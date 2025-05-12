@@ -1,7 +1,13 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
+import { createTransport } from "nodemailer";
+import {
+  generateSignInEmailHTML,
+  generateSignInEmailText,
+} from "~/templates/signin-email";
 
 import { db } from "~/server/db";
 
@@ -37,6 +43,38 @@ export const authConfig = {
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST!,
+        port: Number(process.env.EMAIL_SERVER_PORT!),
+        auth: {
+          user: process.env.EMAIL_SERVER_USER!,
+          pass: process.env.EMAIL_SERVER_PASSWORD!,
+        },
+      },
+      from: process.env.EMAIL_FROM!,
+      async sendVerificationRequest({ identifier: email, url, provider }) {
+        const { host } = new URL(url);
+        const transport = createTransport(provider.server);
+
+        const result = await transport.sendMail({
+          to: email,
+          from: provider.from,
+          subject: `🚀 Sign in to ${host}`,
+          text: generateSignInEmailText({ url, host, email }),
+          html: generateSignInEmailHTML({ url, host, email }),
+        });
+
+        const failed = result.rejected.concat(result.pending).filter(Boolean);
+        if (failed.length) {
+          throw new Error(
+            `Email(s) (${failed
+              .map((f) => (typeof f === "string" ? f : f.address))
+              .join(", ")}) could not be sent`,
+          );
+        }
+      },
     }),
     /**
      * ...add more providers here.

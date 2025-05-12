@@ -37,6 +37,19 @@ This project supports multiple authentication providers. You'll need to set up t
 5. Click "Reset Secret" and copy the new secret
 6. Add redirect URI: `http://localhost:3000/api/auth/callback/discord`
 
+#### Email Provider Setup
+
+For passwordless email authentication, you'll need an SMTP server. Here are some popular options:
+
+1. Create a [SendGrid](https://sendgrid.com/) account
+2. Generate an API key
+3. Use these settings:
+   - Host: `smtp.sendgrid.net`
+   - Port: `587`
+   - User: `apikey`
+   - Password: your SendGrid API key
+   - From: `noreply@yourapp.com`
+
 ### Environment Configuration
 
 Copy the example environment file and fill in your values:
@@ -55,15 +68,23 @@ DATABASE_URL="postgresql://username:password@localhost:5432/prepmate"
 # Generate with: openssl rand -base64 32
 AUTH_SECRET="your-auth-secret"
 
-# Google OAuth
+# Google OAuth (optional)
 # Get these from: https://console.cloud.google.com/
 AUTH_GOOGLE_ID="your-google-client-id"
 AUTH_GOOGLE_SECRET="your-google-client-secret"
 
-# Discord OAuth
+# Discord OAuth (optional)
 # Get these from: https://discord.com/developers/applications
 AUTH_DISCORD_ID="your-discord-client-id"
 AUTH_DISCORD_SECRET="your-discord-client-secret"
+
+# Email Provider (for passwordless login)
+# SMTP server settings
+EMAIL_SERVER_HOST="smtp.gmail.com"  # or your SMTP provider
+EMAIL_SERVER_PORT="587"
+EMAIL_SERVER_USER="your-email@gmail.com"
+EMAIL_SERVER_PASSWORD="your-app-password"
+EMAIL_FROM="noreply@yourapp.com"  # sender address
 ```
 
 ### Setup Commands
