@@ -2,96 +2,25 @@
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## First Installation Guide (for development)
-
-For more detailed information, refer to the [T3 Stack First Steps guide](https://create.t3.gg/en/usage/first-steps).
+## Quick Start
 
 ### Prerequisites
 
 1. Install [Docker](https://docs.docker.com/get-docker/)
-
-### Authentication Setup
-
-This project supports multiple authentication providers. You'll need to set up the OAuth applications for each provider you want to use.
-
-#### Google OAuth Setup
-
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the Google+ API (or Google Identity API)
-4. Go to "Credentials" in the left sidebar
-5. Click "Create Credentials" → "OAuth 2.0 Client IDs"
-6. Configure the OAuth consent screen if prompted
-7. Set application type to "Web application"
-8. Add authorized redirect URIs:
-   - For development: `http://localhost:3000/api/auth/callback/google`
-   - For production: `https://<your-domain.com>/api/auth/callback/google`
-9. Copy the Client ID and Client Secret
-
-#### Discord OAuth Setup
-
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Click "New Application" and give it a name
-3. Go to "Settings → OAuth2 → General"
-4. Copy the "Client ID"
-5. Click "Reset Secret" and copy the new secret
-6. Add redirect URI: `http://localhost:3000/api/auth/callback/discord`
-
-#### Email Provider Setup
-
-For passwordless email authentication, you'll need an SMTP server. Here are some popular options:
-
-1. Create a [SendGrid](https://sendgrid.com/) account
-2. Generate an API key
-3. Use these settings:
-   - Host: `smtp.sendgrid.net`
-   - Port: `587`
-   - User: `apikey`
-   - Password: your SendGrid API key
-   - From: `noreply@yourapp.com`
-
-### Environment Configuration
-
-Copy the example environment file and fill in your values:
-
-```bash
-cp .env.example .env
-```
-
-Then edit the `.env` file with your actual values:
-
-```bash
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/prepmate"
-
-# NextAuth.js
-# Generate with: openssl rand -base64 32
-AUTH_SECRET="your-auth-secret"
-
-# Google OAuth (optional)
-# Get these from: https://console.cloud.google.com/
-AUTH_GOOGLE_ID="your-google-client-id"
-AUTH_GOOGLE_SECRET="your-google-client-secret"
-
-# Discord OAuth (optional)
-# Get these from: https://discord.com/developers/applications
-AUTH_DISCORD_ID="your-discord-client-id"
-AUTH_DISCORD_SECRET="your-discord-client-secret"
-
-# Email Provider (for passwordless login)
-# SMTP server settings
-EMAIL_SERVER_HOST="smtp.gmail.com"  # or your SMTP provider
-EMAIL_SERVER_PORT="587"
-EMAIL_SERVER_USER="your-email@gmail.com"
-EMAIL_SERVER_PASSWORD="your-app-password"
-EMAIL_FROM="noreply@yourapp.com"  # sender address
-```
+2. Install [Node.js](https://nodejs.org/) (v18 or higher)
+3. Install [pnpm](https://pnpm.io/) package manager
 
 ### Setup Commands
 
 ```bash
+# Clone and navigate to the project
+cd prepmate
+
 # Install dependencies
 pnpm i
+
+# Copy environment file (see Authentication Setup guide for details)
+cp .env.example .env
 
 # Start the database container
 ./start-database.sh
@@ -103,17 +32,31 @@ pnpm db:push
 pnpm dev
 ```
 
-## What's next? How do I make an app with this?
+## 📚 Documentation
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+### Essential Setup Guides
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- **[🔐 Authentication Setup](docs/authentication-setup.md)** - Configure OAuth providers and email authentication
+- **[🚀 Deployment Guide](docs/deployment.md)** - Deploy to production (coming soon)
+- **[🎨 Customization Guide](docs/customization.md)** - Customize your app (coming soon)
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### Key Features
+
+- **🔐 Multiple Auth Providers** - Google, Discord, and Email (magic links)
+- **📧 Beautiful Email Templates** - Custom-designed sign-in emails
+- **🛡️ Type-Safe APIs** - Full TypeScript support with tRPC
+- **🗄️ Database Ready** - PostgreSQL with Prisma ORM
+- **🎨 Modern UI** - Tailwind CSS for styling
+
+## Tech Stack
+
+This project uses the powerful [T3 Stack](https://create.t3.gg/):
+
+- **[Next.js](https://nextjs.org)** - React framework for production
+- **[NextAuth.js](https://next-auth.js.org)** - Authentication for Next.js
+- **[Prisma](https://prisma.io)** - Next-generation ORM
+- **[Tailwind CSS](https://tailwindcss.com)** - Utility-first CSS framework
+- **[tRPC](https://trpc.io)** - End-to-end typesafe APIs
 
 ## Learn More
 
