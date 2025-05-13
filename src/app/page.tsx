@@ -8,6 +8,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "~/components/theme-toggle";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -24,7 +25,7 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
         {/* Navigation */}
         <nav className="container mx-auto flex items-center justify-between px-4 py-6">
           <div className="flex items-center space-x-2">
@@ -37,9 +38,10 @@ export default async function Home() {
           </div>
 
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
             {session?.user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-slate-500 dark:text-slate-400">
                   Welcome, {session.user.name}
                 </span>
                 <Button
@@ -51,9 +53,6 @@ export default async function Home() {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" asChild>
-                  <Link href="/api/auth/signin">Sign In</Link>
-                </Button>
                 <Button
                   asChild
                   className="shadow-md transition-shadow hover:shadow-lg"
@@ -80,7 +79,7 @@ export default async function Home() {
               in Minutes
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-slate-600">
+            <p className="mx-auto mb-10 max-w-2xl text-xl leading-relaxed text-slate-600 dark:text-slate-300">
               Transform your career with AI-enhanced resumes using the proven
               XYZ formula. Choose from stunning templates and share your
               professional story online.
@@ -100,7 +99,7 @@ export default async function Home() {
               <Button
                 variant="outline"
                 size="lg"
-                className="px-8 py-6 text-lg transition-colors hover:bg-slate-50"
+                className="px-8 py-6 text-lg transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 View Templates
               </Button>
@@ -133,103 +132,103 @@ export default async function Home() {
             <h2 className="mb-6 text-3xl font-bold md:text-4xl">
               Everything you need to land your dream job
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 dark:text-slate-300">
               From AI-powered content enhancement to beautiful templates and
               online hosting.
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 transition-all duration-300 group-hover:from-blue-100 group-hover:to-purple-100"></div>
+            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-800/50 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 transition-all duration-300 group-hover:from-blue-100 group-hover:to-purple-100 dark:from-blue-950/20 dark:to-purple-950/20 dark:group-hover:from-blue-900/30 dark:group-hover:to-purple-900/30"></div>
               <CardHeader className="relative">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-tr from-blue-500 to-purple-500 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                   <Sparkles className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="transition-colors group-hover:text-blue-700">
+                <CardTitle className="transition-colors group-hover:text-blue-700 dark:text-slate-100 dark:group-hover:text-blue-400">
                   AI-Enhanced Content
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-300">
                   Transform your bullet points with AI using the proven XYZ
                   formula for maximum impact.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 transition-all duration-300 group-hover:from-green-100 group-hover:to-emerald-100"></div>
+            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-800/50 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 transition-all duration-300 group-hover:from-green-100 group-hover:to-emerald-100 dark:from-green-950/20 dark:to-emerald-950/20 dark:group-hover:from-green-900/30 dark:group-hover:to-emerald-900/30"></div>
               <CardHeader className="relative">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-tr from-green-500 to-emerald-500 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                   <FileText className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="transition-colors group-hover:text-green-700">
+                <CardTitle className="transition-colors group-hover:text-green-700 dark:text-slate-100 dark:group-hover:text-green-400">
                   Beautiful Templates
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-300">
                   Choose from multiple professionally designed templates that
                   make you stand out.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 transition-all duration-300 group-hover:from-orange-100 group-hover:to-red-100"></div>
+            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-800/50 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 transition-all duration-300 group-hover:from-orange-100 group-hover:to-red-100 dark:from-orange-950/20 dark:to-red-950/20 dark:group-hover:from-orange-900/30 dark:group-hover:to-red-900/30"></div>
               <CardHeader className="relative">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-tr from-orange-500 to-red-500 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                   <Zap className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="transition-colors group-hover:text-orange-700">
+                <CardTitle className="transition-colors group-hover:text-orange-700 dark:text-slate-100 dark:group-hover:text-orange-400">
                   Quick Setup
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-300">
                   Upload your existing resume or fill out our smart forms to get
                   started instantly.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 transition-all duration-300 group-hover:from-purple-100 group-hover:to-pink-100"></div>
+            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-800/50 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 transition-all duration-300 group-hover:from-purple-100 group-hover:to-pink-100 dark:from-purple-950/20 dark:to-pink-950/20 dark:group-hover:from-purple-900/30 dark:group-hover:to-pink-900/30"></div>
               <CardHeader className="relative">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-500 to-pink-500 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                   <Download className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="transition-colors group-hover:text-purple-700">
+                <CardTitle className="transition-colors group-hover:text-purple-700 dark:text-slate-100 dark:group-hover:text-purple-400">
                   Multiple Formats
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-300">
                   Download your resume in PDF format or export to various file
                   types.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 to-blue-50 transition-all duration-300 group-hover:from-cyan-100 group-hover:to-blue-100"></div>
+            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-800/50 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 to-blue-50 transition-all duration-300 group-hover:from-cyan-100 group-hover:to-blue-100 dark:from-cyan-950/20 dark:to-blue-950/20 dark:group-hover:from-cyan-900/30 dark:group-hover:to-blue-900/30"></div>
               <CardHeader className="relative">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-500 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                   <Share2 className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="transition-colors group-hover:text-cyan-700">
+                <CardTitle className="transition-colors group-hover:text-cyan-700 dark:text-slate-100 dark:group-hover:text-cyan-400">
                   Online Sharing
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-300">
                   Get a unique link to share your resume online with recruiters
                   and employers.
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 transition-all duration-300 group-hover:from-emerald-100 group-hover:to-teal-100"></div>
+            <Card className="group relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-slate-800/50 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 transition-all duration-300 group-hover:from-emerald-100 group-hover:to-teal-100 dark:from-emerald-950/20 dark:to-teal-950/20 dark:group-hover:from-emerald-900/30 dark:group-hover:to-teal-900/30"></div>
               <CardHeader className="relative">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-500 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
                   <CheckCircle className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="transition-colors group-hover:text-emerald-700">
+                <CardTitle className="transition-colors group-hover:text-emerald-700 dark:text-slate-100 dark:group-hover:text-emerald-400">
                   Live Preview
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-slate-300">
                   See your changes in real-time with our live preview feature as
                   you edit.
                 </CardDescription>
@@ -239,7 +238,7 @@ export default async function Home() {
         </section>
 
         {/* How It Works */}
-        <section className="container mx-auto bg-gradient-to-b from-white to-slate-50 px-4 py-20">
+        <section className="container mx-auto bg-gradient-to-b from-white to-slate-50 px-4 py-20 dark:from-slate-950 dark:to-slate-900">
           <div className="mb-16 text-center">
             <Badge variant="outline" className="mb-4">
               🎯 Process
@@ -247,7 +246,7 @@ export default async function Home() {
             <h2 className="mb-6 text-3xl font-bold md:text-4xl">
               How it works
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
+            <p className="mx-auto max-w-2xl text-lg text-slate-600 dark:text-slate-300">
               Get from zero to hired in just four simple steps.
             </p>
           </div>
@@ -283,10 +282,10 @@ export default async function Home() {
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 text-lg font-bold text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
                   {item.step}
                 </div>
-                <h3 className="mb-3 text-xl font-semibold transition-colors group-hover:text-blue-600">
+                <h3 className="mb-3 text-xl font-semibold transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                   {item.title}
                 </h3>
-                <p className="leading-relaxed text-slate-600">
+                <p className="leading-relaxed text-slate-600 dark:text-slate-300">
                   {item.description}
                 </p>
               </div>
@@ -325,7 +324,7 @@ export default async function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="container mx-auto border-t px-4 py-12">
+        <footer className="container mx-auto border-t border-slate-200 px-4 py-12 dark:border-slate-800">
           <div className="flex flex-col items-center justify-between md:flex-row">
             <div className="mb-4 flex items-center space-x-2 md:mb-0">
               <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-tr from-blue-600 to-purple-600 shadow-sm">
@@ -335,7 +334,7 @@ export default async function Home() {
                 PrepMate
               </span>
             </div>
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-slate-500 dark:text-slate-400">
               © 2025 PrepMate. All rights reserved.
             </div>
           </div>
