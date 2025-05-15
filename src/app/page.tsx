@@ -8,6 +8,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -24,6 +25,11 @@ import { HydrateClient } from "~/trpc/server";
 export default async function Home() {
   const session = await auth();
 
+  // Redirect authenticated users to dashboard
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <HydrateClient>
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
@@ -38,28 +44,14 @@ export default async function Home() {
 
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            {session?.user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-slate-500 dark:text-slate-400">
-                  Welcome, {session.user.name}
-                </span>
-                <Button
-                  asChild
-                  className="shadow-md transition-shadow hover:shadow-lg"
-                >
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Button
-                  asChild
-                  className="shadow-md transition-shadow hover:shadow-lg"
-                >
-                  <Link href="/api/auth/signin">Get Started</Link>
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center space-x-2">
+              <Button
+                asChild
+                className="shadow-md transition-shadow hover:shadow-lg"
+              >
+                <Link href="/auth/signin">Get Started</Link>
+              </Button>
+            </div>
           </div>
         </nav>
 
@@ -90,7 +82,7 @@ export default async function Home() {
                 className="transform px-8 py-6 text-lg shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 asChild
               >
-                <Link href="/api/auth/signin">
+                <Link href="/auth/signin">
                   Start Building Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -313,7 +305,7 @@ export default async function Home() {
                 className="px-8 py-6 text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                 asChild
               >
-                <Link href="/api/auth/signin">
+                <Link href="/auth/signin">
                   Start Building Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
