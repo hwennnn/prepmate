@@ -9,12 +9,13 @@ export const metadata: Metadata = {
   description: "A sign in link has been sent to your email address.",
 };
 
-export default function VerifyRequestPage({
+export default async function VerifyRequestPage({
   searchParams,
 }: {
-  searchParams: { email?: string };
+  searchParams: Promise<{ email?: string }>;
 }) {
-  const email = searchParams.email;
+  const params = await searchParams;
+  const email = params.email;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 dark:bg-black">
