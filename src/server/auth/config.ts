@@ -89,6 +89,7 @@ export const authConfig = {
   adapter: PrismaAdapter(db),
   pages: {
     signIn: "/auth/signin",
+    verifyRequest: "/auth/verify-request",
   },
   callbacks: {
     session: ({ session, user }) => ({
