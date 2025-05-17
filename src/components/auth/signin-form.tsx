@@ -1,36 +1,72 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { getAuthErrorMessage, handleSignInResult } from "~/lib/auth-errors";
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  // Check for authentication errors in URL params
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) {
+      setError(getAuthErrorMessage(urlError));
+    }
+  }, [searchParams]);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
+    setError(null);
     setIsLoading("email");
     try {
-      await signIn("email", { email, callbackUrl: "/dashboard" });
+      const result = await signIn("email", {
+        email,
+        callbackUrl: "/dashboard",
+        redirect: false,
+      });
+
+      const errorMessage = handleSignInResult(result);
+      if (errorMessage) {
+        setError(errorMessage);
+      }
     } catch (error) {
       console.error("Email sign-in error:", error);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(null);
     }
   };
 
   const handleProviderSignIn = async (providerId: string) => {
+    setError(null);
     setIsLoading(providerId);
     try {
-      await signIn(providerId, { callbackUrl: "/dashboard" });
+      const result = await signIn(providerId, {
+        callbackUrl: "/dashboard",
+        redirect: false,
+      });
+
+      const errorMessage = handleSignInResult(result, providerId);
+      if (errorMessage) {
+        setError(errorMessage);
+        setIsLoading(null);
+      }
     } catch (error) {
       console.error(`${providerId} sign-in error:`, error);
-    } finally {
+      setError(
+        `An error occurred with ${providerId} sign-in. Please try again.`,
+      );
       setIsLoading(null);
     }
   };
@@ -70,6 +106,14 @@ export function SignInForm() {
 
   return (
     <div className="space-y-6">
+      {/* Error Display */}
+      {error && (
+        <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-950/20 dark:text-red-400">
+          <AlertCircle className="h-5 w-5 flex-shrink-0" />
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Email Form */}
       <form onSubmit={handleEmailSignIn} className="space-y-4">
         <div>
@@ -147,6 +191,22 @@ export function SignInForm() {
             <DiscordIcon />
           )}
           <span className="ml-3">Continue with Discord</span>
+        </Button>
+
+        <Button
+          variant="outline"
+          size="lg"
+          className="h-12 w-full rounded-lg border-slate-300 bg-white text-slate-900 transition-colors hover:bg-slate-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
+          // TODO: Add Github sign in
+          // onClick={() => handleProviderSignIn("github")}
+          disabled={isLoading !== null}
+        >
+          {isLoading === "github" ? (
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          ) : (
+            <GitHubIcon />
+          )}
+          <span className="ml-3">Continue with Github</span>
         </Button>
       </div>
     </div>
