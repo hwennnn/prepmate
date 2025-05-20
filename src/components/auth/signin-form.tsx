@@ -30,20 +30,14 @@ export function SignInForm() {
     setError(null);
     setIsLoading("email");
     try {
-      const result = await signIn("email", {
+      // For email signin, we want to redirect to verify-request page
+      await signIn("email", {
         email,
         callbackUrl: "/dashboard",
-        redirect: false,
       });
-
-      const errorMessage = handleSignInResult(result);
-      if (errorMessage) {
-        setError(errorMessage);
-      }
     } catch (error) {
       console.error("Email sign-in error:", error);
       setError("An unexpected error occurred. Please try again.");
-    } finally {
       setIsLoading(null);
     }
   };
@@ -52,6 +46,7 @@ export function SignInForm() {
     setError(null);
     setIsLoading(providerId);
     try {
+      // For OAuth providers, we want to handle errors inline
       const result = await signIn(providerId, {
         callbackUrl: "/dashboard",
         redirect: false,
@@ -206,7 +201,7 @@ export function SignInForm() {
           ) : (
             <GitHubIcon />
           )}
-          <span className="ml-3">Continue with Github</span>
+          <span className="ml-3">Continue with GitHub</span>
         </Button>
       </div>
     </div>
