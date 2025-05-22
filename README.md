@@ -12,7 +12,7 @@ PrepMate is an innovative AI-powered platform that simplifies and elevates the r
 - **🎨 Beautiful Templates** - Choose from multiple professionally designed, ATS-friendly templates
 - **⚡ Quick Setup** - Upload existing resumes or fill out smart forms for instant setup
 - **📱 Live Preview** - See changes in real-time as you edit your resume
-- **🔗 Online Hosting** - Get a unique shareable link (e.g., prepmate.io/yourname)
+- **🔗 Online Hosting** - Get a unique shareable link (e.g., prepmate.studio/yourname)
 - **📄 Multiple Formats** - Download in PDF and other popular formats
 - **🔐 Secure Authentication** - Multiple sign-in options including Google, Discord, and email
 

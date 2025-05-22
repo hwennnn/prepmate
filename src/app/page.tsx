@@ -20,14 +20,25 @@ import {
 } from "~/components/ui/card";
 import { Logo } from "~/components/ui/logo";
 import { auth } from "~/server/auth";
+import { db } from "~/server/db";
 import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
   const session = await auth();
 
-  // Redirect authenticated users to dashboard
+  // TODO: handle better loading state here with hydrate
+  // Check onboarding status for authenticated users
   if (session?.user) {
-    redirect("/dashboard");
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+      select: { hasCompletedOnboarding: true },
+    });
+
+    if (!user?.hasCompletedOnboarding) {
+      redirect("/onboarding");
+    } else {
+      redirect("/dashboard");
+    }
   }
 
   return (

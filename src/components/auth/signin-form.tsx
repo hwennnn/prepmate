@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { getAuthErrorMessage, handleSignInResult } from "~/lib/auth-errors";
 
 export function SignInForm() {
@@ -137,7 +138,7 @@ export function SignInForm() {
           disabled={isLoading !== null || !email}
         >
           {isLoading === "email" ? (
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            <LoadingSpinner size="sm" className="border-current" />
           ) : (
             "Continue"
           )}
@@ -166,7 +167,7 @@ export function SignInForm() {
           disabled={isLoading !== null}
         >
           {isLoading === "google" ? (
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            <LoadingSpinner size="sm" className="border-current" />
           ) : (
             <GoogleIcon />
           )}
@@ -181,7 +182,7 @@ export function SignInForm() {
           disabled={isLoading !== null}
         >
           {isLoading === "discord" ? (
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            <LoadingSpinner size="sm" className="border-current" />
           ) : (
             <DiscordIcon />
           )}
@@ -197,7 +198,7 @@ export function SignInForm() {
           disabled={isLoading !== null}
         >
           {isLoading === "github" ? (
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            <LoadingSpinner size="sm" className="border-current" />
           ) : (
             <GitHubIcon />
           )}
