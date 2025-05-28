@@ -10,6 +10,10 @@ import { Label } from "~/components/ui/label";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { getAuthErrorMessage, handleSignInResult } from "~/lib/auth-errors";
 
+export const AuthLoadingSpinner = () => (
+  <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+);
+
 export function SignInForm() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -166,11 +170,7 @@ export function SignInForm() {
           onClick={() => handleProviderSignIn("google")}
           disabled={isLoading !== null}
         >
-          {isLoading === "google" ? (
-            <LoadingSpinner size="sm" className="border-current" />
-          ) : (
-            <GoogleIcon />
-          )}
+          {isLoading === "google" ? <AuthLoadingSpinner /> : <GoogleIcon />}
           <span className="ml-3">Continue with Google</span>
         </Button>
 
@@ -181,11 +181,7 @@ export function SignInForm() {
           onClick={() => handleProviderSignIn("discord")}
           disabled={isLoading !== null}
         >
-          {isLoading === "discord" ? (
-            <LoadingSpinner size="sm" className="border-current" />
-          ) : (
-            <DiscordIcon />
-          )}
+          {isLoading === "discord" ? <AuthLoadingSpinner /> : <DiscordIcon />}
           <span className="ml-3">Continue with Discord</span>
         </Button>
 
@@ -197,11 +193,7 @@ export function SignInForm() {
           // onClick={() => handleProviderSignIn("github")}
           disabled={isLoading !== null}
         >
-          {isLoading === "github" ? (
-            <LoadingSpinner size="sm" className="border-current" />
-          ) : (
-            <GitHubIcon />
-          )}
+          {isLoading === "github" ? <AuthLoadingSpinner /> : <GitHubIcon />}
           <span className="ml-3">Continue with GitHub</span>
         </Button>
       </div>
