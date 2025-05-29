@@ -6,8 +6,10 @@ import {
   Plus,
   Share2,
   Trash2,
+  User,
 } from "lucide-react";
 import { type Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SignedInOnly } from "~/app/_components/SignedInOnly";
 import { ThemeToggle } from "~/components/theme-toggle";
@@ -91,10 +93,13 @@ export default async function DashboardPage() {
 
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </Button>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-slate-600 dark:text-slate-400">
-                    {session.user.name}
-                  </span>
                   <form
                     action={async () => {
                       "use server";
