@@ -189,8 +189,7 @@ export function SignInForm() {
           variant="outline"
           size="lg"
           className="h-12 w-full rounded-lg border-slate-300 bg-white text-slate-900 transition-colors hover:bg-slate-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
-          // TODO: Add Github sign in
-          // onClick={() => handleProviderSignIn("github")}
+          onClick={() => handleProviderSignIn("github")}
           disabled={isLoading !== null}
         >
           {isLoading === "github" ? <AuthLoadingSpinner /> : <GitHubIcon />}

@@ -9,6 +9,7 @@ PrepMate supports multiple authentication methods:
 - 🔐 **Email (Magic Links)** - Passwordless authentication via email
 - 🌐 **Google OAuth** - Sign in with Google accounts
 - 🎮 **Discord OAuth** - Sign in with Discord accounts
+- 🐙 **GitHub OAuth** - Sign in with GitHub accounts
 
 ## Email Provider Setup (Recommended)
 
@@ -79,6 +80,28 @@ For passwordless email authentication, you'll need an SMTP server. Here are some
    AUTH_DISCORD_SECRET="your-discord-client-secret"
    ```
 
+## GitHub OAuth Setup
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. Click "New OAuth App"
+3. Fill in the application details:
+   - **Application name**: Your app name (e.g., "PrepMate")
+   - **Homepage URL**:
+     - For development: `http://localhost:3000`
+     - For production: `https://<your-domain.com>`
+   - **Authorization callback URL**:
+     - For development: `http://localhost:3000/api/auth/callback/github`
+     - For production: `https://<your-domain.com>/api/auth/callback/github`
+4. Click "Register application"
+5. Copy the "Client ID"
+6. Click "Generate a new client secret" and copy the secret
+7. Add to your `.env` file:
+
+   ```bash
+   AUTH_GITHUB_ID="your-github-client-id"
+   AUTH_GITHUB_SECRET="your-github-client-secret"
+   ```
+
 ## Environment Configuration
 
 ### 1. Copy the example environment file
@@ -106,6 +129,11 @@ AUTH_GOOGLE_SECRET="your-google-client-secret"
 # Get these from: https://discord.com/developers/applications
 AUTH_DISCORD_ID="your-discord-client-id"
 AUTH_DISCORD_SECRET="your-discord-client-secret"
+
+# GitHub OAuth (optional)
+# Get these from: https://github.com/settings/developers
+AUTH_GITHUB_ID="your-github-client-id"
+AUTH_GITHUB_SECRET="your-github-client-secret"
 
 # Email Provider (for passwordless login)
 # SMTP server settings
