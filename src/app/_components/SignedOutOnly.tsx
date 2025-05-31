@@ -1,14 +1,15 @@
 import { redirect } from "next/navigation";
 import { auth } from "~/server/auth";
 
-interface SignedInOnlyProps {
+interface SignedOutOnlyProps {
   children: React.ReactNode;
   redirectTo?: string;
 }
 
 /**
  * Server-side authentication wrapper component.
- * Protects server components by redirecting unauthenticated users.
+ * Protects auth pages by redirecting authenticated users away.
+ * Use this for sign-in, sign-up, verify-request pages, etc.
  *
  * For direct server component auth, use this pattern instead:
  *
@@ -16,26 +17,26 @@ interface SignedInOnlyProps {
  * import { auth } from "~/server/auth";
  * import { redirect } from "next/navigation";
  *
- * export default async function Page() {
+ * export default async function AuthPage() {
  *   const session = await auth();
- *   if (!session?.user) {
- *     redirect("/auth/signin");
+ *   if (session?.user) {
+ *     redirect("/dashboard");
  *   }
  *   // ... rest of component
  * }
  * ```
  */
-export async function SignedInOnly({
+export async function SignedOutOnly({
   children,
-  redirectTo = "/auth/signin",
-}: SignedInOnlyProps) {
+  redirectTo = "/dashboard",
+}: SignedOutOnlyProps) {
   const session = await auth();
 
-  // Redirect if NOT signed in
-  if (!session?.user) {
+  // Redirect if already signed in
+  if (session?.user) {
     redirect(redirectTo);
   }
 
-  // Render children only when authenticated
+  // Render children only when NOT authenticated
   return <>{children}</>;
 }
