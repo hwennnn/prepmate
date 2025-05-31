@@ -201,7 +201,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
                 type="button"
                 onClick={handleNext}
                 disabled={activeTab === "personal" && !isPersonalCompleted}
-                className="min-w-[120px] bg-blue-600 hover:bg-blue-700"
+                className="min-w-[120px]"
               >
                 Next
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -211,9 +211,13 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-w-[120px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  className="min-w-[120px]"
                 >
-                  {isSubmitting ? "Submitting" : "Complete Setup"}
+                  {isSubmitting ? (
+                    <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : (
+                    "Complete Setup"
+                  )}
                 </Button>
               </form>
             )}
