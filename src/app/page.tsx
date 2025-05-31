@@ -8,7 +8,6 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -19,28 +18,9 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Logo } from "~/components/ui/logo";
-import { auth } from "~/server/auth";
-import { db } from "~/server/db";
 import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  const session = await auth();
-
-  // TODO: handle better loading state here with hydrate
-  // Check onboarding status for authenticated users
-  if (session?.user) {
-    const user = await db.user.findUnique({
-      where: { id: session.user.id },
-      select: { hasCompletedOnboarding: true },
-    });
-
-    if (!user?.hasCompletedOnboarding) {
-      redirect("/onboarding");
-    } else {
-      redirect("/dashboard");
-    }
-  }
-
   return (
     <HydrateClient>
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
