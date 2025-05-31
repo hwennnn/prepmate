@@ -1,5 +1,6 @@
 "use client";
 
+import { Edit } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ThemeToggle } from "~/components/theme-toggle";
@@ -42,12 +43,25 @@ export function ProfileNavigation() {
       {/* Page Title Section */}
       <div className="border-b border-slate-100 bg-white/50 dark:border-slate-800 dark:bg-slate-950/50">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-            My Profile
-          </h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            View and manage your professional profile
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+                My Profile
+              </h1>
+              <p className="mt-2 text-slate-600 dark:text-slate-400">
+                View and manage your professional profile
+              </p>
+            </div>
+            <Button
+              asChild
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg transition-all hover:scale-105 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl"
+            >
+              <Link href="/profile/edit">
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Profile
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </>
