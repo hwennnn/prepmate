@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { getAuthErrorMessage, handleSignInResult } from "~/lib/auth-errors";
 
 export const AuthLoadingSpinner = () => (
@@ -141,11 +140,7 @@ export function SignInForm() {
           className="h-12 w-full rounded-lg bg-slate-900 font-medium text-white transition-colors hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-gray-100"
           disabled={isLoading !== null || !email}
         >
-          {isLoading === "email" ? (
-            <LoadingSpinner size="sm" className="border-current" />
-          ) : (
-            "Continue"
-          )}
+          {isLoading === "email" ? <AuthLoadingSpinner /> : "Continue"}
         </Button>
       </form>
 
