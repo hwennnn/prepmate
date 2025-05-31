@@ -6,9 +6,8 @@ import { Logo } from "~/components/ui/logo";
 import { api } from "~/trpc/react";
 import { OnboardingForm } from "../../_components/onboarding/OnboardingForm";
 
-export default function OnboardingPageClient() {
+export function OnboardingPageClient() {
   const utils = api.useUtils();
-
   const router = useRouter();
 
   const completeOnboardingMutation =
@@ -25,7 +24,6 @@ export default function OnboardingPageClient() {
   const handleOnboardingComplete = async () => {
     try {
       await completeOnboardingMutation.mutateAsync();
-      // Don't set loading to false here - let OnboardingCheck handle the redirect
     } catch {
       // Error is already handled in onError
     }

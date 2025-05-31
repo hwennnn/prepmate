@@ -1,10 +1,10 @@
 import { OnboardingCheck } from "~/app/_components/OnboardingCheck";
-import { OnboardingClientWrapper } from "./_components/OnboardingClientWrapper";
+import { OnboardingPageClient } from "./_components/OnboardingPageClient";
 
 export default function OnboardingPage() {
   return (
     <OnboardingCheck reverse>
-      <OnboardingClientWrapper />
+      <OnboardingPageClient />
     </OnboardingCheck>
   );
 }
