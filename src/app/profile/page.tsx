@@ -6,7 +6,6 @@ import { Card, CardContent } from "~/components/ui/card";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { api } from "~/trpc/react";
 import { OnboardingCheck } from "../_components/OnboardingCheck";
-import { SignedInOnly } from "../_components/SignedInOnly";
 import { EducationCard } from "./components/EducationCard";
 import { ExperienceCard } from "./components/ExperienceCard";
 import { PersonalInfoCard } from "./components/PersonalInfoCard";
@@ -68,7 +67,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <SignedInOnly>
+    <>
       <OnboardingCheck />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
         <ProfileNavigation />
@@ -90,6 +89,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </SignedInOnly>
+    </>
   );
 }

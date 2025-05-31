@@ -45,7 +45,7 @@ export default async function SignInPage() {
         <div className="mb-8 text-center">
           <Logo size="lg" className="mb-6 h-16 w-16 rounded-2xl" />
           <h1 className="mb-2 text-4xl font-bold text-slate-900 dark:text-white">
-            Continue with Prepmate
+            Continue with PrepMate
           </h1>
         </div>
 
