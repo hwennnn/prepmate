@@ -1,10 +1,5 @@
-"use client";
-
-import Link from "next/link";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import { api } from "~/trpc/react";
+import { redirect } from "next/navigation";
+import { api } from "~/trpc/server";
 import { OnboardingCheck } from "../_components/OnboardingCheck";
 import { EducationCard } from "./components/EducationCard";
 import { ExperienceCard } from "./components/ExperienceCard";
@@ -13,62 +8,15 @@ import { ProfileNavigation } from "./components/ProfileNavigation";
 import { ProjectsCard } from "./components/ProjectsCard";
 import { SkillsCard } from "./components/SkillsCard";
 
-export default function ProfilePage() {
-  const {
-    data: profile,
-    isLoading,
-    error,
-  } = api.onboarding.getProfile.useQuery();
-
-  if (isLoading) {
-    return <LoadingSpinner fullScreen text="Loading profile..." size="lg" />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <p className="text-red-600 dark:text-red-400">
-                Failed to load profile: {error.message}
-              </p>
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={() => window.location.reload()}
-              >
-                Try Again
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+export default async function ProfilePage() {
+  const profile = await api.onboarding.getProfile();
 
   if (!profile) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <p className="text-slate-600 dark:text-slate-400">
-                No profile found. Please complete your onboarding first.
-              </p>
-              <Button asChild className="mt-4">
-                <Link href="/onboarding">Complete Profile</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    redirect("/auth/signin");
   }
 
   return (
-    <>
-      <OnboardingCheck />
+    <OnboardingCheck>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
         <ProfileNavigation />
 
@@ -89,6 +37,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </>
+    </OnboardingCheck>
   );
 }
