@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "~/server/auth";
+import { getSession } from "~/lib/dal";
 
 interface SignedOutOnlyProps {
   children: React.ReactNode;
@@ -30,10 +30,10 @@ export async function SignedOutOnly({
   children,
   redirectTo = "/dashboard",
 }: SignedOutOnlyProps) {
-  const session = await auth();
+  const session = await getSession();
 
   // Redirect if already signed in
-  if (session?.user) {
+  if (session) {
     redirect(redirectTo);
   }
 

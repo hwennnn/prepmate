@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
-import { auth } from "~/server/auth";
+import { getSession } from "~/lib/dal";
 import { api } from "~/trpc/server";
-
 interface OnboardingCheckProps {
   reverse?: boolean; // If true, redirect completed users away from onboarding page
   children?: React.ReactNode;
@@ -11,9 +10,10 @@ export async function OnboardingCheck({
   reverse = false,
   children,
 }: OnboardingCheckProps) {
-  // First check if user is authenticated
-  const session = await auth();
-  if (!session?.user) {
+  // Verify session using DAL - this is cached and optimized
+  const session = await getSession();
+
+  if (!session) {
     redirect("/auth/signin");
   }
 
