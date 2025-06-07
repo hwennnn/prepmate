@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { completeProfileSchema } from "~/app/_components/onboarding/types";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -160,4 +161,70 @@ export const onboardingRouter = createTRPCRouter({
 
     return { success: true };
   }),
+
+  // Parse resume and extract data
+  parseResume: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64 encoded file data
+        mimeType: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      console.log("🚀 ~ .mutation ~ input:", input);
+
+      // For now, return a mock response
+      const mockParsedData = {
+        personalDetails: {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com",
+          phoneNumber: "+1 (555) 123-4567",
+          website: "",
+          linkedinUrl: "https://linkedin.com/in/johndoe",
+          githubUrl: "https://github.com/johndoe",
+        },
+        education: [
+          {
+            institution: "University of Technology",
+            degree: "Bachelor of Science in Computer Science",
+            isAttending: false,
+            startDate: new Date("2018-09-01"),
+            endDate: new Date("2022-05-15"),
+            gpa: "3.8",
+            awards: "Dean's List",
+            coursework: "Data Structures, Algorithms, Software Engineering",
+          },
+        ],
+        experience: [
+          {
+            company: "Tech Corp",
+            jobTitle: "Software Engineer",
+            location: "San Francisco, CA",
+            isCurrentJob: true,
+            startDate: new Date("2022-06-01"),
+            achievements:
+              "Developed scalable web applications, improved performance by 40%",
+            technologies: "React, Node.js, PostgreSQL",
+          },
+        ],
+        projects: [
+          {
+            name: "E-commerce Platform",
+            description:
+              "Full-stack e-commerce application with payment integration",
+            url: "https://github.com/johndoe/ecommerce",
+            achievements: "Handled 1000+ concurrent users",
+            technologies: "React, Express, MongoDB",
+          },
+        ],
+        skills: {
+          languages: "JavaScript, TypeScript, Python, Java",
+          frameworks: "React, Next.js, Express, Django",
+        },
+      };
+
+      return mockParsedData;
+    }),
 });

@@ -12,6 +12,7 @@ import { ExperienceForm } from "./ExperienceForm";
 import { PersonalDetailsForm } from "./PersonalDetailsForm";
 import { ProgressBar } from "./ProgressBar";
 import { ProjectsForm } from "./ProjectsForm";
+import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
 import { completeProfileSchema, type FormData } from "./types";
 
@@ -31,6 +32,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
   const [activeTab, setActiveTab] = useState("personal");
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResumeUpload, setShowResumeUpload] = useState(true);
 
   const {
     register,
@@ -133,14 +135,81 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     return;
   };
 
+  // Handle resume data parsing
+  const handleResumeDataParsed = (parsedData: Partial<FormData>) => {
+    // Fill in personal details
+    if (parsedData.personalDetails) {
+      const personalDetails = parsedData.personalDetails;
+      if (personalDetails.firstName)
+        setValue("personalDetails.firstName", personalDetails.firstName);
+      if (personalDetails.lastName)
+        setValue("personalDetails.lastName", personalDetails.lastName);
+      if (personalDetails.email)
+        setValue("personalDetails.email", personalDetails.email);
+      if (personalDetails.phoneNumber)
+        setValue("personalDetails.phoneNumber", personalDetails.phoneNumber);
+      if (personalDetails.website)
+        setValue("personalDetails.website", personalDetails.website);
+      if (personalDetails.linkedinUrl)
+        setValue("personalDetails.linkedinUrl", personalDetails.linkedinUrl);
+      if (personalDetails.githubUrl)
+        setValue("personalDetails.githubUrl", personalDetails.githubUrl);
+    }
+
+    // Fill in education
+    if (parsedData.education && parsedData.education.length > 0) {
+      setValue("education", parsedData.education);
+    }
+
+    // Fill in experience
+    if (parsedData.experience && parsedData.experience.length > 0) {
+      setValue("experience", parsedData.experience);
+    }
+
+    // Fill in projects
+    if (parsedData.projects && parsedData.projects.length > 0) {
+      setValue("projects", parsedData.projects);
+    }
+
+    // Fill in skills
+    if (parsedData.skills) {
+      const skills = parsedData.skills;
+      if (skills.languages) setValue("skills.languages", skills.languages);
+      if (skills.frameworks) setValue("skills.frameworks", skills.frameworks);
+    }
+
+    setShowResumeUpload(false);
+  };
+
   return (
     <div className="space-y-8">
+      {/* Resume Upload */}
+      {showResumeUpload && (
+        <ResumeUpload
+          onDataParsed={handleResumeDataParsed}
+          onClose={() => setShowResumeUpload(false)}
+        />
+      )}
+
       {/* Progress Bar */}
       <ProgressBar
         steps={steps}
         currentStepIndex={currentStepIndex}
         completedSteps={completedSteps}
       />
+
+      {/* Resume Upload Toggle */}
+      {!showResumeUpload && (
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => setShowResumeUpload(true)}
+            className="text-sm"
+          >
+            Upload Different Resume
+          </Button>
+        </div>
+      )}
 
       {/* Form Content */}
       <div className="space-y-6">
