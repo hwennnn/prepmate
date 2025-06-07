@@ -9,7 +9,7 @@ interface Experience {
   jobTitle: string;
   location?: string | null;
   isCurrentJob: boolean;
-  startDate: Date;
+  startDate?: Date | null;
   endDate?: Date | null;
   achievements?: string[] | null;
   technologies?: string | null;
@@ -57,7 +57,10 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
                   <div className="mt-1 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                     <Calendar className="h-3 w-3" />
                     <span>
-                      {format(new Date(exp.startDate), "MMM yyyy")} -{" "}
+                      {exp.startDate
+                        ? format(new Date(exp.startDate), "MMM yyyy")
+                        : "N/A"}{" "}
+                      -{" "}
                       {exp.isCurrentJob
                         ? "Present"
                         : exp.endDate

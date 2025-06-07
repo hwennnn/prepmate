@@ -66,20 +66,19 @@ model UserProfile {
 }
 
 model Education {
-  id               String      @id @default(cuid())
-  profileId        String
-  institution      String
-  degree           String
-  isAttending      Boolean     @default(false)
-  startDate        DateTime?
-  endDate          DateTime?
-  expectedGradDate DateTime?
-  gpa              String?
-  awards           String?
-  coursework       String?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  profile          UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  id          String      @id @default(cuid())
+  profileId   String
+  institution String
+  degree      String
+  isAttending Boolean     @default(false)
+  startDate   DateTime
+  endDate     DateTime
+  gpa         String?
+  awards      String?
+  coursework  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  profile     UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Experience {

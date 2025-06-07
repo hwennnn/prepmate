@@ -10,7 +10,6 @@ interface Education {
   isAttending: boolean;
   startDate?: Date | null;
   endDate?: Date | null;
-  expectedGradDate?: Date | null;
   gpa?: string | null;
   awards?: string | null;
   coursework?: string | null;
@@ -56,13 +55,11 @@ export function EducationCard({ education }: EducationCardProps) {
                         ? format(new Date(edu.startDate), "MMM yyyy")
                         : "Start Date"}{" "}
                       -{" "}
-                      {edu.isAttending
-                        ? edu.expectedGradDate
-                          ? `${format(new Date(edu.expectedGradDate), "MMM yyyy")} (Expected)`
-                          : "Present"
-                        : edu.endDate
-                          ? format(new Date(edu.endDate), "MMM yyyy")
-                          : "End Date"}
+                      {edu.endDate
+                        ? `${format(new Date(edu.endDate), "MMM yyyy")}${
+                            edu.isAttending ? " (Expected)" : ""
+                          }`
+                        : "End Date"}
                     </span>
                     {edu.isAttending && (
                       <Badge variant="secondary" className="ml-2">

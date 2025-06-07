@@ -84,7 +84,6 @@ export const onboardingRouter = createTRPCRouter({
             isAttending: edu.isAttending,
             startDate: edu.startDate,
             endDate: edu.endDate,
-            expectedGradDate: edu.expectedGradDate,
             gpa: edu.gpa,
             awards: edu.awards,
             coursework: edu.coursework,

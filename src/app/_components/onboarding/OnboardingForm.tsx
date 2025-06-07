@@ -180,11 +180,12 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     if (parsedData.education && parsedData.education.length > 0) {
       const educationWithDates = parsedData.education.map((edu) => ({
         ...edu,
-        startDate: edu.startDate ? new Date(edu.startDate) : undefined,
-        endDate: edu.endDate ? new Date(edu.endDate) : undefined,
-        expectedGradDate: edu.expectedGradDate
-          ? new Date(edu.expectedGradDate)
-          : undefined,
+        startDate: edu.startDate
+          ? new Date(edu.startDate)
+          : (undefined as unknown as Date),
+        endDate: edu.endDate
+          ? new Date(edu.endDate)
+          : (undefined as unknown as Date),
       }));
       setValue("education", educationWithDates);
     }
@@ -193,8 +194,12 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     if (parsedData.experience && parsedData.experience.length > 0) {
       const experienceWithDates = parsedData.experience.map((exp) => ({
         ...exp,
-        startDate: exp.startDate ? new Date(exp.startDate) : new Date(),
-        endDate: exp.endDate ? new Date(exp.endDate) : undefined,
+        startDate: exp.startDate
+          ? new Date(exp.startDate)
+          : (undefined as unknown as Date),
+        endDate: exp.endDate
+          ? new Date(exp.endDate)
+          : (undefined as unknown as Date),
       }));
       setValue("experience", experienceWithDates);
     }

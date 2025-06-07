@@ -20,23 +20,34 @@ export const personalDetailsSchema = z.object({
   githubUrl: z.string().optional().or(z.literal("")),
 });
 
-export const educationSchema = z.object({
-  institution: z
-    .string()
-    .min(1, "Institution name is required")
-    .max(100, "Institution name is too long"),
-  degree: z
-    .string()
-    .min(1, "Degree/Program name is required")
-    .max(100, "Degree/Program name is too long"),
-  isAttending: z.boolean(),
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  expectedGradDate: z.date().optional(),
-  gpa: z.string().optional(),
-  awards: z.string().optional(),
-  coursework: z.string().optional(),
-});
+export const educationSchema = z
+  .object({
+    institution: z
+      .string()
+      .min(1, "Institution name is required")
+      .max(100, "Institution name is too long"),
+    degree: z
+      .string()
+      .min(1, "Degree/Program name is required")
+      .max(100, "Degree/Program name is too long"),
+    isAttending: z.boolean(),
+    startDate: z.date({ required_error: "Start date is required" }),
+    endDate: z.date({ required_error: "End date is required" }),
+    gpa: z.string().optional(),
+    awards: z.string().optional(),
+    coursework: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (!data.startDate) return false;
+      if (!data.endDate) return false;
+      return data.startDate <= data.endDate;
+    },
+    {
+      message: "Start date must be before or equal to end date",
+      path: ["endDate"],
+    },
+  );
 
 export const experienceSchema = z.object({
   company: z.string().min(1, "Company name is required"),
