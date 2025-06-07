@@ -42,6 +42,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     formState: { errors },
     trigger,
     getValues,
+    clearErrors,
   } = useForm<FormData>({
     resolver: zodResolver(completeProfileSchema),
     mode: "onChange",
@@ -211,6 +212,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     }
 
     setShowResumeUpload(false);
+    clearErrors();
   };
 
   return (

@@ -72,15 +72,22 @@ IMPORTANT EXTRACTION GUIDELINES:
 7. If information is missing, use empty string "" or empty array [] - never use null
 8. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
 9. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
-10. For achievements: Each bullet point should be a separate string in the achievements array
+
+PROJECT STRUCTURE GUIDELINES:
+- "description": What the project IS - a brief explanation of the project's purpose, functionality, or what it does
+- "achievements": What you DID or ACCOMPLISHED in the project - specific results, metrics, improvements, or notable implementations
+- ONLY include achievements if there are actual accomplishments listed (not just descriptions)
+- If the project section only has a brief description without specific accomplishments, leave achievements as an empty array []
 
 FORMATTING RULES FOR ACHIEVEMENTS:
 - achievements should be an ARRAY of strings, not a single string
-- Each bullet point becomes a separate array element
+- Each bullet point should represent a specific accomplishment or result
 - Remove bullet point symbols (•, -, *, etc.) from each achievement
 - Clean up each achievement to be a complete, well-formatted sentence
 - Do NOT join achievements into a single paragraph - keep them as separate array elements
-- Example: ["Increased system performance by 40%", "Led team of 5 developers", "Implemented new authentication system"]
+- Only include items that show what you accomplished, not what the project does
+- Examples of GOOD achievements: ["Increased performance by 40%", "Reduced load time from 3s to 500ms", "Implemented OAuth authentication", "Led team of 3 developers"]
+- Examples of what should go in description instead: "A web application for managing tasks", "Mobile app built with React Native"
 
 Resume text to parse:
 ${resumeText}
