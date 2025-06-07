@@ -17,10 +17,10 @@ You are an expert resume parser. Extract information from the following resume t
     "firstName": "string",
     "lastName": "string", 
     "email": "string",
-    "phoneNumber": "string",
-    "website": "string",
-    "linkedinUrl": "string",
-    "githubUrl": "string"
+    "phoneNumber": "string (omit if not found)",
+    "website": "string (omit if not found)",
+    "linkedinUrl": "string (omit if not found)",
+    "githubUrl": "string (omit if not found)"
   },
   "education": [
     {
@@ -29,10 +29,9 @@ You are an expert resume parser. Extract information from the following resume t
       "isAttending": boolean,
       "startDate": "YYYY-MM-DD",
       "endDate": "YYYY-MM-DD",
-      "expectedGradDate": "YYYY-MM-DD",
-      "gpa": "string",
-      "awards": "string",
-      "coursework": "string"
+      "gpa": "string (omit if not found)",
+      "awards": "string (omit if not found)",
+      "coursework": "string (omit if not found)"
     }
   ],
   "experience": [
@@ -40,25 +39,25 @@ You are an expert resume parser. Extract information from the following resume t
       "company": "string",
       "jobTitle": "string",
       "location": "string",
+      "isCurrentJob": boolean,
       "startDate": "YYYY-MM-DD", 
-      "endDate": "YYYY-MM-DD",
-      "achievements": ["string", "string"],
-      "technologies": "string",
-      "isCurrentJob": boolean
+      "endDate": "YYYY-MM-DD (omit if isCurrentJob=true)",
+      "achievements": ["string", "string"] (omit if not found),
+      "technologies": "string (omit if not found)"
     }
   ],
   "projects": [
     {
       "name": "string",
       "description": "string",
-      "url": "string",
-      "achievements": ["string", "string"],
-      "technologies": "string"
+      "url": "string (omit if not found)",
+      "achievements": ["string", "string"] (omit if not found),
+      "technologies": "string (omit if not found)"
     }
   ],
   "skills": {
-    "languages": "string (comma-separated)",
-    "frameworks": "string (comma-separated)"
+    "languages": "string (comma-separated) (omit if not found)",
+    "frameworks": "string (comma-separated) (omit if not found)"
   }
 }
 
@@ -69,9 +68,27 @@ IMPORTANT EXTRACTION GUIDELINES:
 4. For projects: Include ALL projects mentioned with complete details and technologies used
 5. For skills: Separate programming languages from frameworks/tools
 6. Use actual dates when available, or reasonable estimates based on context
-7. If information is missing, use empty string "" or empty array [] - never use null
-8. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
-9. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
+7. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
+8. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
+
+MISSING VALUE HANDLING (CRITICAL):
+- For REQUIRED fields (firstName, lastName, email, institution, degree, company, jobTitle, location, startDate): Always extract or provide reasonable defaults
+- For OPTIONAL fields, OMIT the field entirely from JSON if information is not found in resume:
+  * personalDetails: phoneNumber, website, linkedinUrl, githubUrl
+  * education: gpa, awards, coursework  
+  * experience: endDate (when isCurrentJob=true), achievements, technologies
+  * projects: url, achievements, technologies
+  * skills: languages, frameworks (omit entire fields if no skills section found)
+- NEVER include fields with undefined, null, or empty values - completely omit them from JSON
+- This ensures valid JSON that can be parsed without errors
+
+DATE REQUIREMENTS (CRITICAL):
+- Education: BOTH startDate and endDate are ALWAYS required (even if currently attending)
+- Experience: startDate is ALWAYS required
+- Experience: endDate is REQUIRED only if isCurrentJob is false (past positions)
+- Experience: endDate should be empty string "" if isCurrentJob is true (current positions)
+- For currently attending education, use estimated graduation date for endDate
+- Always provide dates in YYYY-MM-DD format
 
 PROJECT STRUCTURE GUIDELINES:
 - "description": What the project IS - a brief explanation of the project's purpose, functionality, or what it does

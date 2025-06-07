@@ -90,7 +90,7 @@ export const experienceSchema = z
 export const projectSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().min(1, "Description is required"),
-  url: z.string().url().optional(),
+  url: z.string().optional(),
   achievements: z
     .array(z.string().min(1, "Achievement must not be empty"))
     .optional(),
