@@ -1,7 +1,10 @@
 import { CheckCircle } from "lucide-react";
+import { useMemo } from "react";
+import type { UseFormWatch } from "react-hook-form";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
+import type { FormData } from "./types";
 
 interface Step {
   id: string;
@@ -12,14 +15,69 @@ interface Step {
 interface ProgressBarProps {
   steps: Step[];
   currentStepIndex: number;
-  completedSteps: string[];
+  watch: UseFormWatch<FormData>;
 }
 
 export function ProgressBar({
   steps,
   currentStepIndex,
-  completedSteps,
+  watch,
 }: ProgressBarProps) {
+  const data = watch();
+
+  const completedSteps = useMemo(() => {
+    const completed: string[] = [];
+
+    // Personal Details - check if required fields are filled
+    if (
+      data.personalDetails?.firstName &&
+      data.personalDetails?.lastName &&
+      data.personalDetails?.email
+    ) {
+      completed.push("personal");
+    }
+
+    // Education - optional section, mark as complete if any education is added
+    if (data.education && data.education.length > 0) {
+      // Check if at least one education entry has required fields
+      const hasValidEducation = data.education.some(
+        (edu) => edu.institution && edu.degree,
+      );
+      if (hasValidEducation) {
+        completed.push("education");
+      }
+    }
+
+    // Experience - optional section, mark as complete if any experience is added
+    if (data.experience && data.experience.length > 0) {
+      // Check if at least one experience entry has required fields
+      const hasValidExperience = data.experience.some(
+        (exp) => exp.company && exp.jobTitle && exp.location,
+      );
+      if (hasValidExperience) {
+        completed.push("experience");
+      }
+    }
+
+    // Projects - optional section, mark as complete if any project is added
+    if (data.projects && data.projects.length > 0) {
+      // Check if at least one project entry has required fields
+      const hasValidProject = data.projects.some(
+        (project) => project.name && project.description,
+      );
+      if (hasValidProject) {
+        completed.push("projects");
+      }
+    }
+
+    // Skills - optional section, mark as complete if any skills are added
+    if (data.skills && (data.skills.languages || data.skills.frameworks)) {
+      completed.push("skills");
+    }
+
+    return completed;
+  }, [data]);
+
   return (
     <Card className="border-slate-200 bg-white/50 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/50">
       <CardContent className="p-4 sm:pt-6">

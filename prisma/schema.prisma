@@ -87,11 +87,11 @@ model Experience {
   profileId    String
   company      String
   jobTitle     String
-  location     String?
+  location     String
   isCurrentJob Boolean     @default(false)
-  startDate    DateTime
+  startDate    DateTime?
   endDate      DateTime?
-  achievements String?
+  achievements String[]
   technologies String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -104,7 +104,7 @@ model Project {
   name         String
   description  String
   url          String?
-  achievements String?
+  achievements String[]
   technologies String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt

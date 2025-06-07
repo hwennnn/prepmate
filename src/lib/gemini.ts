@@ -42,7 +42,7 @@ You are an expert resume parser. Extract information from the following resume t
       "location": "string",
       "startDate": "YYYY-MM-DD", 
       "endDate": "YYYY-MM-DD",
-      "achievements": "string",
+      "achievements": ["string", "string"],
       "technologies": "string",
       "isCurrentJob": boolean
     }
@@ -50,8 +50,9 @@ You are an expert resume parser. Extract information from the following resume t
   "projects": [
     {
       "name": "string",
+      "description": "string",
       "url": "string",
-      "achievements": "string",
+      "achievements": ["string", "string"],
       "technologies": "string"
     }
   ],
@@ -71,14 +72,15 @@ IMPORTANT EXTRACTION GUIDELINES:
 7. If information is missing, use empty string "" or empty array [] - never use null
 8. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
 9. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
-10. For achievements/descriptions: Convert bullet points to clean, complete sentences. Remove bullet point symbols (•, -, *) and line breaks. Join multiple achievements into a single paragraph with proper sentence structure.
+10. For achievements: Each bullet point should be a separate string in the achievements array
 
 FORMATTING RULES FOR ACHIEVEMENTS:
-- Remove all bullet point symbols (•, -, *, etc.)
-- Remove line breaks and extra whitespace
-- Convert each bullet point into a complete sentence
-- Join sentences with proper punctuation and spacing
-- Result should be a single, well-formatted paragraph
+- achievements should be an ARRAY of strings, not a single string
+- Each bullet point becomes a separate array element
+- Remove bullet point symbols (•, -, *, etc.) from each achievement
+- Clean up each achievement to be a complete, well-formatted sentence
+- Do NOT join achievements into a single paragraph - keep them as separate array elements
+- Example: ["Increased system performance by 40%", "Led team of 5 developers", "Implemented new authentication system"]
 
 Resume text to parse:
 ${resumeText}

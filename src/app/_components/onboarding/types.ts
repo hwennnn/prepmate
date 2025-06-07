@@ -41,11 +41,14 @@ export const educationSchema = z.object({
 export const experienceSchema = z.object({
   company: z.string().min(1, "Company name is required"),
   jobTitle: z.string().min(1, "Job title is required"),
-  location: z.string().optional(),
+  location: z.string().min(1, "Location is required"),
   isCurrentJob: z.boolean(),
-  startDate: z.date(),
+  startDate: z.date().optional(),
   endDate: z.date().optional(),
-  achievements: z.string().optional(),
+  achievements: z
+    .array(z.string().min(1, "Achievement must not be empty"))
+    .min(1, "At least one achievement is required")
+    .optional(),
   technologies: z.string().optional(),
 });
 
@@ -53,7 +56,9 @@ export const projectSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().min(1, "Description is required"),
   url: z.string().url().optional().or(z.literal("")),
-  achievements: z.string().optional(),
+  achievements: z
+    .array(z.string().min(1, "Achievement must not be empty"))
+    .optional(),
   technologies: z.string().optional(),
 });
 

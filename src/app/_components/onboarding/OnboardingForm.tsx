@@ -30,7 +30,6 @@ const steps = [
 
 export function OnboardingForm({ onComplete }: OnboardingFormProps) {
   const [activeTab, setActiveTab] = useState("personal");
-  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResumeUpload, setShowResumeUpload] = useState(true);
 
@@ -96,42 +95,23 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     switch (activeTab) {
       case "personal":
         isValid = await trigger("personalDetails");
-        if (isValid) {
-          setCompletedSteps((prev) => [
-            ...prev.filter((step) => step !== "personal"),
-            "personal",
-          ]);
-        }
         break;
       case "education":
         const education = getValues("education");
         const isEducationFilled = education && education.length > 0;
         if (isEducationFilled) {
           isValid = await trigger("education");
-          if (isValid) {
-            setCompletedSteps((prev) => [
-              ...prev.filter((step) => step !== "education"),
-              "education",
-            ]);
-          }
         } else {
-          isValid = true;
+          isValid = true; // Education is optional
         }
-
         break;
       case "experience":
         const experience = getValues("experience");
         const isExperienceFilled = experience && experience.length > 0;
         if (isExperienceFilled) {
           isValid = await trigger("experience");
-          if (isValid) {
-            setCompletedSteps((prev) => [
-              ...prev.filter((step) => step !== "experience"),
-              "experience",
-            ]);
-          }
         } else {
-          isValid = true;
+          isValid = true; // Experience is optional
         }
         break;
       case "projects":
@@ -139,14 +119,8 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
         const isProjectsFilled = projects && projects.length > 0;
         if (isProjectsFilled) {
           isValid = await trigger("projects");
-          if (isValid) {
-            setCompletedSteps((prev) => [
-              ...prev.filter((step) => step !== "projects"),
-              "projects",
-            ]);
-          }
         } else {
-          isValid = true;
+          isValid = true; // Projects is optional
         }
         break;
       case "skills":
@@ -155,14 +129,8 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
           skills && (skills.languages ?? skills.frameworks);
         if (isSkillsFilled) {
           isValid = await trigger("skills");
-          if (isValid) {
-            setCompletedSteps((prev) => [
-              ...prev.filter((step) => step !== "skills"),
-              "skills",
-            ]);
-          } else {
-            isValid = true;
-          }
+        } else {
+          isValid = true; // Skills is optional
         }
         break;
       default:
@@ -259,7 +227,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
       <ProgressBar
         steps={steps}
         currentStepIndex={currentStepIndex}
-        completedSteps={completedSteps}
+        watch={watch}
       />
 
       {/* Resume Upload Toggle */}
@@ -312,6 +280,8 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
             <ProjectsForm
               register={register}
               control={control}
+              watch={watch}
+              setValue={setValue}
               errors={errors}
             />
           </TabsContent>

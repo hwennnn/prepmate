@@ -7,7 +7,7 @@ interface Project {
   name: string;
   description: string;
   url?: string | null;
-  achievements?: string | null;
+  achievements?: string[] | null;
   technologies?: string | null;
 }
 
@@ -59,14 +59,20 @@ export function ProjectsCard({ projects }: ProjectsCardProps) {
                 {project.description}
               </p>
 
-              {project.achievements && (
-                <div className="mb-3">
-                  <h4 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+              {project.achievements && project.achievements.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
                     Key Achievements
                   </h4>
-                  <p className="text-sm whitespace-pre-wrap text-slate-600 dark:text-slate-400">
-                    {project.achievements}
-                  </p>
+                  <ul className="space-y-2">
+                    {project.achievements.map((achievement, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                          - {achievement}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 

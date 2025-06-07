@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
+import { AchievementsField } from "./AchievementsField";
 import { DatePicker } from "./DatePicker";
 import type { FormData } from "./types";
 
@@ -46,9 +46,7 @@ export function ExperienceForm({
       jobTitle: "",
       location: "",
       isCurrentJob: false,
-      startDate: new Date(),
-      endDate: undefined,
-      achievements: "",
+      achievements: [],
       technologies: "",
     });
   };
@@ -198,22 +196,13 @@ export function ExperienceForm({
               )}
             </div>
 
-            <div>
-              <Label className="text-slate-700 dark:text-slate-300">
-                Key Achievements
-              </Label>
-              <Textarea
-                {...register(`experience.${index}.achievements`)}
-                placeholder="• Increased system performance by 40%&#10;• Led team of 5 developers&#10;• Implemented new features"
-                rows={4}
-                className="bg-white dark:bg-slate-900"
-              />
-              {errors.experience?.[index]?.achievements && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.experience[index]?.achievements?.message}
-                </p>
-              )}
-            </div>
+            <AchievementsField
+              watch={watch}
+              setValue={setValue}
+              fieldKey={`experience.${index}.achievements`}
+              errors={errors}
+              placeholder="e.g., Increased system performance by 40%"
+            />
 
             <div>
               <Label className="text-slate-700 dark:text-slate-300">

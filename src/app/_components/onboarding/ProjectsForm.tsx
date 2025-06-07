@@ -1,20 +1,35 @@
 import { CheckCircle, Plus, Trash2 } from "lucide-react";
-import type { Control, FieldErrors, UseFormRegister } from "react-hook-form";
+import type {
+  Control,
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { AchievementsField } from "./AchievementsField";
 import type { FormData } from "./types";
 
 interface ProjectsFormProps {
   register: UseFormRegister<FormData>;
   control: Control<FormData>;
+  watch: UseFormWatch<FormData>;
+  setValue: UseFormSetValue<FormData>;
   errors: FieldErrors<FormData>;
 }
 
-export function ProjectsForm({ register, control, errors }: ProjectsFormProps) {
+export function ProjectsForm({
+  register,
+  control,
+  watch,
+  setValue,
+  errors,
+}: ProjectsFormProps) {
   const {
     fields: projectFields,
     append: appendProject,
@@ -29,7 +44,7 @@ export function ProjectsForm({ register, control, errors }: ProjectsFormProps) {
       name: "",
       description: "",
       url: "",
-      achievements: "",
+      achievements: [],
       technologies: "",
     });
   };
@@ -122,22 +137,13 @@ export function ProjectsForm({ register, control, errors }: ProjectsFormProps) {
               )}
             </div>
 
-            <div>
-              <Label className="text-slate-700 dark:text-slate-300">
-                Key Achievements
-              </Label>
-              <Textarea
-                {...register(`projects.${index}.achievements`)}
-                placeholder="• Built responsive UI with React&#10;• Implemented secure payment processing&#10;• Achieved 99% uptime"
-                rows={3}
-                className="bg-white dark:bg-slate-900"
-              />
-              {errors.projects?.[index]?.achievements && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.projects[index]?.achievements?.message}
-                </p>
-              )}
-            </div>
+            <AchievementsField
+              watch={watch}
+              setValue={setValue}
+              fieldKey={`projects.${index}.achievements`}
+              errors={errors}
+              placeholder="e.g., Built responsive UI with React"
+            />
 
             <div>
               <Label className="text-slate-700 dark:text-slate-300">
