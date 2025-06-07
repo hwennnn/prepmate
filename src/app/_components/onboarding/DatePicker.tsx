@@ -42,6 +42,7 @@ export function DatePicker({
           mode="single"
           selected={value}
           onSelect={onChange}
+          defaultMonth={value}
           initialFocus
           className="bg-white dark:bg-slate-950"
         />
