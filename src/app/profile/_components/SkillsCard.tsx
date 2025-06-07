@@ -1,12 +1,10 @@
+import type { Skills } from "@prisma/client";
 import { Code } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 interface SkillsCardProps {
-  skills: {
-    languages?: string | null;
-    frameworks?: string | null;
-  };
+  skills: Skills;
 }
 
 export function SkillsCard({ skills }: SkillsCardProps) {

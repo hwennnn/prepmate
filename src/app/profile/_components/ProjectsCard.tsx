@@ -1,15 +1,7 @@
+import type { Project } from "@prisma/client";
 import { ExternalLink, FolderOpen, Link as LinkIcon } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  url?: string | null;
-  achievements?: string[] | null;
-  technologies?: string | null;
-}
 
 interface ProjectsCardProps {
   projects: Project[];

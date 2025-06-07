@@ -1,3 +1,4 @@
+import type { UserProfile } from "@prisma/client";
 import {
   ExternalLink,
   Github,
@@ -10,15 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 interface PersonalInfoCardProps {
-  profile: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber?: string | null;
-    website?: string | null;
-    linkedinUrl?: string | null;
-    githubUrl?: string | null;
-  };
+  profile: UserProfile;
 }
 
 export function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
