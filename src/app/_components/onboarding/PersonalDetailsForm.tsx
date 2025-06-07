@@ -92,6 +92,11 @@ export function PersonalDetailsForm({
             placeholder="+1 (555) 123-4567"
             className="bg-white dark:bg-slate-900"
           />
+          {errors.personalDetails?.phoneNumber && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.personalDetails.phoneNumber.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -107,6 +112,11 @@ export function PersonalDetailsForm({
             placeholder="https://yourwebsite.com"
             className="bg-white dark:bg-slate-900"
           />
+          {errors.personalDetails?.website && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.personalDetails.website.message}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -123,6 +133,11 @@ export function PersonalDetailsForm({
               placeholder="https://linkedin.com/in/yourname"
               className="bg-white dark:bg-slate-900"
             />
+            {errors.personalDetails?.linkedinUrl && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.personalDetails.linkedinUrl.message}
+              </p>
+            )}
           </div>
           <div>
             <Label
@@ -137,6 +152,11 @@ export function PersonalDetailsForm({
               placeholder="https://github.com/yourname"
               className="bg-white dark:bg-slate-900"
             />
+            {errors.personalDetails?.githubUrl && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.personalDetails.githubUrl.message}
+              </p>
+            )}
           </div>
         </div>
       </CardContent>

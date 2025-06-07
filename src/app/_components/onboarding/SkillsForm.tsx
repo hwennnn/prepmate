@@ -1,4 +1,4 @@
-import type { UseFormRegister } from "react-hook-form";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -7,9 +7,10 @@ import type { FormData } from "./types";
 
 interface SkillsFormProps {
   register: UseFormRegister<FormData>;
+  errors: FieldErrors<FormData>;
 }
 
-export function SkillsForm({ register }: SkillsFormProps) {
+export function SkillsForm({ register, errors }: SkillsFormProps) {
   return (
     <Card className="border-slate-200 bg-white/50 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/50">
       <CardHeader>
@@ -34,6 +35,11 @@ export function SkillsForm({ register }: SkillsFormProps) {
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Separate multiple languages with commas
           </p>
+          {errors.skills?.languages && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.skills.languages.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -53,6 +59,11 @@ export function SkillsForm({ register }: SkillsFormProps) {
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Separate multiple technologies with commas
           </p>
+          {errors.skills?.frameworks && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.skills.frameworks.message}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

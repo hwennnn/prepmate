@@ -1,15 +1,42 @@
-# Authentication Setup Guide
+# Environment Setup Guide
 
-This guide covers setting up authentication providers for your PrepMate application.
+This guide covers setting up all environment variables and external services for your PrepMate application.
 
 ## Overview
 
-PrepMate supports multiple authentication methods:
+PrepMate requires configuration for:
 
-- 🔐 **Email (Magic Links)** - Passwordless authentication via email
-- 🌐 **Google OAuth** - Sign in with Google accounts
-- 🎮 **Discord OAuth** - Sign in with Discord accounts
-- 🐙 **GitHub OAuth** - Sign in with GitHub accounts
+- 🔐 **Authentication Providers** - Email, Google, Discord, GitHub OAuth
+- 🤖 **AI Services** - Google Gemini for resume parsing
+- 📧 **Email Services** - SMTP for passwordless authentication
+- 🗄️ **Database** - PostgreSQL connection
+
+## Google Gemini AI Setup (Required for Resume Upload)
+
+The resume upload feature uses Google Gemini AI to automatically extract and parse information from uploaded resumes. We use the latest `@google/genai` SDK which supports Gemini 2.0+ features.
+
+### 1. Get Google Gemini API Key
+
+1. Go to [Google AI Studio](https://aistudio.google.com/)
+2. Sign in with your Google account
+3. Click "Get API Key" and create a new API key
+4. Copy the API key
+
+### 2. Configure Environment Variable
+
+Add your API key to your `.env` file:
+
+```bash
+GOOGLE_GEMINI_API_KEY=your_api_key_here
+```
+
+### 3. Supported File Types
+
+The resume upload feature supports:
+
+- **PDF** files (.pdf)
+- **Microsoft Word** documents (.doc, .docx)
+- **Text** files (.txt)
 
 ## Email Provider Setup (Recommended)
 
@@ -119,6 +146,10 @@ DATABASE_URL="postgresql://username:password@localhost:5432/prepmate"
 # NextAuth.js
 # Generate with: openssl rand -base64 32
 AUTH_SECRET="your-auth-secret"
+
+# Google Gemini AI (required for resume upload)
+# Get from: https://aistudio.google.com/
+GOOGLE_GEMINI_API_KEY="your-gemini-api-key"
 
 # Google OAuth (optional)
 # Get these from: https://console.cloud.google.com/

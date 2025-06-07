@@ -1,6 +1,7 @@
 import { CheckCircle, Plus, Trash2 } from "lucide-react";
 import type {
   Control,
+  FieldErrors,
   UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
@@ -20,6 +21,7 @@ interface ExperienceFormProps {
   control: Control<FormData>;
   watch: UseFormWatch<FormData>;
   setValue: UseFormSetValue<FormData>;
+  errors: FieldErrors<FormData>;
 }
 
 export function ExperienceForm({
@@ -27,6 +29,7 @@ export function ExperienceForm({
   control,
   watch,
   setValue,
+  errors,
 }: ExperienceFormProps) {
   const {
     fields: experienceFields,
@@ -99,6 +102,11 @@ export function ExperienceForm({
                   placeholder="Tech Company Inc."
                   className="bg-white dark:bg-slate-900"
                 />
+                {errors.experience?.[index]?.company && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.experience[index]?.company?.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label className="text-slate-700 dark:text-slate-300">
@@ -109,6 +117,11 @@ export function ExperienceForm({
                   placeholder="Software Engineer"
                   className="bg-white dark:bg-slate-900"
                 />
+                {errors.experience?.[index]?.jobTitle && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.experience[index]?.jobTitle?.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -121,6 +134,11 @@ export function ExperienceForm({
                 placeholder="San Francisco, CA"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.experience?.[index]?.location && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.experience[index]?.location?.message}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -133,6 +151,11 @@ export function ExperienceForm({
               <Label className="text-slate-700 dark:text-slate-300">
                 Currently working here
               </Label>
+              {errors.experience?.[index]?.isCurrentJob && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.experience[index]?.isCurrentJob?.message}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -149,6 +172,11 @@ export function ExperienceForm({
                     )
                   }
                 />
+                {errors.experience?.[index]?.startDate && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.experience[index]?.startDate?.message}
+                  </p>
+                )}
               </div>
               {!watch(`experience.${index}.isCurrentJob`) && (
                 <div>
@@ -161,6 +189,11 @@ export function ExperienceForm({
                       setValue(`experience.${index}.endDate`, date)
                     }
                   />
+                  {errors.experience?.[index]?.endDate && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.experience[index]?.endDate?.message}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -175,6 +208,11 @@ export function ExperienceForm({
                 rows={4}
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.experience?.[index]?.achievements && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.experience[index]?.achievements?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -186,6 +224,11 @@ export function ExperienceForm({
                 placeholder="React, Node.js, TypeScript, PostgreSQL"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.experience?.[index]?.technologies && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.experience[index]?.technologies?.message}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>

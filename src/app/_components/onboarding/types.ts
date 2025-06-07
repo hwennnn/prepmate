@@ -15,9 +15,9 @@ export const personalDetailsSchema = z.object({
     .email("Invalid email address")
     .max(50, "Email address is too long"),
   phoneNumber: z.string().optional(),
-  website: z.string().url().optional().or(z.literal("")),
-  linkedinUrl: z.string().url().optional().or(z.literal("")),
-  githubUrl: z.string().url().optional().or(z.literal("")),
+  website: z.string().optional().or(z.literal("")),
+  linkedinUrl: z.string().optional().or(z.literal("")),
+  githubUrl: z.string().optional().or(z.literal("")),
 });
 
 export const educationSchema = z.object({

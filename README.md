@@ -10,7 +10,7 @@ PrepMate is an innovative AI-powered platform that simplifies and elevates the r
 
 - **🤖 AI-Enhanced Content** - Transform bullet points using the proven XYZ formula ("Accomplished X by doing Y, resulting in Z")
 - **🎨 Beautiful Templates** - Choose from multiple professionally designed, ATS-friendly templates
-- **⚡ Quick Setup** - Upload existing resumes or fill out smart forms for instant setup
+- **⚡ Quick Setup** - Upload existing resumes with AI parsing (powered by Gemini 2.0) or fill out smart forms for instant setup
 - **📱 Live Preview** - See changes in real-time as you edit your resume
 - **🔗 Online Hosting** - Get a unique shareable link (e.g., prepmate.studio/yourname)
 - **📄 Multiple Formats** - Download in PDF and other popular formats
@@ -33,7 +33,7 @@ cd prepmate
 # Install dependencies
 pnpm i
 
-# Copy environment file (see Authentication Setup guide for details)
+# Copy environment file and configure (see Environment Setup guide for details)
 cp .env.example .env
 
 # Start the database container
@@ -50,14 +50,13 @@ pnpm dev
 
 ### Essential Setup Guides
 
-- **[🔐 Authentication Setup](docs/authentication-setup.md)** - Configure OAuth providers and email authentication
+- **[⚙️ Environment Setup](docs/environment-setup.md)** - Configure authentication, AI services, and environment variables
 - **[🚀 Deployment Guide](docs/deployment.md)** - Deploy to production (coming soon)
-- **[🎨 Customization Guide](docs/customization.md)** - Customize your app (coming soon)
 
 ### User Journey
 
 1. **Sign Up** - Quick registration with email or social login
-2. **Onboarding** - Fill out personal information or upload existing resume
+2. **Onboarding** - Fill out personal information or upload existing resume (AI-powered parsing)
 3. **Template Selection** - Choose from professional, modern templates
 4. **AI Enhancement** - Let AI improve your content using the XYZ formula
 5. **Live Editing** - Real-time preview as you customize your resume

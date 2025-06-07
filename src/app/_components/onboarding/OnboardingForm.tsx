@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList } from "~/components/ui/tabs";
@@ -42,6 +42,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     setValue,
     formState: { errors },
     trigger,
+    getValues,
   } = useForm<FormData>({
     resolver: zodResolver(completeProfileSchema),
     mode: "onChange",
@@ -63,24 +64,6 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
       },
     },
   });
-
-  // Check if personal details are completed
-  const personalDetails = watch("personalDetails");
-  const isPersonalCompleted =
-    personalDetails.firstName &&
-    personalDetails.lastName &&
-    personalDetails.email;
-
-  // Update completed steps based on form data
-  useEffect(() => {
-    const newCompletedSteps: string[] = [];
-
-    if (isPersonalCompleted) {
-      newCompletedSteps.push("personal");
-    }
-
-    setCompletedSteps(newCompletedSteps);
-  }, [isPersonalCompleted]);
 
   const currentStepIndex = steps.findIndex((step) => step.id === activeTab);
   const isLastStep = currentStepIndex === steps.length - 1;
@@ -113,6 +96,74 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     switch (activeTab) {
       case "personal":
         isValid = await trigger("personalDetails");
+        if (isValid) {
+          setCompletedSteps((prev) => [
+            ...prev.filter((step) => step !== "personal"),
+            "personal",
+          ]);
+        }
+        break;
+      case "education":
+        const education = getValues("education");
+        const isEducationFilled = education && education.length > 0;
+        if (isEducationFilled) {
+          isValid = await trigger("education");
+          if (isValid) {
+            setCompletedSteps((prev) => [
+              ...prev.filter((step) => step !== "education"),
+              "education",
+            ]);
+          }
+        } else {
+          isValid = true;
+        }
+
+        break;
+      case "experience":
+        const experience = getValues("experience");
+        const isExperienceFilled = experience && experience.length > 0;
+        if (isExperienceFilled) {
+          isValid = await trigger("experience");
+          if (isValid) {
+            setCompletedSteps((prev) => [
+              ...prev.filter((step) => step !== "experience"),
+              "experience",
+            ]);
+          }
+        } else {
+          isValid = true;
+        }
+        break;
+      case "projects":
+        const projects = getValues("projects");
+        const isProjectsFilled = projects && projects.length > 0;
+        if (isProjectsFilled) {
+          isValid = await trigger("projects");
+          if (isValid) {
+            setCompletedSteps((prev) => [
+              ...prev.filter((step) => step !== "projects"),
+              "projects",
+            ]);
+          }
+        } else {
+          isValid = true;
+        }
+        break;
+      case "skills":
+        const skills = getValues("skills");
+        const isSkillsFilled =
+          skills && (skills.languages ?? skills.frameworks);
+        if (isSkillsFilled) {
+          isValid = await trigger("skills");
+          if (isValid) {
+            setCompletedSteps((prev) => [
+              ...prev.filter((step) => step !== "skills"),
+              "skills",
+            ]);
+          } else {
+            isValid = true;
+          }
+        }
         break;
       default:
         isValid = true;
@@ -158,12 +209,25 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
 
     // Fill in education
     if (parsedData.education && parsedData.education.length > 0) {
-      setValue("education", parsedData.education);
+      const educationWithDates = parsedData.education.map((edu) => ({
+        ...edu,
+        startDate: edu.startDate ? new Date(edu.startDate) : undefined,
+        endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+        expectedGradDate: edu.expectedGradDate
+          ? new Date(edu.expectedGradDate)
+          : undefined,
+      }));
+      setValue("education", educationWithDates);
     }
 
     // Fill in experience
     if (parsedData.experience && parsedData.experience.length > 0) {
-      setValue("experience", parsedData.experience);
+      const experienceWithDates = parsedData.experience.map((exp) => ({
+        ...exp,
+        startDate: exp.startDate ? new Date(exp.startDate) : new Date(),
+        endDate: exp.endDate ? new Date(exp.endDate) : undefined,
+      }));
+      setValue("experience", experienceWithDates);
     }
 
     // Fill in projects
@@ -230,6 +294,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
               control={control}
               watch={watch}
               setValue={setValue}
+              errors={errors}
             />
           </TabsContent>
 
@@ -239,15 +304,20 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
               control={control}
               watch={watch}
               setValue={setValue}
+              errors={errors}
             />
           </TabsContent>
 
           <TabsContent value="projects" className="space-y-4">
-            <ProjectsForm register={register} control={control} />
+            <ProjectsForm
+              register={register}
+              control={control}
+              errors={errors}
+            />
           </TabsContent>
 
           <TabsContent value="skills" className="space-y-4">
-            <SkillsForm register={register} />
+            <SkillsForm register={register} errors={errors} />
           </TabsContent>
         </Tabs>
 
@@ -269,7 +339,6 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
               <Button
                 type="button"
                 onClick={handleNext}
-                disabled={activeTab === "personal" && !isPersonalCompleted}
                 className="min-w-[120px]"
               >
                 Next

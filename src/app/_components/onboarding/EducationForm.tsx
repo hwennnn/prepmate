@@ -1,6 +1,7 @@
 import { CheckCircle, Plus, Trash2 } from "lucide-react";
 import type {
   Control,
+  FieldErrors,
   UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
@@ -20,6 +21,7 @@ interface EducationFormProps {
   control: Control<FormData>;
   watch: UseFormWatch<FormData>;
   setValue: UseFormSetValue<FormData>;
+  errors: FieldErrors<FormData>;
 }
 
 export function EducationForm({
@@ -27,6 +29,7 @@ export function EducationForm({
   control,
   watch,
   setValue,
+  errors,
 }: EducationFormProps) {
   const {
     fields: educationFields,
@@ -100,6 +103,11 @@ export function EducationForm({
                   placeholder="University of Example"
                   className="bg-white dark:bg-slate-900"
                 />
+                {errors.education?.[index]?.institution && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.education[index]?.institution?.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label className="text-slate-700 dark:text-slate-300">
@@ -110,6 +118,11 @@ export function EducationForm({
                   placeholder="Bachelor in Computer Science"
                   className="bg-white dark:bg-slate-900"
                 />
+                {errors.education?.[index]?.degree && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.education[index]?.degree?.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -123,6 +136,11 @@ export function EducationForm({
               <Label className="text-slate-700 dark:text-slate-300">
                 Currently attending
               </Label>
+              {errors.education?.[index]?.isAttending && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.education[index]?.isAttending?.message}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -136,6 +154,11 @@ export function EducationForm({
                     setValue(`education.${index}.startDate`, date)
                   }
                 />
+                {errors.education?.[index]?.startDate && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.education[index]?.startDate?.message}
+                  </p>
+                )}
               </div>
               {!watch(`education.${index}.isAttending`) ? (
                 <div>
@@ -148,6 +171,11 @@ export function EducationForm({
                       setValue(`education.${index}.endDate`, date)
                     }
                   />
+                  {errors.education?.[index]?.endDate && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.education[index]?.endDate?.message}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div>
@@ -160,6 +188,11 @@ export function EducationForm({
                       setValue(`education.${index}.expectedGradDate`, date)
                     }
                   />
+                  {errors.education?.[index]?.expectedGradDate && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.education[index]?.expectedGradDate?.message}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -171,6 +204,11 @@ export function EducationForm({
                 placeholder="3.8/4.0"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.education?.[index]?.gpa && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.education[index]?.gpa?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -182,6 +220,11 @@ export function EducationForm({
                 placeholder="Dean's List, Honors Graduate"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.education?.[index]?.awards && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.education[index]?.awards?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -194,6 +237,11 @@ export function EducationForm({
                 rows={2}
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.education?.[index]?.coursework && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.education[index]?.coursework?.message}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -1,5 +1,5 @@
 import { CheckCircle, Plus, Trash2 } from "lucide-react";
-import type { Control, UseFormRegister } from "react-hook-form";
+import type { Control, FieldErrors, UseFormRegister } from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -11,9 +11,10 @@ import type { FormData } from "./types";
 interface ProjectsFormProps {
   register: UseFormRegister<FormData>;
   control: Control<FormData>;
+  errors: FieldErrors<FormData>;
 }
 
-export function ProjectsForm({ register, control }: ProjectsFormProps) {
+export function ProjectsForm({ register, control, errors }: ProjectsFormProps) {
   const {
     fields: projectFields,
     append: appendProject,
@@ -81,6 +82,11 @@ export function ProjectsForm({ register, control }: ProjectsFormProps) {
                 placeholder="E-commerce Platform"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.projects?.[index]?.name && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.projects[index]?.name?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -93,6 +99,11 @@ export function ProjectsForm({ register, control }: ProjectsFormProps) {
                 rows={3}
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.projects?.[index]?.description && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.projects[index]?.description?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -104,6 +115,11 @@ export function ProjectsForm({ register, control }: ProjectsFormProps) {
                 placeholder="https://github.com/yourname/project or https://liveproject.com"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.projects?.[index]?.url && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.projects[index]?.url?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -116,6 +132,11 @@ export function ProjectsForm({ register, control }: ProjectsFormProps) {
                 rows={3}
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.projects?.[index]?.achievements && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.projects[index]?.achievements?.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -127,6 +148,11 @@ export function ProjectsForm({ register, control }: ProjectsFormProps) {
                 placeholder="React, Node.js, MongoDB, Stripe API"
                 className="bg-white dark:bg-slate-900"
               />
+              {errors.projects?.[index]?.technologies && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.projects[index]?.technologies?.message}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
