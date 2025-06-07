@@ -64,15 +64,18 @@ export function ProjectsCard({ projects }: ProjectsCardProps) {
                   <h4 className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
                     Key Achievements
                   </h4>
-                  <ul className="space-y-2">
-                    {project.achievements.map((achievement, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                          - {achievement}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="rounded-md bg-slate-50 p-3 dark:bg-slate-800/30">
+                    <ul className="space-y-2">
+                      {project.achievements.map((achievement, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <div className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></div>
+                          <span className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                            {achievement}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
 
