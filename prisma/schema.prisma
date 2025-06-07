@@ -88,7 +88,7 @@ model Experience {
   jobTitle     String
   location     String
   isCurrentJob Boolean     @default(false)
-  startDate    DateTime?
+  startDate    DateTime
   endDate      DateTime?
   achievements String[]
   technologies String?

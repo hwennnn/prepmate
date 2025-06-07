@@ -45,6 +45,8 @@ export function ExperienceForm({
       company: "",
       jobTitle: "",
       location: "",
+      startDate: undefined as unknown as Date,
+      endDate: undefined as unknown as Date,
       isCurrentJob: false,
       achievements: [],
       technologies: "",
