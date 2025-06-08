@@ -34,7 +34,7 @@ export function EditProfileForm({
   onComplete,
 }: EditProfileFormProps) {
   const [activeTab, setActiveTab] = useState("personal");
-  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  //const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -140,7 +140,7 @@ export function EditProfileForm({
       case "skills":
         const skills = getValues("skills");
         const isSkillsFilled =
-          skills && (skills.languages || skills.frameworks);
+          skills && (skills.languages ?? skills.frameworks);
         if (isSkillsFilled) {
           isValid = await trigger("skills");
         } else {
@@ -173,7 +173,7 @@ export function EditProfileForm({
       <ProgressBar
         steps={steps}
         currentStepIndex={currentStepIndex}
-        completedSteps={completedSteps}
+        completedSteps={[]}
         // watch={watch}
       />
 

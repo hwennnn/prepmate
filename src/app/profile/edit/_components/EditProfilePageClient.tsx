@@ -7,6 +7,29 @@ import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { api } from "~/trpc/react";
 import { EditProfileForm } from "~/app/_components/onboarding/EditProfileForm";
 import type { FormData } from "~/app/_components/onboarding/types";
+import { type RouterOutputs } from "~/trpc/react";
+
+import type { Education } from "~/app/profile/_components/EducationCard";
+import type { Experience } from "~/app/profile/_components/ExperienceCard";
+import type { Project } from "~/app/profile/_components/ProjectsCard";
+
+/*
+interface ProfileData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  website?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  education?: Education[];
+  experience?: Experience[];
+  projects?: Project[];
+  skills?: Skills;
+}
+*/
+
+type ProfileData = RouterOutputs["onboarding"]["getProfile"];
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -26,52 +49,54 @@ export function EditProfilePageClient() {
   };
 
   // Transform profile data to form format
-  const transformProfileToFormData = (profileData: any): FormData => {
+  const transformProfileToFormData = (
+    profileData: ProfileData | null | undefined,
+  ): FormData => {
     if (!profileData) return {} as FormData;
 
     return {
       personalDetails: {
-        firstName: profileData.firstName || "",
-        lastName: profileData.lastName || "",
-        email: profileData.email || "",
-        phoneNumber: profileData.phoneNumber || "",
-        website: profileData.website || "",
-        linkedinUrl: profileData.linkedinUrl || "",
-        githubUrl: profileData.githubUrl || "",
+        firstName: profileData.firstName ?? "",
+        lastName: profileData.lastName ?? "",
+        email: profileData.email ?? "",
+        phoneNumber: profileData.phoneNumber ?? "",
+        website: profileData.website ?? "",
+        linkedinUrl: profileData.linkedinUrl ?? "",
+        githubUrl: profileData.githubUrl ?? "",
       },
       education:
-        profileData.education?.map((edu: any) => ({
+        profileData.education?.map((edu: Education) => ({
           institution: edu.institution,
           degree: edu.degree,
           isAttending: edu.isAttending,
-          startDate: new Date(edu.startDate),
-          endDate: new Date(edu.endDate),
-          gpa: edu.gpa || "",
-          awards: edu.awards || "",
-          coursework: edu.coursework || "",
-        })) || [],
+          startDate: edu.startDate ?? undefined,
+          endDate: edu.endDate ?? undefined,
+          gpa: edu.gpa ?? "",
+          awards: edu.awards ?? "",
+          coursework: edu.coursework ?? "",
+        })) ?? [],
       experience:
-        profileData.experience?.map((exp: any) => ({
+        profileData.experience?.map((exp: Experience) => ({
           company: exp.company,
           jobTitle: exp.jobTitle,
-          location: exp.location,
+          location: exp.location ?? "",
           isCurrentJob: exp.isCurrentJob,
           startDate: new Date(exp.startDate),
           endDate: exp.endDate ? new Date(exp.endDate) : undefined,
-          achievements: exp.achievements || [],
-          technologies: exp.technologies || "",
-        })) || [],
+          achievements: exp.achievements ?? undefined,
+          technologies: exp.technologies ?? "",
+        })) ?? [],
       projects:
-        profileData.projects?.map((proj: any) => ({
+        profileData.projects?.map((proj: Project) => ({
           name: proj.name,
           description: proj.description,
-          url: proj.url || "",
-          achievements: proj.achievements || [],
-          technologies: proj.technologies || "",
-        })) || [],
+          url: proj.url ?? "",
+          achievements: proj.achievements ?? undefined,
+          technologies: proj.technologies ?? "",
+        })) ?? [],
       skills: {
-        languages: profileData.skills?.languages || "",
-        frameworks: profileData.skills?.frameworks || "",
+        languages: profileData.skills?.languages ?? "",
+        frameworks: profileData.skills?.frameworks ?? "",
       },
     };
   };

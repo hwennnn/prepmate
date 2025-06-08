@@ -3,7 +3,7 @@ import { Award, Building2, Calendar, GraduationCap } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-interface Education {
+export interface Education {
   id: string;
   institution: string;
   degree: string;

@@ -3,7 +3,7 @@ import { Briefcase, Building2, Calendar, MapPin } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-interface Experience {
+export interface Experience {
   id: string;
   company: string;
   jobTitle: string;
