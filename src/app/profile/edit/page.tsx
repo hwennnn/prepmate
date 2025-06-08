@@ -1,9 +1,10 @@
 import { OnboardingCheck } from "~/app/_components/OnboardingCheck";
+import { EditProfilePageClient } from "./_components/EditProfilePageClient";
 
 export default function EditProfilePage() {
   return (
     <OnboardingCheck>
-      Add edit profile form here
+      <EditProfilePageClient />
       {/* <OnboardingForm onComplete={() => {}} /> */}
     </OnboardingCheck>
   );
