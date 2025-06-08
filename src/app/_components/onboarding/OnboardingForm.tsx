@@ -16,8 +16,13 @@ import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
 import { completeProfileSchema, type FormData } from "./types";
 
+// made change here
+// import CompleteProfileInput from 
+
 interface OnboardingFormProps {
   onComplete: () => void;
+  // made change here
+  //defaultValues?: CompleteProfileInput;
 }
 
 const steps = [

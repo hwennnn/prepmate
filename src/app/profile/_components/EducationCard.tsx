@@ -4,6 +4,19 @@ import { Award, Building2, Calendar, GraduationCap } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  isAttending: boolean;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  expectedGradDate?: Date | null;
+  gpa?: string | null;
+  awards?: string | null;
+  coursework?: string | null;
+}
+
 interface EducationCardProps {
   education: Education[];
 }

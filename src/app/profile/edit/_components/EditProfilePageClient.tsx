@@ -25,12 +25,10 @@ export function EditProfilePageClient() {
   } = api.onboarding.getProfile.useQuery();
 
   const handleEditComplete = async () => {
-    // Invalidate profile cache and redirect
     await utils.onboarding.getProfile.invalidate();
     router.push("/profile");
   };
 
-  // Transform profile data to form format
   const transformProfileToFormData = (profileData: ProfileData | undefined): FormData => {
     if (!profileData) return {} as FormData;
 
@@ -104,7 +102,6 @@ export function EditProfilePageClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-      {/* Navigation */}
       <nav className="border-b border-slate-200 bg-white/80 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center space-x-2">

@@ -70,7 +70,6 @@ export function EditProfileForm({
     },
   });
 
-  // Pre-populate form with existing data
   useEffect(() => {
     if (initialData) {
       reset(initialData);
@@ -102,7 +101,6 @@ export function EditProfileForm({
   };
 
   const handleNext = async () => {
-    // Validation logic (same as OnboardingForm)
     let isValid = false;
 
     switch (activeTab) {
@@ -162,7 +160,6 @@ export function EditProfileForm({
   };
 
   const handleTabChange = (_: string) => {
-    // Prevent direct tab changes
     return;
   };
 
@@ -172,7 +169,6 @@ export function EditProfileForm({
       <ProgressBar
         steps={steps}
         currentStepIndex={currentStepIndex}
-        //completedSteps={completedSteps}
         watch={watch}
       />
 
