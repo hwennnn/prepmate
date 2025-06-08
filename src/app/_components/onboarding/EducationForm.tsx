@@ -45,9 +45,8 @@ export function EducationForm({
       institution: "",
       degree: "",
       isAttending: false,
-      startDate: undefined,
-      endDate: undefined,
-      expectedGradDate: undefined,
+      startDate: undefined as unknown as Date,
+      endDate: undefined as unknown as Date,
       gpa: "",
       awards: "",
       coursework: "",
@@ -151,7 +150,7 @@ export function EducationForm({
                 <DatePicker
                   value={watch(`education.${index}.startDate`)}
                   onChange={(date) =>
-                    setValue(`education.${index}.startDate`, date)
+                    setValue(`education.${index}.startDate`, date!)
                   }
                 />
                 {errors.education?.[index]?.startDate && (
@@ -160,41 +159,25 @@ export function EducationForm({
                   </p>
                 )}
               </div>
-              {!watch(`education.${index}.isAttending`) ? (
-                <div>
-                  <Label className="text-slate-700 dark:text-slate-300">
-                    End Date
-                  </Label>
-                  <DatePicker
-                    value={watch(`education.${index}.endDate`)}
-                    onChange={(date) =>
-                      setValue(`education.${index}.endDate`, date)
-                    }
-                  />
-                  {errors.education?.[index]?.endDate && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.education[index]?.endDate?.message}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <Label className="text-slate-700 dark:text-slate-300">
-                    Expected Graduation Date
-                  </Label>
-                  <DatePicker
-                    value={watch(`education.${index}.expectedGradDate`)}
-                    onChange={(date) =>
-                      setValue(`education.${index}.expectedGradDate`, date)
-                    }
-                  />
-                  {errors.education?.[index]?.expectedGradDate && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.education[index]?.expectedGradDate?.message}
-                    </p>
-                  )}
-                </div>
-              )}
+
+              <div>
+                <Label className="text-slate-700 dark:text-slate-300">
+                  {!watch(`education.${index}.isAttending`)
+                    ? "End Date"
+                    : "Expected Graduation Date"}
+                </Label>
+                <DatePicker
+                  value={watch(`education.${index}.endDate`)}
+                  onChange={(date) =>
+                    setValue(`education.${index}.endDate`, date ?? new Date())
+                  }
+                />
+                {errors.education?.[index]?.endDate && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.education[index]?.endDate?.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div>

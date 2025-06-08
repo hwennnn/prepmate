@@ -66,20 +66,19 @@ model UserProfile {
 }
 
 model Education {
-  id               String      @id @default(cuid())
-  profileId        String
-  institution      String
-  degree           String
-  isAttending      Boolean     @default(false)
-  startDate        DateTime?
-  endDate          DateTime?
-  expectedGradDate DateTime?
-  gpa              String?
-  awards           String?
-  coursework       String?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  profile          UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  id          String      @id @default(cuid())
+  profileId   String
+  institution String
+  degree      String
+  isAttending Boolean     @default(false)
+  startDate   DateTime
+  endDate     DateTime
+  gpa         String?
+  awards      String?
+  coursework  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  profile     UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Experience {
@@ -87,11 +86,11 @@ model Experience {
   profileId    String
   company      String
   jobTitle     String
-  location     String?
+  location     String
   isCurrentJob Boolean     @default(false)
   startDate    DateTime
   endDate      DateTime?
-  achievements String?
+  achievements String[]
   technologies String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -104,7 +103,7 @@ model Project {
   name         String
   description  String
   url          String?
-  achievements String?
+  achievements String[]
   technologies String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt

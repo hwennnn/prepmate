@@ -1,3 +1,4 @@
+import type { Education } from "@prisma/client";
 import { format } from "date-fns";
 import { Award, Building2, Calendar, GraduationCap } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
@@ -56,13 +57,11 @@ export function EducationCard({ education }: EducationCardProps) {
                         ? format(new Date(edu.startDate), "MMM yyyy")
                         : "Start Date"}{" "}
                       -{" "}
-                      {edu.isAttending
-                        ? edu.expectedGradDate
-                          ? `${format(new Date(edu.expectedGradDate), "MMM yyyy")} (Expected)`
-                          : "Present"
-                        : edu.endDate
-                          ? format(new Date(edu.endDate), "MMM yyyy")
-                          : "End Date"}
+                      {edu.endDate
+                        ? `${format(new Date(edu.endDate), "MMM yyyy")}${
+                            edu.isAttending ? " (Expected)" : ""
+                          }`
+                        : "End Date"}
                     </span>
                     {edu.isAttending && (
                       <Badge variant="secondary" className="ml-2">

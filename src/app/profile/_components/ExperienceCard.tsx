@@ -1,3 +1,4 @@
+import type { Experience } from "@prisma/client";
 import { format } from "date-fns";
 import { Briefcase, Building2, Calendar, MapPin } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
@@ -57,7 +58,10 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
                   <div className="mt-1 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                     <Calendar className="h-3 w-3" />
                     <span>
-                      {format(new Date(exp.startDate), "MMM yyyy")} -{" "}
+                      {exp.startDate
+                        ? format(new Date(exp.startDate), "MMM yyyy")
+                        : "N/A"}{" "}
+                      -{" "}
                       {exp.isCurrentJob
                         ? "Present"
                         : exp.endDate
@@ -73,14 +77,23 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
                 </div>
               </div>
 
-              {exp.achievements && (
-                <div className="mt-3">
-                  <h4 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+              {exp.achievements && exp.achievements.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
                     Key Achievements
                   </h4>
-                  <p className="text-sm whitespace-pre-wrap text-slate-600 dark:text-slate-400">
-                    {exp.achievements}
-                  </p>
+                  <div className="rounded-md bg-slate-50 p-3 dark:bg-slate-800/30">
+                    <ul className="space-y-2">
+                      {exp.achievements.map((achievement, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <div className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></div>
+                          <span className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                            {achievement}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
 

@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
+import { auth } from "~/server/auth";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -20,13 +21,15 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
+
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body className="bg-white text-slate-950 antialiased dark:bg-slate-950 dark:text-slate-50">
-        <Providers>{children}</Providers>
+        <Providers session={session}>{children}</Providers>
         <Analytics />
         <SpeedInsights />
       </body>

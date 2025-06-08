@@ -1,3 +1,4 @@
+import type { Project } from "@prisma/client";
 import { ExternalLink, FolderOpen, Link as LinkIcon } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -59,14 +60,23 @@ export function ProjectsCard({ projects }: ProjectsCardProps) {
                 {project.description}
               </p>
 
-              {project.achievements && (
-                <div className="mb-3">
-                  <h4 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+              {project.achievements && project.achievements.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
                     Key Achievements
                   </h4>
-                  <p className="text-sm whitespace-pre-wrap text-slate-600 dark:text-slate-400">
-                    {project.achievements}
-                  </p>
+                  <div className="rounded-md bg-slate-50 p-3 dark:bg-slate-800/30">
+                    <ul className="space-y-2">
+                      {project.achievements.map((achievement, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <div className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500"></div>
+                          <span className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                            {achievement}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
 

@@ -17,10 +17,10 @@ You are an expert resume parser. Extract information from the following resume t
     "firstName": "string",
     "lastName": "string", 
     "email": "string",
-    "phoneNumber": "string",
-    "website": "string",
-    "linkedinUrl": "string",
-    "githubUrl": "string"
+    "phoneNumber": "string (omit if not found)",
+    "website": "string (omit if not found)",
+    "linkedinUrl": "string (omit if not found)",
+    "githubUrl": "string (omit if not found)"
   },
   "education": [
     {
@@ -29,10 +29,9 @@ You are an expert resume parser. Extract information from the following resume t
       "isAttending": boolean,
       "startDate": "YYYY-MM-DD",
       "endDate": "YYYY-MM-DD",
-      "expectedGradDate": "YYYY-MM-DD",
-      "gpa": "string",
-      "awards": "string",
-      "coursework": "string"
+      "gpa": "string (omit if not found)",
+      "awards": "string (omit if not found)",
+      "coursework": "string (omit if not found)"
     }
   ],
   "experience": [
@@ -40,24 +39,25 @@ You are an expert resume parser. Extract information from the following resume t
       "company": "string",
       "jobTitle": "string",
       "location": "string",
+      "isCurrentJob": boolean,
       "startDate": "YYYY-MM-DD", 
-      "endDate": "YYYY-MM-DD",
-      "achievements": "string",
-      "technologies": "string",
-      "isCurrentJob": boolean
+      "endDate": "YYYY-MM-DD (omit if isCurrentJob=true)",
+      "achievements": ["string", "string"] (omit if not found),
+      "technologies": "string (omit if not found)"
     }
   ],
   "projects": [
     {
       "name": "string",
-      "url": "string",
-      "achievements": "string",
-      "technologies": "string"
+      "description": "string",
+      "url": "string (omit if not found)",
+      "achievements": ["string", "string"] (omit if not found),
+      "technologies": "string (omit if not found)"
     }
   ],
   "skills": {
-    "languages": "string (comma-separated)",
-    "frameworks": "string (comma-separated)"
+    "languages": "string (comma-separated) (omit if not found)",
+    "frameworks": "string (comma-separated) (omit if not found)"
   }
 }
 
@@ -68,17 +68,43 @@ IMPORTANT EXTRACTION GUIDELINES:
 4. For projects: Include ALL projects mentioned with complete details and technologies used
 5. For skills: Separate programming languages from frameworks/tools
 6. Use actual dates when available, or reasonable estimates based on context
-7. If information is missing, use empty string "" or empty array [] - never use null
-8. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
-9. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
-10. For achievements/descriptions: Convert bullet points to clean, complete sentences. Remove bullet point symbols (•, -, *) and line breaks. Join multiple achievements into a single paragraph with proper sentence structure.
+7. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
+8. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
+
+MISSING VALUE HANDLING (CRITICAL):
+- For REQUIRED fields (firstName, lastName, email, institution, degree, company, jobTitle, location, startDate): Always extract or provide reasonable defaults
+- For OPTIONAL fields, OMIT the field entirely from JSON if information is not found in resume:
+  * personalDetails: phoneNumber, website, linkedinUrl, githubUrl
+  * education: gpa, awards, coursework  
+  * experience: endDate (when isCurrentJob=true), achievements, technologies
+  * projects: url, achievements, technologies
+  * skills: languages, frameworks (omit entire fields if no skills section found)
+- NEVER include fields with undefined, null, or empty values - completely omit them from JSON
+- This ensures valid JSON that can be parsed without errors
+
+DATE REQUIREMENTS (CRITICAL):
+- Education: BOTH startDate and endDate are ALWAYS required (even if currently attending)
+- Experience: startDate is ALWAYS required
+- Experience: endDate is REQUIRED only if isCurrentJob is false (past positions)
+- Experience: endDate should be empty string "" if isCurrentJob is true (current positions)
+- For currently attending education, use estimated graduation date for endDate
+- Always provide dates in YYYY-MM-DD format
+
+PROJECT STRUCTURE GUIDELINES:
+- "description": What the project IS - a brief explanation of the project's purpose, functionality, or what it does
+- "achievements": What you DID or ACCOMPLISHED in the project - specific results, metrics, improvements, or notable implementations
+- ONLY include achievements if there are actual accomplishments listed (not just descriptions)
+- If the project section only has a brief description without specific accomplishments, leave achievements as an empty array []
 
 FORMATTING RULES FOR ACHIEVEMENTS:
-- Remove all bullet point symbols (•, -, *, etc.)
-- Remove line breaks and extra whitespace
-- Convert each bullet point into a complete sentence
-- Join sentences with proper punctuation and spacing
-- Result should be a single, well-formatted paragraph
+- achievements should be an ARRAY of strings, not a single string
+- Each bullet point should represent a specific accomplishment or result
+- Remove bullet point symbols (•, -, *, etc.) from each achievement
+- Clean up each achievement to be a complete, well-formatted sentence
+- Do NOT join achievements into a single paragraph - keep them as separate array elements
+- Only include items that show what you accomplished, not what the project does
+- Examples of GOOD achievements: ["Increased performance by 40%", "Reduced load time from 3s to 500ms", "Implemented OAuth authentication", "Led team of 3 developers"]
+- Examples of what should go in description instead: "A web application for managing tasks", "Mobile app built with React Native"
 
 Resume text to parse:
 ${resumeText}
