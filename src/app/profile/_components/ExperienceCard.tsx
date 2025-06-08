@@ -4,6 +4,18 @@ import { Briefcase, Building2, Calendar, MapPin } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
+export interface Experience {
+  id: string;
+  company: string;
+  jobTitle: string;
+  location?: string | null;
+  isCurrentJob: boolean;
+  startDate: Date;
+  endDate?: Date | null;
+  achievements?: string | null;
+  technologies?: string | null;
+}
+
 interface ExperienceCardProps {
   experience: Experience[];
 }

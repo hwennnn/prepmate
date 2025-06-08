@@ -2,7 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList } from "~/components/ui/tabs";
@@ -12,17 +13,12 @@ import { ExperienceForm } from "./ExperienceForm";
 import { PersonalDetailsForm } from "./PersonalDetailsForm";
 import { ProgressBar } from "./ProgressBar";
 import { ProjectsForm } from "./ProjectsForm";
-import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
 import { completeProfileSchema, type FormData } from "./types";
 
-// made change here
-// import CompleteProfileInput from 
-
-interface OnboardingFormProps {
+interface EditProfileFormProps {
+  initialData?: FormData;
   onComplete: () => void;
-  // made change here
-  //defaultValues?: CompleteProfileInput;
 }
 
 const steps = [
@@ -33,10 +29,14 @@ const steps = [
   { id: "skills", label: "Skills", description: "Technical skills" },
 ];
 
-export function OnboardingForm({ onComplete }: OnboardingFormProps) {
+export function EditProfileForm({
+  initialData,
+  onComplete,
+}: EditProfileFormProps) {
   const [activeTab, setActiveTab] = useState("personal");
+  //const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showResumeUpload, setShowResumeUpload] = useState(true);
+  const router = useRouter();
 
   const {
     register,
@@ -47,7 +47,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     formState: { errors },
     trigger,
     getValues,
-    clearErrors,
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(completeProfileSchema),
     mode: "onChange",
@@ -55,6 +55,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
       personalDetails: {
         firstName: "",
         lastName: "",
+        email: "",
         phoneNumber: "",
         website: "",
         linkedinUrl: "",
@@ -70,32 +71,39 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     },
   });
 
+  // Pre-populate form with existing data
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData);
+    }
+  }, [initialData, reset]);
+
   const currentStepIndex = steps.findIndex((step) => step.id === activeTab);
   const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
-  const saveProfileMutation = api.onboarding.saveProfile.useMutation({
+  const updateProfileMutation = api.onboarding.saveProfile.useMutation({
     onSuccess: () => {
       onComplete();
     },
     onError: (error) => {
-      console.error("Failed to save profile:", error);
+      console.error("Failed to update profile:", error);
     },
   });
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      await saveProfileMutation.mutateAsync(data);
+      await updateProfileMutation.mutateAsync(data);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error updating profile:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleNext = async () => {
-    // Validate current step before proceeding
+    // Validation logic (same as OnboardingForm)
     let isValid = false;
 
     switch (activeTab) {
@@ -108,7 +116,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
         if (isEducationFilled) {
           isValid = await trigger("education");
         } else {
-          isValid = true; // Education is optional
+          isValid = true;
         }
         break;
       case "experience":
@@ -117,7 +125,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
         if (isExperienceFilled) {
           isValid = await trigger("experience");
         } else {
-          isValid = true; // Experience is optional
+          isValid = true;
         }
         break;
       case "projects":
@@ -126,7 +134,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
         if (isProjectsFilled) {
           isValid = await trigger("projects");
         } else {
-          isValid = true; // Projects is optional
+          isValid = true;
         }
         break;
       case "skills":
@@ -136,7 +144,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
         if (isSkillsFilled) {
           isValid = await trigger("skills");
         } else {
-          isValid = true; // Skills is optional
+          isValid = true;
         }
         break;
       default:
@@ -154,106 +162,20 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     }
   };
 
-  // Prevent tab changes from submitting the form
   const handleTabChange = (_: string) => {
-    // Only allow tab changes through navigation buttons, not direct tab clicks
+    // Prevent direct tab changes
     return;
-  };
-
-  // Handle resume data parsing
-  const handleResumeDataParsed = (parsedData: Partial<FormData>) => {
-    // Fill in personal details
-    if (parsedData.personalDetails) {
-      const personalDetails = parsedData.personalDetails;
-      if (personalDetails.firstName)
-        setValue("personalDetails.firstName", personalDetails.firstName);
-      if (personalDetails.lastName)
-        setValue("personalDetails.lastName", personalDetails.lastName);
-      if (personalDetails.email)
-        setValue("personalDetails.email", personalDetails.email);
-      if (personalDetails.phoneNumber)
-        setValue("personalDetails.phoneNumber", personalDetails.phoneNumber);
-      if (personalDetails.website)
-        setValue("personalDetails.website", personalDetails.website);
-      if (personalDetails.linkedinUrl)
-        setValue("personalDetails.linkedinUrl", personalDetails.linkedinUrl);
-      if (personalDetails.githubUrl)
-        setValue("personalDetails.githubUrl", personalDetails.githubUrl);
-    }
-
-    // Fill in education
-    if (parsedData.education && parsedData.education.length > 0) {
-      const educationWithDates = parsedData.education.map((edu) => ({
-        ...edu,
-        startDate: edu.startDate
-          ? new Date(edu.startDate)
-          : (undefined as unknown as Date),
-        endDate: edu.endDate
-          ? new Date(edu.endDate)
-          : (undefined as unknown as Date),
-      }));
-      setValue("education", educationWithDates);
-    }
-
-    // Fill in experience
-    if (parsedData.experience && parsedData.experience.length > 0) {
-      const experienceWithDates = parsedData.experience.map((exp) => ({
-        ...exp,
-        startDate: exp.startDate
-          ? new Date(exp.startDate)
-          : (undefined as unknown as Date),
-        endDate: exp.endDate
-          ? new Date(exp.endDate)
-          : (undefined as unknown as Date),
-      }));
-      setValue("experience", experienceWithDates);
-    }
-
-    // Fill in projects
-    if (parsedData.projects && parsedData.projects.length > 0) {
-      setValue("projects", parsedData.projects);
-    }
-
-    // Fill in skills
-    if (parsedData.skills) {
-      const skills = parsedData.skills;
-      if (skills.languages) setValue("skills.languages", skills.languages);
-      if (skills.frameworks) setValue("skills.frameworks", skills.frameworks);
-    }
-
-    setShowResumeUpload(false);
-    clearErrors();
   };
 
   return (
     <div className="space-y-8">
-      {/* Resume Upload */}
-      {showResumeUpload && (
-        <ResumeUpload
-          onDataParsed={handleResumeDataParsed}
-          onClose={() => setShowResumeUpload(false)}
-        />
-      )}
-
       {/* Progress Bar */}
       <ProgressBar
         steps={steps}
         currentStepIndex={currentStepIndex}
-        watch={watch}
+        completedSteps={[]}
+        // watch={watch}
       />
-
-      {/* Resume Upload Toggle */}
-      {!showResumeUpload && (
-        <div className="flex justify-center">
-          <Button
-            variant="outline"
-            onClick={() => setShowResumeUpload(true)}
-            className="text-sm"
-          >
-            Upload Different Resume
-          </Button>
-        </div>
-      )}
 
       {/* Form Content */}
       <div className="space-y-6">
@@ -292,8 +214,8 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
             <ProjectsForm
               register={register}
               control={control}
-              watch={watch}
-              setValue={setValue}
+              //watch={watch}
+              //setValue={setValue}
               errors={errors}
             />
           </TabsContent>
@@ -317,6 +239,14 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
           </Button>
 
           <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/profile")}
+              className="min-w-[120px]"
+            >
+              Cancel
+            </Button>
             {!isLastStep ? (
               <Button
                 type="button"
@@ -331,12 +261,12 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-w-[120px]"
+                  className="min-w-[120px] bg-gradient-to-r from-blue-600 to-purple-600"
                 >
                   {isSubmitting ? (
                     <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   ) : (
-                    "Complete Setup"
+                    "Save Changes"
                   )}
                 </Button>
               </form>
