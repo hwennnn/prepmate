@@ -2,11 +2,11 @@ import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface PersonalDetailsFormProps {
-  register: UseFormRegister<FormData>;
-  errors: FieldErrors<FormData>;
+  register: UseFormRegister<OnboardingFormData>;
+  errors: FieldErrors<OnboardingFormData>;
 }
 
 export function PersonalDetailsForm({

@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
@@ -14,16 +15,7 @@ import { ProgressBar } from "./ProgressBar";
 import { ProjectsForm } from "./ProjectsForm";
 import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
-import { completeProfileSchema, type FormData } from "./types";
-
-// made change here
-// import CompleteProfileInput from 
-
-interface OnboardingFormProps {
-  onComplete: () => void;
-  // made change here
-  //defaultValues?: CompleteProfileInput;
-}
+import { completeProfileSchema, type OnboardingFormData } from "./types";
 
 const steps = [
   { id: "personal", label: "Personal", description: "Basic information" },
@@ -33,10 +25,24 @@ const steps = [
   { id: "skills", label: "Skills", description: "Technical skills" },
 ];
 
-export function OnboardingForm({ onComplete }: OnboardingFormProps) {
-  const [activeTab, setActiveTab] = useState("personal");
+type StepId = (typeof steps)[number]["id"];
+
+interface OnboardingFormProps {
+  initialData?: OnboardingFormData;
+  onComplete: () => void;
+}
+
+export function OnboardingForm({
+  onComplete,
+  initialData,
+}: OnboardingFormProps) {
+  const isEditMode = !!initialData;
+
+  const [activeTab, setActiveTab] = useState<StepId>("personal");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResumeUpload, setShowResumeUpload] = useState(true);
+
+  const router = useRouter();
 
   const {
     register,
@@ -48,10 +54,10 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     trigger,
     getValues,
     clearErrors,
-  } = useForm<FormData>({
+  } = useForm<OnboardingFormData>({
     resolver: zodResolver(completeProfileSchema),
     mode: "onChange",
-    defaultValues: {
+    defaultValues: initialData ?? {
       personalDetails: {
         firstName: "",
         lastName: "",
@@ -83,10 +89,23 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const updateProfileMutation = api.onboarding.saveProfile.useMutation({
+    onSuccess: () => {
+      onComplete();
+    },
+    onError: (error) => {
+      console.error("Failed to update profile:", error);
+    },
+  });
+
+  const onSubmit = async (data: OnboardingFormData) => {
     setIsSubmitting(true);
     try {
-      await saveProfileMutation.mutateAsync(data);
+      if (isEditMode) {
+        await updateProfileMutation.mutateAsync(data);
+      } else {
+        await saveProfileMutation.mutateAsync(data);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
@@ -154,14 +173,14 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     }
   };
 
-  // Prevent tab changes from submitting the form
-  const handleTabChange = (_: string) => {
-    // Only allow tab changes through navigation buttons, not direct tab clicks
-    return;
+  const handleProgressOnClick = (index: number) => {
+    if (isEditMode && index < steps.length && steps[index]) {
+      setActiveTab(steps[index].id);
+    }
   };
 
   // Handle resume data parsing
-  const handleResumeDataParsed = (parsedData: Partial<FormData>) => {
+  const handleResumeDataParsed = (parsedData: Partial<OnboardingFormData>) => {
     // Fill in personal details
     if (parsedData.personalDetails) {
       const personalDetails = parsedData.personalDetails;
@@ -240,6 +259,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
         steps={steps}
         currentStepIndex={currentStepIndex}
         watch={watch}
+        onClick={isEditMode ? handleProgressOnClick : undefined}
       />
 
       {/* Resume Upload Toggle */}
@@ -257,11 +277,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
 
       {/* Form Content */}
       <div className="space-y-6">
-        <Tabs
-          value={activeTab}
-          onValueChange={handleTabChange}
-          className="w-full"
-        >
+        <Tabs value={activeTab} className="w-full">
           <TabsList className="hidden" />
 
           <TabsContent value="personal" className="space-y-4">
@@ -317,6 +333,17 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
           </Button>
 
           <div className="flex gap-3">
+            {/* Only show cancel button in Edit Mode */}
+            {isEditMode && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/profile")}
+                className="min-w-[120px]"
+              >
+                Cancel
+              </Button>
+            )}
             {!isLastStep ? (
               <Button
                 type="button"

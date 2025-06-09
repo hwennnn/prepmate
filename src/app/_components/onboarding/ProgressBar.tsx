@@ -4,7 +4,7 @@ import type { UseFormWatch } from "react-hook-form";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface Step {
   id: string;
@@ -15,13 +15,15 @@ interface Step {
 interface ProgressBarProps {
   steps: Step[];
   currentStepIndex: number;
-  watch: UseFormWatch<FormData>;
+  watch: UseFormWatch<OnboardingFormData>;
+  onClick?: (index: number) => void;
 }
 
 export function ProgressBar({
   steps,
   currentStepIndex,
   watch,
+  onClick,
 }: ProgressBarProps) {
   const data = watch();
 
@@ -123,7 +125,14 @@ export function ProgressBar({
         {/* Desktop Layout */}
         <div className="hidden sm:flex sm:items-center sm:space-x-4">
           {steps.map((step, index) => (
-            <div key={step.id} className="flex items-center">
+            <div
+              key={step.id}
+              className={cn(
+                "flex items-center",
+                onClick ? "cursor-pointer" : "",
+              )}
+              onClick={onClick ? () => onClick(index) : undefined}
+            >
               <div className="flex flex-col items-center">
                 <div
                   className={cn(

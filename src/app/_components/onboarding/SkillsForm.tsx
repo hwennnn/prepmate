@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface SkillsFormProps {
-  register: UseFormRegister<FormData>;
-  errors: FieldErrors<FormData>;
+  register: UseFormRegister<OnboardingFormData>;
+  errors: FieldErrors<OnboardingFormData>;
 }
 
 export function SkillsForm({ register, errors }: SkillsFormProps) {

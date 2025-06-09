@@ -52,10 +52,7 @@ export function ProfileNavigation() {
                 View and manage your professional profile
               </p>
             </div>
-            <Button
-              asChild
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg transition-all hover:scale-105 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl"
-            >
+            <Button asChild>
               <Link href="/profile/edit">
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Profile
