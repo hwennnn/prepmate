@@ -173,8 +173,10 @@ export function OnboardingForm({
     }
   };
 
-  const handleTabChange = (_: string) => {
-    return;
+  const handleProgressOnClick = (index: number) => {
+    if (isEditMode && index < steps.length && steps[index]) {
+      setActiveTab(steps[index].id);
+    }
   };
 
   // Handle resume data parsing
@@ -257,6 +259,7 @@ export function OnboardingForm({
         steps={steps}
         currentStepIndex={currentStepIndex}
         watch={watch}
+        onClick={isEditMode ? handleProgressOnClick : undefined}
       />
 
       {/* Resume Upload Toggle */}
@@ -274,11 +277,7 @@ export function OnboardingForm({
 
       {/* Form Content */}
       <div className="space-y-6">
-        <Tabs
-          value={activeTab}
-          onValueChange={handleTabChange}
-          className="w-full"
-        >
+        <Tabs value={activeTab} className="w-full">
           <TabsList className="hidden" />
 
           <TabsContent value="personal" className="space-y-4">
