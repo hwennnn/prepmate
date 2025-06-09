@@ -245,7 +245,7 @@ export function OnboardingForm({
   return (
     <div className="space-y-8">
       {/* Resume Upload */}
-      {!isEditMode && showResumeUpload && (
+      {showResumeUpload && (
         <ResumeUpload
           onDataParsed={handleResumeDataParsed}
           onClose={() => setShowResumeUpload(false)}
@@ -260,7 +260,7 @@ export function OnboardingForm({
       />
 
       {/* Resume Upload Toggle */}
-      {!isEditMode && !showResumeUpload && (
+      {!showResumeUpload && (
         <div className="flex justify-center">
           <Button
             variant="outline"
