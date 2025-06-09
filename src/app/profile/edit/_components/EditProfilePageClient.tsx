@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { EditProfileForm } from "~/app/_components/onboarding/EditProfileForm";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { Logo } from "~/components/ui/logo";
@@ -9,6 +8,7 @@ import { api } from "~/trpc/react";
 
 import type { Education, Experience, Project } from "@prisma/client";
 import { useMemo } from "react";
+import { OnboardingForm } from "~/app/_components/onboarding/OnboardingForm";
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -127,7 +127,7 @@ export function EditProfilePageClient() {
           </p>
         </div>
 
-        <EditProfileForm
+        <OnboardingForm
           initialData={initialData}
           onComplete={handleEditComplete}
         />

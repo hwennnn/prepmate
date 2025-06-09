@@ -13,14 +13,14 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { AchievementsField } from "./AchievementsField";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface ProjectsFormProps {
-  register: UseFormRegister<FormData>;
-  control: Control<FormData>;
-  watch: UseFormWatch<FormData>;
-  setValue: UseFormSetValue<FormData>;
-  errors: FieldErrors<FormData>;
+  register: UseFormRegister<OnboardingFormData>;
+  control: Control<OnboardingFormData>;
+  watch: UseFormWatch<OnboardingFormData>;
+  setValue: UseFormSetValue<OnboardingFormData>;
+  errors: FieldErrors<OnboardingFormData>;
 }
 
 export function ProjectsForm({

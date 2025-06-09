@@ -3,10 +3,10 @@ import { useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { api } from "~/trpc/react";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface ResumeUploadProps {
-  onDataParsed: (data: Partial<FormData>) => void;
+  onDataParsed: (data: Partial<OnboardingFormData>) => void;
   onClose: () => void;
 }
 
@@ -17,7 +17,7 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const parseResumeMutation = api.onboarding.parseResume.useMutation({
-    onSuccess: (data: Partial<FormData>) => {
+    onSuccess: (data: Partial<OnboardingFormData>) => {
       onDataParsed(data);
       setIsParsing(false);
     },

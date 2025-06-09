@@ -4,7 +4,7 @@ import type { UseFormWatch } from "react-hook-form";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface Step {
   id: string;
@@ -15,7 +15,7 @@ interface Step {
 interface ProgressBarProps {
   steps: Step[];
   currentStepIndex: number;
-  watch: UseFormWatch<FormData>;
+  watch: UseFormWatch<OnboardingFormData>;
 }
 
 export function ProgressBar({

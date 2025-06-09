@@ -110,9 +110,4 @@ export const completeProfileSchema = z.object({
   skills: skillsSchema.optional(),
 });
 
-export type FormData = z.infer<typeof completeProfileSchema>;
-export type PersonalDetails = z.infer<typeof personalDetailsSchema>;
-export type Education = z.infer<typeof educationSchema>;
-export type Experience = z.infer<typeof experienceSchema>;
-export type Project = z.infer<typeof projectSchema>;
-export type Skills = z.infer<typeof skillsSchema>;
+export type OnboardingFormData = z.infer<typeof completeProfileSchema>;

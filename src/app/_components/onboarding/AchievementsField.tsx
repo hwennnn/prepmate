@@ -7,13 +7,13 @@ import type {
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import type { FormData } from "./types";
+import type { OnboardingFormData } from "./types";
 
 interface AchievementsFieldProps {
-  watch: UseFormWatch<FormData>;
-  setValue: UseFormSetValue<FormData>;
+  watch: UseFormWatch<OnboardingFormData>;
+  setValue: UseFormSetValue<OnboardingFormData>;
   fieldKey: string; // e.g., "experience.0.achievements" or "projects.1.achievements"
-  errors: FieldErrors<FormData>;
+  errors: FieldErrors<OnboardingFormData>;
   placeholder?: string;
 }
 
