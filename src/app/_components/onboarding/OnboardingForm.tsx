@@ -16,15 +16,6 @@ import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
 import { completeProfileSchema, type FormData } from "./types";
 
-// made change here
-// import CompleteProfileInput from 
-
-interface OnboardingFormProps {
-  onComplete: () => void;
-  // made change here
-  //defaultValues?: CompleteProfileInput;
-}
-
 const steps = [
   { id: "personal", label: "Personal", description: "Basic information" },
   { id: "education", label: "Education", description: "Academic background" },
@@ -33,8 +24,14 @@ const steps = [
   { id: "skills", label: "Skills", description: "Technical skills" },
 ];
 
+type StepId = (typeof steps)[number]["id"];
+
+interface OnboardingFormProps {
+  onComplete: () => void;
+}
+
 export function OnboardingForm({ onComplete }: OnboardingFormProps) {
-  const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useState<StepId>("personal");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResumeUpload, setShowResumeUpload] = useState(true);
 

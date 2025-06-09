@@ -1,17 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ThemeToggle } from "~/components/theme-toggle";
-import { Logo } from "~/components/ui/logo";
-import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import { api } from "~/trpc/react";
 import { EditProfileForm } from "~/app/_components/onboarding/EditProfileForm";
-import type { FormData } from "~/app/_components/onboarding/types";
+import { ThemeToggle } from "~/components/theme-toggle";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { Logo } from "~/components/ui/logo";
+import { api } from "~/trpc/react";
 
-import type { RouterOutputs } from "~/trpc/react";
 import type { Education, Experience, Project } from "@prisma/client";
-
-type ProfileData = RouterOutputs["onboarding"]["getProfile"];
+import { useMemo } from "react";
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -19,7 +16,7 @@ export function EditProfilePageClient() {
 
   // Fetch existing profile data
   const {
-    data: profile,
+    data: profileData,
     isLoading,
     error,
   } = api.onboarding.getProfile.useQuery();
@@ -29,8 +26,8 @@ export function EditProfilePageClient() {
     router.push("/profile");
   };
 
-  const transformProfileToFormData = (profileData: ProfileData | undefined): FormData => {
-    if (!profileData) return {} as FormData;
+  const initialData = useMemo(() => {
+    if (!profileData) return undefined;
 
     return {
       personalDetails: {
@@ -38,20 +35,24 @@ export function EditProfilePageClient() {
         lastName: profileData.lastName ?? "",
         email: profileData.email ?? "",
         phoneNumber: profileData.phoneNumber ?? "",
-        website: profileData.website ?? "",
-        linkedinUrl: profileData.linkedinUrl ?? "",
-        githubUrl: profileData.githubUrl ?? "",
+        website: profileData.website ?? undefined,
+        linkedinUrl: profileData.linkedinUrl ?? undefined,
+        githubUrl: profileData.githubUrl ?? undefined,
       },
       education:
         profileData.education?.map((edu: Education) => ({
           institution: edu.institution,
           degree: edu.degree,
           isAttending: edu.isAttending,
-          startDate: new Date(edu.startDate),
-          endDate: new Date(edu.endDate),
-          gpa: edu.gpa ?? "",
-          awards: edu.awards ?? "",
-          coursework: edu.coursework ?? "",
+          startDate: edu.startDate
+            ? new Date(edu.startDate)
+            : (undefined as unknown as Date),
+          endDate: edu.endDate
+            ? new Date(edu.endDate)
+            : (undefined as unknown as Date),
+          gpa: edu.gpa ?? undefined,
+          awards: edu.awards ?? undefined,
+          coursework: edu.coursework ?? undefined,
         })) ?? [],
       experience:
         profileData.experience?.map((exp: Experience) => ({
@@ -59,28 +60,32 @@ export function EditProfilePageClient() {
           jobTitle: exp.jobTitle,
           location: exp.location,
           isCurrentJob: exp.isCurrentJob,
-          startDate: new Date(exp.startDate),
-          endDate: exp.endDate ? new Date(exp.endDate) : undefined,
+          startDate: exp.startDate
+            ? new Date(exp.startDate)
+            : (undefined as unknown as Date),
+          endDate: exp.endDate
+            ? new Date(exp.endDate)
+            : (undefined as unknown as Date),
           achievements: exp.achievements ?? [],
-          technologies: exp.technologies ?? "",
+          technologies: exp.technologies ?? undefined,
         })) ?? [],
       projects:
         profileData.projects?.map((proj: Project) => ({
           name: proj.name,
           description: proj.description,
-          url: proj.url ?? "",
+          url: proj.url ?? undefined,
           achievements: proj.achievements ?? [],
-          technologies: proj.technologies ?? "",
+          technologies: proj.technologies ?? undefined,
         })) ?? [],
       skills: {
-        languages: profileData.skills?.languages ?? "",
-        frameworks: profileData.skills?.frameworks ?? "",
+        languages: profileData.skills?.languages ?? undefined,
+        frameworks: profileData.skills?.frameworks ?? undefined,
       },
     };
-  };
+  }, [profileData]);
 
   if (isLoading) {
-    return <LoadingSpinner fullScreen text="Loading profile..." size="lg" />;
+    return <LoadingSpinner fullScreen size="lg" />;
   }
 
   if (error) {
@@ -97,8 +102,6 @@ export function EditProfilePageClient() {
       </div>
     );
   }
-
-  const initialData = transformProfileToFormData(profile);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">

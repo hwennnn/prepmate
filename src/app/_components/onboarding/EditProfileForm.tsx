@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList } from "~/components/ui/tabs";
@@ -46,11 +46,10 @@ export function EditProfileForm({
     formState: { errors },
     trigger,
     getValues,
-    reset,
   } = useForm<FormData>({
     resolver: zodResolver(completeProfileSchema),
     mode: "onChange",
-    defaultValues: {
+    defaultValues: initialData ?? {
       personalDetails: {
         firstName: "",
         lastName: "",
@@ -69,12 +68,6 @@ export function EditProfileForm({
       },
     },
   });
-
-  useEffect(() => {
-    if (initialData) {
-      reset(initialData);
-    }
-  }, [initialData, reset]);
 
   const currentStepIndex = steps.findIndex((step) => step.id === activeTab);
   const isLastStep = currentStepIndex === steps.length - 1;
@@ -256,7 +249,7 @@ export function EditProfileForm({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-w-[120px] bg-gradient-to-r from-blue-600 to-purple-600"
+                  className="min-w-[120px]"
                 >
                   {isSubmitting ? (
                     <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
