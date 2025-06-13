@@ -9,6 +9,7 @@ import {
   User,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { formatUrlProtocol } from "~/lib/utils";
 
 interface PersonalInfoCardProps {
   profile: UserProfile;
@@ -47,7 +48,7 @@ export function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4 text-slate-600 dark:text-slate-400" />
               <a
-                href={profile.website}
+                href={formatUrlProtocol(profile.website)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -62,7 +63,7 @@ export function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
             <div className="flex items-center gap-2">
               <Linkedin className="h-4 w-4 text-slate-600 dark:text-slate-400" />
               <a
-                href={profile.linkedinUrl}
+                href={formatUrlProtocol(profile.linkedinUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -77,7 +78,7 @@ export function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
             <div className="flex items-center gap-2">
               <Github className="h-4 w-4 text-slate-600 dark:text-slate-400" />
               <a
-                href={profile.githubUrl}
+                href={formatUrlProtocol(profile.githubUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
