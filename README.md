@@ -51,6 +51,7 @@ pnpm dev
 ### Essential Setup Guides
 
 - **[⚙️ Environment Setup](docs/environment-setup.md)** - Configure authentication, AI services, and environment variables
+- **[🔍 Performance Optimisations](docs/OPTIMISATIONS.md)** - Performance optimisations for the app
 - **[🚀 Deployment Guide](docs/deployment.md)** - Deploy to production (coming soon)
 
 ### User Journey

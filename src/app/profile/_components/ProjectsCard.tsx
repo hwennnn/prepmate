@@ -2,6 +2,7 @@ import type { Project } from "@prisma/client";
 import { ExternalLink, FolderOpen, Link as LinkIcon } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { formatUrlProtocol } from "~/lib/utils";
 
 interface ProjectsCardProps {
   projects: Project[];
@@ -34,7 +35,7 @@ export function ProjectsCard({ projects }: ProjectsCardProps) {
                   </h3>
                   {project.url && (
                     <a
-                      href={project.url}
+                      href={formatUrlProtocol(project.url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
