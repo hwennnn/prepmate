@@ -9,7 +9,6 @@ import { ErrorMessage } from "~/components/ErrorMessage";
 // re-using components from home page
 import { Providers } from './providers';
 import { Geist } from 'next/font/google';
-
 const geist = Geist({
   subsets: ['latin'],
   variable: '--font-geist-sans',

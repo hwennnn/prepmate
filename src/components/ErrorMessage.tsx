@@ -1,6 +1,5 @@
-import { AlertCircle, RefreshCw, User } from "lucide-react";
+import { AlertCircle, RefreshCw, } from "lucide-react";
 import Link from "next/link";
-//import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -9,9 +8,9 @@ import {
   CardTitle,
   CardContent,
 } from "~/components/ui/card";
-//import { env } from "~/env";
 import { normalizeErrorMessage } from "~/lib/error-utils";
 
+// Generic Properties for Error Message
 export interface ErrorUIProps {
   title?: string;
   description?: string;
@@ -50,14 +49,14 @@ export function ErrorMessage({
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
-
+{/*
             <Button asChild variant="outline" className="w-full">
               <Link href="/onboarding">
                 <User className="mr-2 h-4 w-4" />
                 Complete Profile Setup
               </Link>
             </Button>
-
+*/}
             <Button asChild variant="ghost" className="w-full">
               <Link href="/dashboard">Back to Dashboard</Link>
             </Button>

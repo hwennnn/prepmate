@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
 import type { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { TRPCError } from "@trpc/server";
-//import { TRPCClientError } from "@trpc/client";
-//import type { AppRouter } from "~/server/api/root";
 
+// ErroCode mapping 
 export type ErrorCode = keyof typeof TRPC_ERROR_CODES_BY_KEY;
-
 const ERROR_MESSAGES: Record<ErrorCode, { title: string, message: string, http_code: number }> = {
 	BAD_REQUEST: {
     title: "Invalid Request",
@@ -104,6 +102,7 @@ const ERROR_MESSAGES: Record<ErrorCode, { title: string, message: string, http_c
 	}
 }
 
+// Helper function for routing to error page
 export function redirectToErrorPage(
 	errorCode: ErrorCode,
 	returnUrl?: string
@@ -116,9 +115,11 @@ export function redirectToErrorPage(
 	redirect(`error?${params.toString()}`);
 }
 
+// Main server action error handling : redirects the page to specified returnUrl
 export function handleTRPCError(error: unknown, returnUrl?: string) : never {
   console.error('tRPC error:', error); // Log full error server-side
   
+	//Default error code if error is not a TRPCError
   let errorCode: ErrorCode = 'INTERNAL_SERVER_ERROR';
   
   if (error instanceof TRPCError) {
@@ -128,17 +129,21 @@ export function handleTRPCError(error: unknown, returnUrl?: string) : never {
   redirectToErrorPage(errorCode, returnUrl);
 }
 
+// Helper function to extract error message from mapping
 export function getErrorInfo(errorCode: ErrorCode) {
   return ERROR_MESSAGES[errorCode] || ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
 }
 
+//Helper function to normalize error messages
+//Errors typing can be tricky across the stack
+//Handles type Error and TRPCError, defaults string
 export function normalizeErrorMessage(error: unknown): string {
   if (error instanceof Error || error instanceof TRPCError) return error.message;
   if (typeof error === "string") return error;
   return "An unexpected error occurred.";
 }
 
-//
+// Helper function to format TRPCErrors, currently not in use
 export function throwTRPCError(
   code: ErrorCode, 
   message?: string,

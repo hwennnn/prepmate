@@ -11,6 +11,7 @@ export default async function ProfilePage() {
       <ErrorBoundary
       //title={profilePageClientErrorTitle}
       //description={profilePageClientErrorMessage}
+      // Still trying to figure out how to better customize error boundary's error details dynamically
       >
         <ProfilePageClient />
       </ErrorBoundary>

@@ -32,7 +32,9 @@ export function ProfilePageClient() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  /*
+  /* No longer needed because of re-routing, 
+  but really isFetching check eventually results in error catch in Error Boundary 
+  
   const handleRetry = () => {
     void refetch();
   };

@@ -91,6 +91,7 @@ export function EditProfilePageClient() {
 
   if (error) {
     handleTRPCError(error, '/edit')
+    return null;
     /*
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">

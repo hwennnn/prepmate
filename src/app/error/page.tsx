@@ -1,5 +1,7 @@
 "use client";
 
+//Global Error Page for server action errors
+
 import { useSearchParams, useRouter } from "next/navigation";
 import { ErrorMessage } from "~/components/ErrorMessage";
 import { type ErrorCode, getErrorInfo } from "~/lib/error-utils";

@@ -19,7 +19,8 @@ export function OnboardingPageClient() {
       },
       onError: (error) => {
         //console.error("Failed to complete onboarding:", error);
-        handleTRPCError(error, "/onboarding");
+        handleTRPCError(error, "/onboarding"); 
+        //Passing '/onboarding' as returnUrl will cause retry to re-render the onboarding/current page
       },
     });
 
