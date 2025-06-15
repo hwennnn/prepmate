@@ -9,6 +9,7 @@ import { api } from "~/trpc/react";
 import type { Education, Experience, Project } from "@prisma/client";
 import { useMemo } from "react";
 import { OnboardingForm } from "~/app/_components/onboarding/OnboardingForm";
+import { handleTRPCError } from "~/lib/error-utils";
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -89,6 +90,9 @@ export function EditProfilePageClient() {
   }
 
   if (error) {
+    handleTRPCError(error, '/edit')
+    return null;
+    /*
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
         <div className="container mx-auto px-4 py-8">
@@ -101,6 +105,7 @@ export function EditProfilePageClient() {
         </div>
       </div>
     );
+    */
   }
 
   return (
