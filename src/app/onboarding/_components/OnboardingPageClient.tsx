@@ -5,6 +5,7 @@ import { ThemeToggle } from "~/components/theme-toggle";
 import { Logo } from "~/components/ui/logo";
 import { api } from "~/trpc/react";
 import { OnboardingForm } from "../../_components/onboarding/OnboardingForm";
+import { handleTRPCError } from "~/lib/error-utils";
 
 export function OnboardingPageClient() {
   const utils = api.useUtils();
@@ -17,7 +18,8 @@ export function OnboardingPageClient() {
         router.push("/dashboard");
       },
       onError: (error) => {
-        console.error("Failed to complete onboarding:", error);
+        //console.error("Failed to complete onboarding:", error);
+        handleTRPCError(error, "/onboarding");
       },
     });
 

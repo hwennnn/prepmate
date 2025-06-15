@@ -1,70 +1,75 @@
 "use client";
 
-import type { TRPCClientErrorLike } from "@trpc/react-query";
-import { AlertCircle, RefreshCw, User } from "lucide-react";
-import Link from "next/link";
+//import type { TRPCClientErrorLike } from "@trpc/react-query";
+//import { AlertCircle, RefreshCw, User } from "lucide-react";
+//import Link from "next/link";
 import { EducationCard } from "~/app/profile/_components/EducationCard";
 import { ExperienceCard } from "~/app/profile/_components/ExperienceCard";
 import { PersonalInfoCard } from "~/app/profile/_components/PersonalInfoCard";
 import { ProfileNavigation } from "~/app/profile/_components/ProfileNavigation";
 import { ProjectsCard } from "~/app/profile/_components/ProjectsCard";
 import { SkillsCard } from "~/app/profile/_components/SkillsCard";
-import { Button } from "~/components/ui/button";
-import {
+//import { Button } from "~/components/ui/button";
+/*import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
+} from "~/components/ui/card"; */
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import type { AppRouter } from "~/server/api/root";
+//import type { AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/react";
+import { handleTRPCError } from "~/lib/error-utils";
 
 export function ProfilePageClient() {
   const {
     data: profile,
     isFetching,
     error,
-    refetch,
+    //refetch,
   } = api.onboarding.getProfile.useQuery(undefined, {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  /*
   const handleRetry = () => {
     void refetch();
   };
+  */
+
+  if (isFetching) {
+    return <LoadingSpinner fullScreen text="Loading profile..." size="lg" />;
+  }
+
+  if (!profile || error) {
+    handleTRPCError(error, "/profile");
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
       <ProfileNavigation />
-
-      {isFetching ? (
-        <LoadingSpinner fullScreen text="Loading profile..." size="lg" />
-      ) : !profile ? (
-        <ProfileError error={error} handleRetry={handleRetry} />
-      ) : (
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid gap-8 lg:grid-cols-3">
-            {/* Personal Information Sidebar */}
-            <div className="lg:col-span-1">
-              <PersonalInfoCard profile={profile} />
-              {profile.skills && <SkillsCard skills={profile.skills} />}
-            </div>
-
-            {/* Main Content */}
-            <div className="space-y-8 lg:col-span-2">
-              <ExperienceCard experience={profile.experience ?? []} />
-              <EducationCard education={profile.education ?? []} />
-              <ProjectsCard projects={profile.projects ?? []} />
-            </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Personal Information Sidebar */}
+          <div className="lg:col-span-1">
+            <PersonalInfoCard profile={profile} />
+            {profile.skills && <SkillsCard skills={profile.skills} />}
+          </div>
+          {/* Main Content */}
+          <div className="space-y-8 lg:col-span-2">
+            <ExperienceCard experience={profile.experience ?? []} />
+            <EducationCard education={profile.education ?? []} />
+            <ProjectsCard projects={profile.projects ?? []} />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
+/*
 const ProfileError = ({
   error,
   handleRetry,
@@ -118,3 +123,4 @@ const ProfileError = ({
     </div>
   );
 };
+*/
