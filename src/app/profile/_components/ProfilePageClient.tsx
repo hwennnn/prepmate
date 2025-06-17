@@ -1,15 +1,16 @@
 "use client";
 
-import type { TRPCClientErrorLike } from "@trpc/react-query";
-import { AlertCircle, RefreshCw, User } from "lucide-react";
-import Link from "next/link";
+//import type { TRPCClientErrorLike } from "@trpc/react-query";
+//import { AlertCircle, RefreshCw, User } from "lucide-react";
+//import Link from "next/link";
 import { EducationCard } from "~/app/profile/_components/EducationCard";
 import { ExperienceCard } from "~/app/profile/_components/ExperienceCard";
 import { PersonalInfoCard } from "~/app/profile/_components/PersonalInfoCard";
 import { ProfileNavigation } from "~/app/profile/_components/ProfileNavigation";
 import { ProjectsCard } from "~/app/profile/_components/ProjectsCard";
 import { SkillsCard } from "~/app/profile/_components/SkillsCard";
-import { Button } from "~/components/ui/button";
+//import { Button } from "~/components/ui/button";
+/*
 import {
   Card,
   CardContent,
@@ -17,9 +18,11 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+*/
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import type { AppRouter } from "~/server/api/root";
+// import type { AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/react";
+import { ErrorMessage } from "~/components/error-message";
 
 export function ProfilePageClient() {
   const {
@@ -42,7 +45,15 @@ export function ProfilePageClient() {
       {isFetching ? (
         <LoadingSpinner fullScreen text="Loading profile..." size="lg" />
       ) : !profile ? (
-        <ProfileError error={error} handleRetry={handleRetry} />
+        <ErrorMessage 
+        error={error}
+        title="Failed to Load Profile"
+        description={error?.message ?? "We couldn't load your profile information. This might be because your profile hasn't been set up yet or there was a network issue."}
+        retry={handleRetry}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+        />
+        //<ProfileError error={error} handleRetry={handleRetry} />
       ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="grid gap-8 lg:grid-cols-3">
@@ -64,7 +75,7 @@ export function ProfilePageClient() {
     </div>
   );
 }
-
+/*
 const ProfileError = ({
   error,
   handleRetry,
@@ -118,3 +129,4 @@ const ProfileError = ({
     </div>
   );
 };
+*/
