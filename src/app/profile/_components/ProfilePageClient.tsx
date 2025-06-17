@@ -26,25 +26,29 @@ export function ProfilePageClient() {
     void refetch();
   };
 
+  if (isFetching) {
+    return <LoadingSpinner fullScreen text="Loading profile..." size="lg" />;
+  }
+
+  if (error || !profile) {
+    return (
+      <ErrorMessage
+        error={error}
+        title="Failed to Load Profile"
+        description={
+          error?.message ??
+          "We couldn't load your profile information. This might be because your profile hasn't been set up yet or there was a network issue."
+        }
+        retry={handleRetry}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
       <ProfileNavigation />
-
-      {isFetching ? (
-        <LoadingSpinner fullScreen text="Loading profile..." size="lg" />
-      ) : !profile ? (
-        <ErrorMessage
-          error={error}
-          title="Failed to Load Profile"
-          description={
-            error?.message ??
-            "We couldn't load your profile information. This might be because your profile hasn't been set up yet or there was a network issue."
-          }
-          retry={handleRetry}
-          showHomeButton={true}
-          showTechnicalDetails={true}
-        />
-      ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Personal Information Sidebar */}
@@ -61,7 +65,6 @@ export function ProfilePageClient() {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 }
