@@ -92,7 +92,7 @@ export function EditProfilePageClient() {
 
   if (error) {
     return (
-      <ErrorMessage 
+      <ErrorMessage
         error={error}
         title="Error Loading Profile"
         description={error.message}

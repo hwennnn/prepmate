@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, RefreshCw, } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 //import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
@@ -12,18 +12,18 @@ import {
   CardContent,
 } from "~/components/ui/card";
 //import { useRouter } from "next/navigation";
-import { 
-	normalizeErrorMessage, 
-	getErrorCode, 
-	getErrorDigest, 
-	isDevelopment,
+import {
+  normalizeErrorMessage,
+  getErrorCode,
+  getErrorDigest,
+  isDevelopment,
 } from "~/lib/error-utils";
 
 export interface ErrorUIProps {
   title?: string;
   description?: string;
   retry?: () => void;
-	showHomeButton?: boolean;
+  showHomeButton?: boolean;
   showTechnicalDetails?: boolean;
 }
 
@@ -36,16 +36,16 @@ export function ErrorMessage({
   title,
   description,
   retry,
-	showHomeButton = true,
-	showTechnicalDetails = true,
+  showHomeButton = true,
+  showTechnicalDetails = true,
 }: ErrorMessageProps) {
-	//const router = useRouter();
-	const errorMessage = normalizeErrorMessage(error);
-	const errorCode = getErrorCode(error);
-	const errorDigest = getErrorDigest(error);
+  //const router = useRouter();
+  const errorMessage = normalizeErrorMessage(error);
+  const errorCode = getErrorCode(error);
+  const errorDigest = getErrorDigest(error);
 
   return (
-    <div className="flex min-h-screen items-center justify-center ">
+    <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/20">
@@ -60,14 +60,14 @@ export function ErrorMessage({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-3">
-						{retry && (
-							<Button onClick={retry} className="w-full" variant="default">
-              	<RefreshCw className="mr-2 h-4 w-4" />
-              	Try Again
-            	</Button>
-						)}
-            
-{/*
+            {retry && (
+              <Button onClick={retry} className="w-full" variant="default">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+              </Button>
+            )}
+
+            {/*
             <Button asChild variant="outline" className="w-full">
               <Link href="/onboarding">
                 <User className="mr-2 h-4 w-4" />
@@ -75,20 +75,20 @@ export function ErrorMessage({
               </Link>
             </Button>
 */}
-						{showHomeButton && (
-							<Button asChild variant="ghost" className="w-full">
-              	<Link href="/dashboard">Back to Dashboard</Link>
-            	</Button>
-						)}
+            {showHomeButton && (
+              <Button asChild variant="ghost" className="w-full">
+                <Link href="/dashboard">Back to Dashboard</Link>
+              </Button>
+            )}
           </div>
 
           {isDevelopment() && showTechnicalDetails && (
-						<div className="mt-4 space-y-2">
-							<div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-4 space-y-2">
+              <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   <strong>Error:</strong> {errorMessage}
                 </p>
-								{errorCode && (
+                {errorCode && (
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     <strong>Code:</strong> {errorCode}
                   </p>
@@ -98,9 +98,9 @@ export function ErrorMessage({
                     <strong>Digest:</strong> {errorDigest}
                   </p>
                 )}
-							</div>
-						</div>
-					)}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

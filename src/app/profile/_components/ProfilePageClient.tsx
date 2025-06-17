@@ -33,13 +33,16 @@ export function ProfilePageClient() {
       {isFetching ? (
         <LoadingSpinner fullScreen text="Loading profile..." size="lg" />
       ) : !profile ? (
-        <ErrorMessage 
-        error={error}
-        title="Failed to Load Profile"
-        description={error?.message ?? "We couldn't load your profile information. This might be because your profile hasn't been set up yet or there was a network issue."}
-        retry={handleRetry}
-        showHomeButton={true}
-        showTechnicalDetails={true}
+        <ErrorMessage
+          error={error}
+          title="Failed to Load Profile"
+          description={
+            error?.message ??
+            "We couldn't load your profile information. This might be because your profile hasn't been set up yet or there was a network issue."
+          }
+          retry={handleRetry}
+          showHomeButton={true}
+          showTechnicalDetails={true}
         />
       ) : (
         <div className="container mx-auto px-4 py-8">

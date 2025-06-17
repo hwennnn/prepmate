@@ -91,13 +91,15 @@ export function OnboardingForm({
   });
 
   if (saveProfileMutation.error) {
-    return <ErrorMessage 
-    error={saveProfileMutation.error} 
-    title="Error saving profile!"
-    description={saveProfileMutation.error.message}
-    showHomeButton={true}
-    showTechnicalDetails={true}
-    />
+    return (
+      <ErrorMessage
+        error={saveProfileMutation.error}
+        title="Error saving profile!"
+        description={saveProfileMutation.error.message}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
+    );
   }
 
   const updateProfileMutation = api.onboarding.saveProfile.useMutation({
@@ -110,13 +112,15 @@ export function OnboardingForm({
   });
 
   if (updateProfileMutation.error) {
-    return <ErrorMessage 
-    error={updateProfileMutation.error} 
-    title="Error saving profile!"
-    description={updateProfileMutation.error.message}
-    showHomeButton={true}
-    showTechnicalDetails={true}
-    />
+    return (
+      <ErrorMessage
+        error={updateProfileMutation.error}
+        title="Error saving profile!"
+        description={updateProfileMutation.error.message}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
+    );
   }
 
   const onSubmit = async (data: OnboardingFormData) => {

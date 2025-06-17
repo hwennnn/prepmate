@@ -32,13 +32,15 @@ export function OnboardingPageClient() {
 
   // render error component if error
   if (completeOnboardingMutation.error) {
-    return <ErrorMessage 
-    error={completeOnboardingMutation.error} 
-    title="Error completing onboarding!"
-    description={completeOnboardingMutation.error.message}
-    showHomeButton={true}
-    showTechnicalDetails={true}
-    />
+    return (
+      <ErrorMessage
+        error={completeOnboardingMutation.error}
+        title="Error completing onboarding!"
+        description={completeOnboardingMutation.error.message}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
+    );
   }
 
   return (
