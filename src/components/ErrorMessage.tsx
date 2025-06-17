@@ -1,4 +1,4 @@
-import { AlertCircle, RefreshCw, } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import {
@@ -30,7 +30,7 @@ export function ErrorMessage({
   const errorMessage = normalizeErrorMessage(error);
 
   return (
-    <div className="flex min-h-screen items-center justify-center ">
+    <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/20">
@@ -49,7 +49,7 @@ export function ErrorMessage({
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
-{/*
+            {/*
             <Button asChild variant="outline" className="w-full">
               <Link href="/onboarding">
                 <User className="mr-2 h-4 w-4" />

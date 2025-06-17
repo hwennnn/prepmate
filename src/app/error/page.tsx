@@ -10,11 +10,12 @@ export default function ErrorPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const errorCode = (searchParams.get("code") as ErrorCode) ?? "INTERNAL_SERVER_ERROR";
-	const returnUrl = searchParams.get("returnUrl");
+  const errorCode =
+    (searchParams.get("code") as ErrorCode) ?? "INTERNAL_SERVER_ERROR";
+  const returnUrl = searchParams.get("returnUrl");
 
   const { title, message } = getErrorInfo(errorCode);
-	const error = new Error(message);
+  const error = new Error(message);
 
   const handleRetry = () => {
     if (returnUrl) {

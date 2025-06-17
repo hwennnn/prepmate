@@ -90,7 +90,7 @@ export function EditProfilePageClient() {
   }
 
   if (error) {
-    handleTRPCError(error, '/edit')
+    handleTRPCError(error, "/profile/edit");
     return null;
     /*
     return (
