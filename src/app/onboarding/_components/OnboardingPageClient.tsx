@@ -5,7 +5,7 @@ import { ThemeToggle } from "~/components/theme-toggle";
 import { Logo } from "~/components/ui/logo";
 import { api } from "~/trpc/react";
 import { OnboardingForm } from "../../_components/onboarding/OnboardingForm";
-import { handleTRPCError } from "~/lib/error-utils";
+import { ErrorMessage } from "~/components/error-message";
 
 export function OnboardingPageClient() {
   const utils = api.useUtils();
@@ -18,9 +18,7 @@ export function OnboardingPageClient() {
         router.push("/dashboard");
       },
       onError: (error) => {
-        //console.error("Failed to complete onboarding:", error);
-        handleTRPCError(error, "/onboarding");
-        //Passing '/onboarding' as returnUrl will cause retry to re-render the onboarding/current page
+        console.error("Failed to complete onboarding:", error);
       },
     });
 
@@ -31,6 +29,17 @@ export function OnboardingPageClient() {
       // Error is already handled in onError
     }
   };
+
+  // render error component if error
+  if (completeOnboardingMutation.error) {
+    return <ErrorMessage 
+    error={completeOnboardingMutation.error} 
+    title="Error completing onboarding!"
+    description={completeOnboardingMutation.error.message}
+    showHomeButton={true}
+    showTechnicalDetails={true}
+    />
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">

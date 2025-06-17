@@ -9,7 +9,8 @@ import { api } from "~/trpc/react";
 import type { Education, Experience, Project } from "@prisma/client";
 import { useMemo } from "react";
 import { OnboardingForm } from "~/app/_components/onboarding/OnboardingForm";
-import { handleTRPCError } from "~/lib/error-utils";
+
+import { ErrorMessage } from "~/components/error-message";
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -90,22 +91,15 @@ export function EditProfilePageClient() {
   }
 
   if (error) {
-    handleTRPCError(error, "/profile/edit");
-    return null;
-    /*
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">
-              Error Loading Profile
-            </h1>
-            <p className="mt-2 text-slate-600">{error.message}</p>
-          </div>
-        </div>
-      </div>
+      <ErrorMessage 
+        error={error}
+        title="Error Loading Profile"
+        description={error.message}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
     );
-    */
   }
 
   return (
