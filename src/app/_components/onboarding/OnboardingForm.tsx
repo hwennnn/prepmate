@@ -16,6 +16,7 @@ import { ProjectsForm } from "./ProjectsForm";
 import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
 import { completeProfileSchema, type OnboardingFormData } from "./types";
+import { ErrorMessage } from "~/components/error-message";
 
 const steps = [
   { id: "personal", label: "Personal", description: "Basic information" },
@@ -89,6 +90,18 @@ export function OnboardingForm({
     },
   });
 
+  if (saveProfileMutation.error) {
+    return (
+      <ErrorMessage
+        error={saveProfileMutation.error}
+        title="Error saving profile!"
+        description={saveProfileMutation.error.message}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
+    );
+  }
+
   const updateProfileMutation = api.onboarding.saveProfile.useMutation({
     onSuccess: () => {
       onComplete();
@@ -97,6 +110,18 @@ export function OnboardingForm({
       console.error("Failed to update profile:", error);
     },
   });
+
+  if (updateProfileMutation.error) {
+    return (
+      <ErrorMessage
+        error={updateProfileMutation.error}
+        title="Error saving profile!"
+        description={updateProfileMutation.error.message}
+        showHomeButton={true}
+        showTechnicalDetails={true}
+      />
+    );
+  }
 
   const onSubmit = async (data: OnboardingFormData) => {
     setIsSubmitting(true);
