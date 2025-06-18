@@ -39,7 +39,7 @@ export function ErrorMessage({
   showHomeButton = true,
   showTechnicalDetails = true,
 }: ErrorMessageProps) {
-  //const router = useRouter();
+
   const errorMessage = normalizeErrorMessage(error);
   const errorCode = getErrorCode(error);
   const errorDigest = getErrorDigest(error);
