@@ -66,6 +66,7 @@
     "@types/pdf-parse": "^1.1.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
     "husky": "^9.1.7",
@@ -83,7 +84,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs}": [
-      "next lint --fix",
+      "dotenv -e .env -- next lint --fix",
       "prettier --write"
     ],
     "*.{json,css,scss,md,mdx}": [
