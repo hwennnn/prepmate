@@ -66,6 +66,7 @@
     "@types/pdf-parse": "^1.1.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
     "husky": "^9.1.7",
@@ -74,6 +75,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.5.0",
+    "react-hot-toast": "^2.5.2",
     "tailwindcss": "^4.0.15",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
@@ -83,7 +85,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs}": [
-      "next lint --fix",
+      "dotenv -e .env -- next lint --fix --dir . src",
       "prettier --write"
     ],
     "*.{json,css,scss,md,mdx}": [

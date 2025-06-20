@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { api } from "~/trpc/react";
 import type { OnboardingFormData } from "./types";
+import toast, { Toaster } from "react-hot-toast";
 
 interface ResumeUploadProps {
   onDataParsed: (data: Partial<OnboardingFormData>) => void;
@@ -13,8 +14,19 @@ interface ResumeUploadProps {
 export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isParsing, setIsParsing] = useState(false);
-  const [parseError, setParseError] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
+
+  const notifyError = (err: string) => {
+    toast.error(err, {
+      duration: 4000,
+      position: "top-center",
+      style: {
+        padding: "0.5cm",
+      },
+    });
+  };
 
   const parseResumeMutation = api.onboarding.parseResume.useMutation({
     onSuccess: (data: Partial<OnboardingFormData>) => {
@@ -22,35 +34,85 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
       setIsParsing(false);
     },
     onError: (error: { message?: string }) => {
-      setParseError(error.message ?? "Failed to parse resume");
+      notifyError(error.message ?? "Failed to parse resume");
       setIsParsing(false);
     },
   });
 
+  const validateFile = (file: File): string | null => {
+    // Check file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      return "Please upload a PDF, DOC, DOCX, or TXT file";
+    }
+
+    // Check file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      return "File size must be less than 10MB";
+    }
+
+    return null;
+  };
+
+  const processFile = (file: File) => {
+    const error = validateFile(file);
+    if (error) {
+      notifyError(error);
+      return;
+    }
+
+    setUploadedFile(file);
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Check file type
-      const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "text/plain",
-      ];
+      processFile(file);
+    }
+  };
 
-      if (!allowedTypes.includes(file.type)) {
-        setParseError("Please upload a PDF, DOC, DOCX, or TXT file");
-        return;
+  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounter.current++;
+    if (event.dataTransfer.items && event.dataTransfer.items.length > 0) {
+      setIsDragOver(true);
+    }
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragOver(false);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setIsDragOver(false);
+    dragCounter.current = 0;
+
+    const files = event.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file instanceof File) {
+        processFile(file);
       }
-
-      // Check file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        setParseError("File size must be less than 10MB");
-        return;
-      }
-
-      setUploadedFile(file);
-      setParseError(null);
     }
   };
 
@@ -58,7 +120,6 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
     if (!uploadedFile) return;
 
     setIsParsing(true);
-    setParseError(null);
 
     try {
       // Convert file to base64
@@ -76,14 +137,13 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
       reader.readAsDataURL(uploadedFile);
     } catch (error) {
       console.error("🚀 ~ handleParseResume ~ error:", error);
-      setParseError("Failed to process file");
+      notifyError("Failed to process file");
       setIsParsing(false);
     }
   };
 
   const removeFile = () => {
     setUploadedFile(null);
-    setParseError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -111,11 +171,27 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
         <div className="space-y-4">
           <div
             onClick={handleUploadClick}
-            className="border-muted-foreground/25 hover:border-primary/50 cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors"
+            className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
+              isDragOver
+                ? "border-primary bg-muted"
+                : "border-muted-foreground/25 hover:border-primary/50"
+            }`}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
           >
-            <Upload className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+            {isDragOver ? (
+              <FileText className="text-primary mx-auto mb-4 h-12 w-12" />
+            ) : (
+              <Upload className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+            )}
             <div className="space-y-2">
-              <p className="text-sm font-medium">Click to upload your resume</p>
+              <p className="text-sm font-medium">
+                {isDragOver
+                  ? "Drop your file here"
+                  : "Click to upload your resume"}
+              </p>
               <p className="text-muted-foreground text-xs">
                 Supports PDF, DOC, DOCX, and TXT files (max 10MB)
               </p>
@@ -144,12 +220,6 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
               <X className="h-4 w-4" />
             </Button>
           </div>
-
-          {parseError && (
-            <div className="bg-destructive/10 border-destructive/20 rounded-lg border p-3">
-              <p className="text-destructive text-sm">{parseError}</p>
-            </div>
-          )}
 
           <div className="flex gap-3">
             <Button
@@ -182,6 +252,7 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
           Please review and correct any details after parsing.
         </p>
       </div>
+      <Toaster />
     </Card>
   );
 }
