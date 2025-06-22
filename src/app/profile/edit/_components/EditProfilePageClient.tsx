@@ -6,11 +6,11 @@ import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { Logo } from "~/components/ui/logo";
 import { api } from "~/trpc/react";
 
-import type { Education, Experience, Project } from "@prisma/client";
 import { useMemo } from "react";
 import { OnboardingForm } from "~/app/_components/onboarding/OnboardingForm";
 
 import { ErrorMessage } from "~/components/error-message";
+import { convertToFormData } from "~/lib/profile";
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -28,63 +28,10 @@ export function EditProfilePageClient() {
     router.push("/profile");
   };
 
-  const initialData = useMemo(() => {
-    if (!profileData) return undefined;
-
-    return {
-      personalDetails: {
-        firstName: profileData.firstName ?? "",
-        lastName: profileData.lastName ?? "",
-        email: profileData.email ?? "",
-        phoneNumber: profileData.phoneNumber ?? "",
-        website: profileData.website ?? undefined,
-        linkedinUrl: profileData.linkedinUrl ?? undefined,
-        githubUrl: profileData.githubUrl ?? undefined,
-      },
-      education:
-        profileData.education?.map((edu: Education) => ({
-          institution: edu.institution,
-          degree: edu.degree,
-          isAttending: edu.isAttending,
-          startDate: edu.startDate
-            ? new Date(edu.startDate)
-            : (undefined as unknown as Date),
-          endDate: edu.endDate
-            ? new Date(edu.endDate)
-            : (undefined as unknown as Date),
-          gpa: edu.gpa ?? undefined,
-          awards: edu.awards ?? undefined,
-          coursework: edu.coursework ?? undefined,
-        })) ?? [],
-      experience:
-        profileData.experience?.map((exp: Experience) => ({
-          company: exp.company,
-          jobTitle: exp.jobTitle,
-          location: exp.location,
-          isCurrentJob: exp.isCurrentJob,
-          startDate: exp.startDate
-            ? new Date(exp.startDate)
-            : (undefined as unknown as Date),
-          endDate: exp.endDate
-            ? new Date(exp.endDate)
-            : (undefined as unknown as Date),
-          achievements: exp.achievements ?? [],
-          technologies: exp.technologies ?? undefined,
-        })) ?? [],
-      projects:
-        profileData.projects?.map((proj: Project) => ({
-          name: proj.name,
-          description: proj.description,
-          url: proj.url ?? undefined,
-          achievements: proj.achievements ?? [],
-          technologies: proj.technologies ?? undefined,
-        })) ?? [],
-      skills: {
-        languages: profileData.skills?.languages ?? undefined,
-        frameworks: profileData.skills?.frameworks ?? undefined,
-      },
-    };
-  }, [profileData]);
+  const initialData = useMemo(
+    () => convertToFormData(profileData),
+    [profileData],
+  );
 
   if (isLoading) {
     return <LoadingSpinner fullScreen size="lg" />;
