@@ -78,6 +78,7 @@ export function ResumeBuilderClient() {
         variant="blurred"
         showDashboardLink
         showProfileLink
+        showSignOutButton
         isAuthenticated
       />
 

@@ -55,6 +55,7 @@ export function TemplateSelectionClient() {
         variant="blurred"
         showDashboardLink
         showProfileLink
+        showSignOutButton
         isAuthenticated
       />
 
