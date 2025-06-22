@@ -1,11 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ThemeToggle } from "~/components/theme-toggle";
-import { Logo } from "~/components/ui/logo";
+import { ErrorMessage } from "~/components/error-message";
+import { Header } from "~/components/layout";
 import { api } from "~/trpc/react";
 import { OnboardingForm } from "../../_components/onboarding/OnboardingForm";
-import { ErrorMessage } from "~/components/error-message";
 
 export function OnboardingPageClient() {
   const utils = api.useUtils();
@@ -45,18 +44,7 @@ export function OnboardingPageClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-      {/* Navigation */}
-      <nav className="border-b border-slate-200 bg-white/80 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center space-x-2">
-            <Logo size="md" variant="rounded-lg" />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-              PrepMate
-            </span>
-          </div>
-          <ThemeToggle />
-        </div>
-      </nav>
+      <Header variant="blurred" showSignOutButton disabledLogoNavigation />
 
       <div className="container mx-auto max-w-5xl px-4 py-8">
         <div className="mb-8 text-center">

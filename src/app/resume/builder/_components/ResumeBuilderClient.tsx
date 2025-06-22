@@ -1,16 +1,13 @@
 "use client";
 
-import { Download, Save, User } from "lucide-react";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
+import { Download, Save } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { ErrorMessage } from "~/components/error-message";
-import { ThemeToggle } from "~/components/theme-toggle";
+import { Header } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import { Logo } from "~/components/ui/logo";
 import { convertToFormData } from "~/lib/profile";
 import { api } from "~/trpc/react";
 import { ResumeForm } from "./ResumeForm";
@@ -77,41 +74,12 @@ export function ResumeBuilderClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-      {/* Navigation - Consistent with other pages */}
-      <nav className="border-b border-slate-200 bg-white/80 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center space-x-2">
-            <Logo size="md" variant="rounded-lg" />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-              PrepMate
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/profile">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </Link>
-            </Button>
-            <div className="flex items-center space-x-2">
-              <form
-                action={async () => {
-                  await signOut({ redirectTo: "/" });
-                }}
-              >
-                <Button variant="outline" size="sm" type="submit">
-                  Sign Out
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header
+        variant="blurred"
+        showDashboardLink
+        showProfileLink
+        isAuthenticated
+      />
 
       {/* Main Content - Split Layout with integrated title */}
       <div className="container mx-auto px-4 py-8">

@@ -3,11 +3,10 @@
 import { ArrowRight, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ThemeToggle } from "~/components/theme-toggle";
+import { Header } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Logo } from "~/components/ui/logo";
 
 // Mock templates for now - we'll replace this with real data later
 const templates = [
@@ -52,17 +51,12 @@ export function TemplateSelectionClient() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="border-b border-slate-200 bg-white/80 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center space-x-2">
-            <Logo size="md" variant="rounded-lg" />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-              PrepMate
-            </span>
-          </div>
-          <ThemeToggle />
-        </div>
-      </nav>
+      <Header
+        variant="blurred"
+        showDashboardLink
+        showProfileLink
+        isAuthenticated
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
