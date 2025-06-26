@@ -8,7 +8,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { ThemeToggle } from "~/components/theme-toggle";
+import { Header } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -24,27 +24,7 @@ export default async function Home() {
   return (
     <HydrateClient>
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-        {/* Navigation */}
-        <nav className="container mx-auto flex items-center justify-between px-4 py-6">
-          <div className="flex items-center space-x-2">
-            <Logo size="md" variant="rounded-lg" />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-              PrepMate
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <div className="flex items-center space-x-2">
-              <Button
-                asChild
-                className="shadow-md transition-shadow hover:shadow-lg"
-              >
-                <Link href="/auth/signin">Get Started</Link>
-              </Button>
-            </div>
-          </div>
-        </nav>
+        <Header showSignInButton />
 
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-20">

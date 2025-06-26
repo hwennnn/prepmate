@@ -3,14 +3,14 @@
 import { EducationCard } from "~/app/profile/_components/EducationCard";
 import { ExperienceCard } from "~/app/profile/_components/ExperienceCard";
 import { PersonalInfoCard } from "~/app/profile/_components/PersonalInfoCard";
-import { ProfileNavigation } from "~/app/profile/_components/ProfileNavigation";
+import { ProfileHeader } from "~/app/profile/_components/ProfileHeader";
 import { ProjectsCard } from "~/app/profile/_components/ProjectsCard";
 import { SkillsCard } from "~/app/profile/_components/SkillsCard";
 
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
-import { api } from "~/trpc/react";
 import { ErrorMessage } from "~/components/error-message";
+import { api } from "~/trpc/react";
 
 export function ProfilePageClient() {
   const {
@@ -48,7 +48,7 @@ export function ProfilePageClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-      <ProfileNavigation />
+      <ProfileHeader />
       <div className="container mx-auto px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Personal Information Sidebar */}
