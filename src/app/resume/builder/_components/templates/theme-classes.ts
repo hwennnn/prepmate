@@ -113,11 +113,11 @@ const modernClasses: ThemeClasses = {
   header: {
     wrapper: "mb-6 text-center border-gray-300 pb-4",
     background: "",
-    name: "text-[20px] font-bold text-gray-900 mb-1 tracking-tight uppercase",
+    name: "text-[20px] font-bold text-gray-900 mb-2 tracking-tight uppercase",
     contact: {
       container:
-        "flex justify-center items-center gap-3 text-[9px] text-gray-700",
-      item: "flex items-center",
+        "flex justify-center items-center gap-2 text-[9px] text-gray-700",
+      item: "flex items-center gap-1",
       separator: "text-gray-400 mx-1",
       link: "text-blue-600 hover:underline font-medium",
     },

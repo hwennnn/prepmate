@@ -22,17 +22,13 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
     <>
       {profile && (
         <div className={classes.header.wrapper}>
-          {" "}
           <h1 className={classes.header.name}>
-            {" "}
             {profile.personalDetails.firstName}{" "}
             {profile.personalDetails.lastName}
           </h1>
           <div className={classes.header.contact.container}>
-            {" "}
             {profile.personalDetails.phoneNumber && (
               <div className={classes.header.contact.item}>
-                {" "}
                 <span>
                   <a
                     href={`tel:${profile.personalDetails.phoneNumber}`}
@@ -45,7 +41,6 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
             )}
             {profile.personalDetails.website && (
               <div className={classes.header.contact.item}>
-                {" "}
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
@@ -65,7 +60,6 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
             )}
             {profile.personalDetails.email && (
               <div className={classes.header.contact.item}>
-                {" "}
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
@@ -79,7 +73,6 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
             )}
             {profile.personalDetails.linkedinUrl && (
               <div className={classes.header.contact.item}>
-                {" "}
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
@@ -95,7 +88,6 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
             )}
             {profile.personalDetails.githubUrl && (
               <div className={classes.header.contact.item}>
-                {" "}
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
