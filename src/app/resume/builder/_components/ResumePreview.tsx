@@ -5,7 +5,6 @@ import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 //import { ClassicTemplate, CreativeTemplate, ModernTemplate } from "./templates";
 import UniversalTemplate from "./templates/UniversalTemplate";
 
-
 interface ResumePreviewProps {
   formData: OnboardingFormData;
   templateId: string;
