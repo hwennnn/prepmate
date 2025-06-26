@@ -1,11 +1,11 @@
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
 import {
-	ResumeHeader,
-	EducationSection,
-	ExperienceSection,
-	ProjectSection,
-	SkillsSection,
+  ResumeHeader,
+  EducationSection,
+  ExperienceSection,
+  ProjectSection,
+  SkillsSection,
 } from "~/app/resume/builder/_components/sections";
 
 interface UniversalTemplateProps {
@@ -13,7 +13,10 @@ interface UniversalTemplateProps {
   templateId: string;
 }
 
-export default function UniversalTemplate({ data, templateId }: UniversalTemplateProps) {
+export default function UniversalTemplate({
+  data,
+  templateId,
+}: UniversalTemplateProps) {
   const classes = getThemeClasses(templateId);
 
   return (

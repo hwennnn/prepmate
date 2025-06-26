@@ -53,7 +53,8 @@ interface ThemeClasses {
 // Classic: Clean, Traditional, ATS-friendly
 
 const classicClasses: ThemeClasses = {
-  container: "min-h-full px-12 py-8 font-serif text-[11px] text-black leading-tight",
+  container:
+    "min-h-full px-12 py-8 font-serif text-[11px] text-black leading-tight",
   header: {
     wrapper: "my-4 text-center",
     background: "",
@@ -84,7 +85,8 @@ const classicClasses: ThemeClasses = {
     date: "text-black font-normal",
     location: "text-black",
     achievement: "text-[11px] text-black leading-tight mt-1",
-    achievementList: "list-disc list-outside ms-6 text-[11px] text-black leading-tight space-y-0.5", // "list-disc list-outside ms-6 text-xs text-black "
+    achievementList:
+      "list-disc list-outside ms-6 text-[11px] text-black leading-tight space-y-0.5", // "list-disc list-outside ms-6 text-xs text-black "
   },
   projects: {
     wrapper: "mb-4 break-inside-avoid",
@@ -93,13 +95,14 @@ const classicClasses: ThemeClasses = {
     description: "text-black inline",
     technology: "text-black inline font-medium",
     achievement: "text-[11px] text-black leading-tight",
-    achievementList: "list-disc list-outside ml-4 text-[11px] text-black leading-tight space-y-0.5",
+    achievementList:
+      "list-disc list-outside ml-4 text-[11px] text-black leading-tight space-y-0.5",
   },
   skills: {
     wrapper: "mb-4 break-inside-avoid",
     container: "",
     category: "font-medium text-black inline min-w-32",
-		items: "text-black inline",
+    items: "text-black inline",
   },
 };
 
@@ -272,13 +275,15 @@ const classicClasses: ThemeClasses = {
 
 // Modern Professional - Clean, Professional, Tech-focused
 const modernClasses: ThemeClasses = {
-  container: "min-h-full px-16 py-12 font-sans text-[10px] text-gray-900 leading-[1.3] max-w-[8.5in] mx-auto",
+  container:
+    "min-h-full px-16 py-12 font-sans text-[10px] text-gray-900 leading-[1.3] max-w-[8.5in] mx-auto",
   header: {
     wrapper: "mb-6 text-center border-gray-300 pb-4",
     background: "",
     name: "text-[20px] font-bold text-gray-900 mb-1 tracking-tight uppercase",
     contact: {
-      container: "flex justify-center items-center gap-3 text-[9px] text-gray-700",
+      container:
+        "flex justify-center items-center gap-3 text-[9px] text-gray-700",
       item: "flex items-center",
       separator: "text-gray-400 mx-1",
       link: "text-blue-600 hover:underline font-medium",
@@ -286,7 +291,8 @@ const modernClasses: ThemeClasses = {
   },
   section: {
     wrapper: "mb-4 break-inside-avoid",
-    title: "mb-2 text-[10px] font-bold text-gray-900 uppercase tracking-[0.5px] border-b border-gray-900 pb-0.5",
+    title:
+      "mb-2 text-[10px] font-bold text-gray-900 uppercase tracking-[0.5px] border-b border-gray-900 pb-0.5",
     titleSeparator: "",
   },
   education: {
@@ -303,16 +309,18 @@ const modernClasses: ThemeClasses = {
     date: "text-gray-700 text-[10px] font-medium",
     location: "text-gray-700 text-[10px]",
     achievement: "text-[9px] text-gray-800 leading-[1.4] mt-0.5",
-    achievementList: "list-disc list-outside ml-4 text-[9px] text-gray-800 leading-[1.4] space-y-0.5 mt-1",
+    achievementList:
+      "list-disc list-outside ml-4 text-[9px] text-gray-800 leading-[1.4] space-y-0.5 mt-1",
   },
-	projects: {
+  projects: {
     wrapper: "mb-4 break-inside-avoid",
     item: "mb-2 break-inside-avoid",
     name: "font-bold text-gray-900 inline text-[10px]",
     description: "text-gray-800 inline text-[10px] ml-1",
     technology: "text-blue-600 inline font-medium text-[10px]",
     achievement: "text-[9px] text-gray-800 leading-[1.4]",
-    achievementList: "list-disc list-outside ml-4 text-[9px] text-gray-800 leading-[1.4] space-y-0.5 mt-1",
+    achievementList:
+      "list-disc list-outside ml-4 text-[9px] text-gray-800 leading-[1.4] space-y-0.5 mt-1",
   },
   skills: {
     wrapper: "mb-4 break-inside-avoid",
@@ -322,16 +330,18 @@ const modernClasses: ThemeClasses = {
   },
 };
 
-
 // Creative Bold - Uniform pastel design with consistent styling
 const creativeClasses: ThemeClasses = {
-  container: "min-h-full px-10 py-8 font-sans text-[10px] text-gray-900 bg-white max-w-[8.5in] mx-auto",
+  container:
+    "min-h-full px-10 py-8 font-sans text-[10px] text-gray-900 bg-white max-w-[8.5in] mx-auto",
   header: {
-    wrapper: "mb-6 text-center bg-gradient-to-r from-slate-500 to-slate-600 text-white p-6 rounded-lg shadow-sm",
+    wrapper:
+      "mb-6 text-center bg-gradient-to-r from-slate-500 to-slate-600 text-white p-6 rounded-lg shadow-sm",
     background: "bg-gradient-to-r from-slate-500 to-slate-600",
     name: "text-[28px] font-bold text-white mb-2 tracking-tight",
     contact: {
-      container: "flex justify-center items-center flex-wrap gap-2 text-[10px] text-slate-100",
+      container:
+        "flex justify-center items-center flex-wrap gap-2 text-[10px] text-slate-100",
       item: "flex items-center gap-1 hover:text-white transition-colors",
       separator: "text-slate-200 mx-1",
       link: "text-white hover:text-slate-100 underline decoration-1 underline-offset-2",
@@ -339,8 +349,10 @@ const creativeClasses: ThemeClasses = {
   },
   section: {
     wrapper: "mb- break-inside-avoid",
-    title: "text-[12px] font-bold text-slate-700 uppercase tracking-wide flex items-center relative pb-2",
-    titleSeparator: "absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-400 to-transparent",
+    title:
+      "text-[12px] font-bold text-slate-700 uppercase tracking-wide flex items-center relative pb-2",
+    titleSeparator:
+      "absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-400 to-transparent",
     icon: "mr-2 text-[14px]",
   },
   education: {
@@ -357,7 +369,8 @@ const creativeClasses: ThemeClasses = {
     date: "text-gray-600 text-[10px] font-medium",
     location: "text-gray-600 text-[10px]",
     achievement: "text-[10px] text-gray-800 leading-relaxed mt-2",
-    achievementList: "list-disc list-outside ml-4 text-[10px] text-gray-800 leading-relaxed space-y-1 mt-2",
+    achievementList:
+      "list-disc list-outside ml-4 text-[10px] text-gray-800 leading-relaxed space-y-1 mt-2",
   },
   projects: {
     wrapper: "mb-6 break-inside-avoid",
@@ -366,7 +379,8 @@ const creativeClasses: ThemeClasses = {
     description: "text-gray-800 inline text-[10px] ml-2",
     technology: "text-slate-600 inline font-semibold text-[10px]",
     achievement: "text-[10px] text-gray-800 leading-relaxed",
-    achievementList: "list-disc list-outside ml-4 text-[10px] text-gray-800 leading-relaxed space-y-1 mt-2",
+    achievementList:
+      "list-disc list-outside ml-4 text-[10px] text-gray-800 leading-relaxed space-y-1 mt-2",
   },
   skills: {
     wrapper: "mb-6 break-inside-avoid",
@@ -381,7 +395,6 @@ const themeClassMap: Record<string, ThemeClasses> = {
   creative: creativeClasses,
   modern: modernClasses,
 };
-
 
 export const getThemeClasses = (templateId: string): ThemeClasses => {
   return themeClassMap[templateId] ?? classicClasses;

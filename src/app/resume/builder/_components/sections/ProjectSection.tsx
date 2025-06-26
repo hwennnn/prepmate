@@ -4,20 +4,20 @@ import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
 
 interface ProjectSectionProps {
-	projects: OnboardingFormData["projects"],
-  templateId: string,
+  projects: OnboardingFormData["projects"];
+  templateId: string;
 }
 
-export function ProjectSection({ projects, templateId } : ProjectSectionProps) {
-	const classes = getThemeClasses(templateId);
-  
-  if (!projects || projects.length === 0) {
-		return null;
-	}
+export function ProjectSection({ projects, templateId }: ProjectSectionProps) {
+  const classes = getThemeClasses(templateId);
 
-	return (
-		<div className={classes.section.wrapper} >
-      <ResumeSectionTitle title="Projects" templateId={templateId}/>
+  if (!projects || projects.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={classes.section.wrapper}>
+      <ResumeSectionTitle title="Projects" templateId={templateId} />
       {projects.map((project, index) => (
         <div key={index} className={classes.projects.item}>
           <div className="mb-1">
@@ -31,15 +31,23 @@ export function ProjectSection({ projects, templateId } : ProjectSectionProps) {
                 >
                   {project.name}
                 </a>
-              ) : project.name}
+              ) : (
+                project.name
+              )}
             </span>
             {project.description && (
-              <span className={classes.projects.description}> | {project.description}</span>
+              <span className={classes.projects.description}>
+                {" "}
+                | {project.description}
+              </span>
             )}
             {project.technologies && (
-              <span className={classes.projects.technology}> | {project.technologies}</span>
+              <span className={classes.projects.technology}>
+                {" "}
+                | {project.technologies}
+              </span>
             )}
-          {/*
+            {/*
             <p className="font-semibold text-gray-800 inline">
               {project.url ? (
                 <a
@@ -77,5 +85,5 @@ export function ProjectSection({ projects, templateId } : ProjectSectionProps) {
         </div>
       ))}
     </div>
-	)
+  );
 }

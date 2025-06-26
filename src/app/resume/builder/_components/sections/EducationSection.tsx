@@ -9,10 +9,12 @@ interface EducationSectionProps {
   templateId: string;
 }
 
-
-export function EducationSection({ education, templateId }: EducationSectionProps) {
+export function EducationSection({
+  education,
+  templateId,
+}: EducationSectionProps) {
   const classes = getThemeClasses(templateId);
-  
+
   if (!education || education.length === 0) {
     return null;
   }
@@ -24,19 +26,23 @@ export function EducationSection({ education, templateId }: EducationSectionProp
 
   return (
     <div className={classes.section.wrapper}>
-      <ResumeSectionTitle title="Education" templateId={templateId}/>
+      <ResumeSectionTitle title="Education" templateId={templateId} />
       {sortedEducation.map((edu, index) => (
         <div key={index} className={classes.education.item}>
-          <div className="flex justify-between mb-1">
-            <span className={classes.education.institution}>{edu.institution}</span>
+          <div className="mb-1 flex justify-between">
+            <span className={classes.education.institution}>
+              {edu.institution}
+            </span>
             <span className={classes.education.date}>
-                {formatDateRange(edu.startDate, edu.endDate, edu.isAttending)}
+              {formatDateRange(edu.startDate, edu.endDate, edu.isAttending)}
             </span>
           </div>
           <div className="flex justify-between">
             <span className={classes.education.degree}>{edu.degree}</span>
             {/* TODO: ADD A THRESHOLD TO INCLUDE / OPTIONAL */}
-            {edu.gpa && <span className={classes.education.gpa}>GPA: {edu.gpa}</span>}
+            {edu.gpa && (
+              <span className={classes.education.gpa}>GPA: {edu.gpa}</span>
+            )}
           </div>
           {/* TODO: MAKE THIS AN OPTIONAL FIELD */}
           {/*

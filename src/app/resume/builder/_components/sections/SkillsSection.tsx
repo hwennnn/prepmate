@@ -8,28 +8,37 @@ interface TechnicalSkillsSectionProps {
   templateId: string;
 }
 
-export function SkillsSection({ skills, templateId }: TechnicalSkillsSectionProps) {
+export function SkillsSection({
+  skills,
+  templateId,
+}: TechnicalSkillsSectionProps) {
   const classes = getThemeClasses(templateId);
 
   if (!skills || (!skills.languages && !skills.frameworks)) {
     return null;
   }
 
-	const skillCategories = [];
-  
+  const skillCategories = [];
+
   if (skills.languages) {
     skillCategories.push({
-      category: 'Languages',
+      category: "Languages",
       //items: skills.languages.split(',').map(item => item.trim())
-      items: skills.languages.split(',').map(item => item.trim()).join(', ')
+      items: skills.languages
+        .split(",")
+        .map((item) => item.trim())
+        .join(", "),
     });
   }
-  
+
   if (skills.frameworks) {
     skillCategories.push({
-      category: 'Frameworks & Tools',
+      category: "Frameworks & Tools",
       //items: skills.frameworks.split(',').map(item => item.trim())
-      items: skills.frameworks.split(',').map(item => item.trim()).join(', ')
+      items: skills.frameworks
+        .split(",")
+        .map((item) => item.trim())
+        .join(", "),
     });
   }
 
@@ -39,7 +48,9 @@ export function SkillsSection({ skills, templateId }: TechnicalSkillsSectionProp
       <div className={classes.skills.container}>
         {skillCategories.map((skillCategory, index) => (
           <div key={index} className="flex">
-            <span className={classes.skills.category}>{skillCategory.category}: </span>
+            <span className={classes.skills.category}>
+              {skillCategory.category}:{" "}
+            </span>
             <span className={classes.skills.items}>{skillCategory.items}</span>
           </div>
         ))}
@@ -54,4 +65,4 @@ export function SkillsSection({ skills, templateId }: TechnicalSkillsSectionProp
       */}
     </div>
   );
-};
+}
