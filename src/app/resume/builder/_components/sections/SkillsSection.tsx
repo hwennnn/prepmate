@@ -23,7 +23,6 @@ export function SkillsSection({
   if (skills.languages) {
     skillCategories.push({
       category: "Languages",
-      //items: skills.languages.split(',').map(item => item.trim())
       items: skills.languages
         .split(",")
         .map((item) => item.trim())
@@ -34,7 +33,6 @@ export function SkillsSection({
   if (skills.frameworks) {
     skillCategories.push({
       category: "Frameworks & Tools",
-      //items: skills.frameworks.split(',').map(item => item.trim())
       items: skills.frameworks
         .split(",")
         .map((item) => item.trim())
@@ -55,14 +53,6 @@ export function SkillsSection({
           </div>
         ))}
       </div>
-      {/*skills.languages && skills.frameworks && 
-        skillCategories.map((skillCategory, index) => (
-          <div key={index} className="flex">
-            <span className="font-medium text-gray-800 min-w-32">{skillCategory.category}:</span>
-            <span className="text-gray-700">{skillCategory.items.join(', ')}</span>
-          </div>
-        ))
-      */}
     </div>
   );
 }

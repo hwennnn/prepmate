@@ -44,15 +44,6 @@ export function EducationSection({
               <span className={classes.education.gpa}>GPA: {edu.gpa}</span>
             )}
           </div>
-          {/* TODO: MAKE THIS AN OPTIONAL FIELD */}
-          {/*
-          <div>
-            {edu.awards?.split(', ').map((award, index) => (
-              <span key={index} className="font-medium">• {award}</span>
-            ))}
-          </div>
-          ... 
-          */}
         </div>
       ))}
     </div>
