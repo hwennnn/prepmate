@@ -45,28 +45,6 @@ export function ProjectSection({ projects, templateId }: ProjectSectionProps) {
                 | {project.technologies}
               </span>
             )}
-            {/*
-            <p className="font-semibold text-gray-800 inline">
-              {project.url ? (
-                <a
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline"
-                >
-                  {project.name}
-                </a>
-              ) :
-              project.name}
-            </p>
-            {project.description && (
-              <p className="text-gray-800 inline"> | {project.description}</p>
-            )}
-            {project.technologies && (
-              <span className={classes.projects.technology}>
-                | {project.technologies}
-              </span>
-            )}
           </div>
           {/* TODO: MAKE THIS AN OPTIONAL FIELD */}
           {project.achievements && project.achievements.length > 0 && (
