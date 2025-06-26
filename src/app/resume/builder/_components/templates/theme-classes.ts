@@ -118,6 +118,7 @@ const modernClasses: ThemeClasses = {
       container:
         "flex justify-center items-center gap-2 text-[9px] text-gray-700",
       item: "flex items-center gap-1",
+
       separator: "text-gray-400 mx-1",
       link: "text-blue-600 hover:underline font-medium",
     },

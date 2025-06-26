@@ -37,13 +37,33 @@ export function ProjectSection({ projects, templateId }: ProjectSectionProps) {
             </span>
             {project.description && (
               <span className={classes.projects.description}>
-                {" "}
                 | {project.description}
               </span>
             )}
             {project.technologies && (
               <span className={classes.projects.technology}>
-                {" "}
+                | {project.technologies}
+              </span>
+            )}
+            {/*
+            <p className="font-semibold text-gray-800 inline">
+              {project.url ? (
+                <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+                >
+                  {project.name}
+                </a>
+              ) :
+              project.name}
+            </p>
+            {project.description && (
+              <p className="text-gray-800 inline"> | {project.description}</p>
+            )}
+            {project.technologies && (
+              <span className={classes.projects.technology}>
                 | {project.technologies}
               </span>
             )}

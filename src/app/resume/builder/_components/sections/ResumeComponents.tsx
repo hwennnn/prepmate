@@ -115,5 +115,6 @@ export function ResumeSectionTitle({
 }: ResumeSectionTitleProps) {
   const classes = getThemeClasses(templateId);
 
+
   return <h2 className={classes.section.title}> {title}</h2>;
 }
