@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Header } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { TemplatePreview } from "~/app/resume/_components/TemplatePreview";
 
 // Mock templates for now - we'll replace this with real data later
 const templates = [
@@ -76,10 +77,10 @@ export function TemplateSelectionClient() {
             {templates.map((template) => (
               <Card
                 key={template.id}
-                className={`flex h-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg ${
+                className={`flex h-full cursor-pointer flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
                   selectedTemplateId === template.id
-                    ? "shadow-lg ring-2 ring-blue-500"
-                    : ""
+                    ? "scale-[1.02] shadow-xl ring-2 ring-blue-500"
+                    : "hover:shadow-lg"
                 }`}
                 onClick={() => setSelectedTemplateId(template.id)}
               >
@@ -96,12 +97,7 @@ export function TemplateSelectionClient() {
                 <CardContent className="flex flex-grow flex-col justify-between space-y-4">
                   <div className="space-y-4">
                     {/* Template Preview */}
-                    <div className="aspect-[8.5/11] rounded-lg border bg-white p-4 shadow-sm">
-                      <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400">
-                        <FileText className="h-16 w-16" />
-                      </div>
-                    </div>
-
+                    <TemplatePreview templateId={template.id} />
                     <p className="text-sm text-slate-600 dark:text-slate-400">
                       {template.description}
                     </p>

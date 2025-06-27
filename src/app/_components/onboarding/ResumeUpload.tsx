@@ -19,6 +19,7 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
   const dragCounter = useRef(0);
 
   const notifyError = (err: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     toast.error(err, {
       duration: 4000,
       position: "top-center",
