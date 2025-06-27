@@ -77,9 +77,9 @@ export function TemplateSelectionClient() {
             {templates.map((template) => (
               <Card
                 key={template.id}
-                className={`flex h-full cursor-pointer flex-col transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${
+                className={`flex h-full cursor-pointer flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
                   selectedTemplateId === template.id
-                    ? "shadow-xl ring-2 ring-blue-500 scale-[1.02]"
+                    ? "scale-[1.02] shadow-xl ring-2 ring-blue-500"
                     : "hover:shadow-lg"
                 }`}
                 onClick={() => setSelectedTemplateId(template.id)}
