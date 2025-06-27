@@ -23,6 +23,8 @@ interface ThemeClasses {
     degree: string;
     date: string;
     gpa: string;
+    awards: string;
+    coursework: string;
   };
   experience: {
     item: string;
@@ -54,7 +56,7 @@ interface ThemeClasses {
 
 const classicClasses: ThemeClasses = {
   container:
-    "min-h-full px-12 py-8 font-serif text-[11px] text-black leading-tight",
+    "min-h-full px-8 py-4 font-serif text-[11px] text-black leading-tight",
   header: {
     wrapper: "my-4 text-center",
     background: "",
@@ -63,33 +65,35 @@ const classicClasses: ThemeClasses = {
       container: "flex justify-center gap-2 mb-3",
       item: "flex items-center",
       separator: "pr-2 text-black",
-      link: "hover:underline",
+      link: "text-blue-700 hover:underline",
     },
   },
   section: {
-    wrapper: "mb-6 break-inside-avoid", // mb-4 break-inside-avoid
+    wrapper: "mb-3 break-inside-avoid", // mb-4 break-inside-avoid
     title: "mb-2 border-b border-black text-lg font-bold text-black uppercase",
     titleSeparator: "", // not used
   },
   education: {
-    item: "mb-3 break-inside-avoid", //"mb-2 break-inside-avoid"
+    item: "mb-2 break-inside-avoid", //"mb-2 break-inside-avoid"
     institution: "font-bold text-black",
     degree: "text-black",
     date: "text-black font-normal",
     gpa: "text-black",
+    awards: "text-[11px] text-black font-semibold mt-1",
+    coursework: "text-[11px] text-black font-semibold mt-1",
   },
   experience: {
-    item: "mb-5 break-inside-avoid", //"mb-4 break-inside-avoid"
+    item: "mb-3 break-inside-avoid", //"mb-4 break-inside-avoid"
     company: "font-bold text-black",
     title: "text-black italic",
     date: "text-black font-normal",
     location: "text-black",
     achievement: "text-[11px] text-black leading-tight mt-1",
     achievementList:
-      "list-disc list-outside ms-6 text-[11px] text-black leading-tight space-y-0.5", // "list-disc list-outside ms-6 text-xs text-black "
+      "list-disc list-outside ml-4 text-[11px] text-black leading-tight space-y-0.5", // "list-disc list-outside ms-6 text-xs text-black "
   },
   projects: {
-    wrapper: "mb-4 break-inside-avoid",
+    wrapper: "mb-3 break-inside-avoid",
     item: "mb-2 break-inside-avoid", // "mb-2 break-inside-avoid text-black"
     name: "font-bold text-black inline",
     description: "text-black inline",
@@ -99,9 +103,9 @@ const classicClasses: ThemeClasses = {
       "list-disc list-outside ml-4 text-[11px] text-black leading-tight space-y-0.5",
   },
   skills: {
-    wrapper: "mb-4 break-inside-avoid",
+    wrapper: "mb-3 break-inside-avoid",
     container: "",
-    category: "font-medium text-black inline min-w-32",
+    category: "font-bold text-black inline min-w-32",
     items: "text-black inline",
   },
 };
@@ -109,7 +113,7 @@ const classicClasses: ThemeClasses = {
 // Modern Professional - Clean, Professional, Tech-focused
 const modernClasses: ThemeClasses = {
   container:
-    "min-h-full px-16 py-12 font-sans text-[10px] text-gray-900 leading-[1.3] max-w-[8.5in] mx-auto",
+    "min-h-full px-8 py-4 font-sans text-[10px] text-gray-900 leading-[1.3] max-w-[8.5in] mx-auto",
   header: {
     wrapper: "mb-6 text-center border-gray-300 pb-4",
     background: "",
@@ -118,7 +122,6 @@ const modernClasses: ThemeClasses = {
       container:
         "flex justify-center items-center gap-2 text-[9px] text-gray-700",
       item: "flex items-center gap-1",
-
       separator: "text-gray-400 mx-1",
       link: "text-blue-600 hover:underline font-medium",
     },
@@ -135,6 +138,8 @@ const modernClasses: ThemeClasses = {
     degree: "text-gray-800 text-[10px]",
     date: "text-gray-700 text-[10px] font-medium",
     gpa: "text-gray-700 text-[10px]",
+    awards: "text-[9px] text-gray-600 mt-1 font-semibold",
+    coursework: "text-[9px] text-gray-600 mt-1 font-semibold",
   },
   experience: {
     item: "mb-3 break-inside-avoid",
@@ -195,6 +200,10 @@ const creativeClasses: ThemeClasses = {
     degree: "text-gray-800 text-[10px] mt-0.5",
     date: "text-gray-600 text-[10px] font-medium",
     gpa: "text-gray-700 font-medium text-[10px]",
+    awards:
+      "text-[10px] text-rose-700 mt-2 p-2 bg-rose-100 rounded font-semibold",
+    coursework:
+      "text-[10px] text-gray-700 mt-2 p-2 bg-gray-50 rounded font-semibold",
   },
   experience: {
     item: "mb-3 p-4 break-inside-avoid bg-blue-50 border-l-4 border-blue-300 rounded-r-lg shadow-sm",

@@ -1,6 +1,6 @@
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
-import React from "react";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
+import { formatUrlProtocol } from "~/lib/utils";
 
 interface ResumeHeaderProps {
   profile?: OnboardingFormData;
@@ -29,14 +29,7 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
           <div className={classes.header.contact.container}>
             {profile.personalDetails.phoneNumber && (
               <div className={classes.header.contact.item}>
-                <span>
-                  <a
-                    href={`tel:${profile.personalDetails.phoneNumber}`}
-                    className={classes.header.contact.link}
-                  >
-                    {profile.personalDetails.phoneNumber}
-                  </a>
-                </span>
+                <span>{profile.personalDetails.phoneNumber}</span>
               </div>
             )}
             {profile.personalDetails.website && (
@@ -44,11 +37,7 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
-                    href={
-                      profile.personalDetails.website.startsWith("http")
-                        ? profile.personalDetails.website
-                        : `https://${profile.personalDetails.website}`
-                    }
+                    href={formatUrlProtocol(profile.personalDetails.website)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={classes.header.contact.link}
@@ -76,7 +65,9 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
-                    href={profile.personalDetails.linkedinUrl}
+                    href={formatUrlProtocol(
+                      profile.personalDetails.linkedinUrl,
+                    )}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={classes.header.contact.link}
@@ -91,7 +82,7 @@ export function ResumeHeader({ profile, templateId }: ResumeHeaderProps) {
                 <span className={classes.header.contact.separator}>|</span>
                 <span>
                   <a
-                    href={profile.personalDetails.githubUrl}
+                    href={formatUrlProtocol(profile.personalDetails.githubUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={classes.header.contact.link}

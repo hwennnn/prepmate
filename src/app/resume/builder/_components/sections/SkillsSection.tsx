@@ -1,7 +1,6 @@
-import React from "react";
-import { ResumeSectionTitle } from "./ResumeComponents";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
+import { ResumeSectionTitle } from "./ResumeComponents";
 
 interface TechnicalSkillsSectionProps {
   skills?: OnboardingFormData["skills"];

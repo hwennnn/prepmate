@@ -1,7 +1,7 @@
-import React from "react";
-import { ResumeSectionTitle } from "./ResumeComponents";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
+import { formatUrlProtocol } from "~/lib/utils";
+import { ResumeSectionTitle } from "./ResumeComponents";
 
 interface ProjectSectionProps {
   projects: OnboardingFormData["projects"];
@@ -24,10 +24,10 @@ export function ProjectSection({ projects, templateId }: ProjectSectionProps) {
             <span className={classes.projects.name}>
               {project.url ? (
                 <a
-                  href={project.url}
+                  href={formatUrlProtocol(project.url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:no-underline"
+                  className="text-blue-700 underline hover:no-underline"
                 >
                   {project.name}
                 </a>
@@ -37,21 +37,25 @@ export function ProjectSection({ projects, templateId }: ProjectSectionProps) {
             </span>
             {project.description && (
               <span className={classes.projects.description}>
+                {" "}
                 | {project.description}
               </span>
             )}
-            {project.technologies && (
-              <span className={classes.projects.technology}>
-                | {project.technologies}
-              </span>
-            )}
           </div>
-          {/* TODO: MAKE THIS AN OPTIONAL FIELD */}
-          {project.achievements && project.achievements.length > 0 && (
+          {((project.achievements && project.achievements.length > 0) ??
+            project.technologies) && (
             <ul className={classes.projects.achievementList}>
-              {project.achievements.map((achievement, achIndex) => (
+              {project.achievements?.map((achievement, achIndex) => (
                 <li key={achIndex}>{achievement}</li>
               ))}
+              {project.technologies && (
+                <li>
+                  <span className={classes.projects.technology}>
+                    <span className="font-semibold">Technologies: </span>
+                    {project.technologies}
+                  </span>
+                </li>
+              )}
             </ul>
           )}
         </div>

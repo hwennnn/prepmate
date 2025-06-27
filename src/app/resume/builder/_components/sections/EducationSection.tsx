@@ -1,8 +1,7 @@
-import React from "react";
-import { ResumeSectionTitle } from "./ResumeComponents";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
-import { formatDateRange } from "~/lib/date";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
+import { formatDateRange } from "~/lib/date";
+import { ResumeSectionTitle } from "./ResumeComponents";
 
 interface EducationSectionProps {
   education: OnboardingFormData["education"];
@@ -44,6 +43,19 @@ export function EducationSection({
               <span className={classes.education.gpa}>GPA: {edu.gpa}</span>
             )}
           </div>
+
+          {edu.awards && (
+            <div className={classes.education.awards}>
+              Awards: <span className="font-normal">{edu.awards}</span>
+            </div>
+          )}
+
+          {edu.coursework && (
+            <div className={classes.education.coursework}>
+              Relevant Coursework:{" "}
+              <span className="font-normal">{edu.coursework}</span>
+            </div>
+          )}
         </div>
       ))}
     </div>

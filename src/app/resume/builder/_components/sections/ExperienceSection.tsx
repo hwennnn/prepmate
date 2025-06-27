@@ -1,8 +1,7 @@
-import React from "react";
-import { ResumeSectionTitle } from "./ResumeComponents";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
-import { formatDateRange } from "~/lib/date";
 import { getThemeClasses } from "~/app/resume/builder/_components/templates/theme-classes";
+import { formatDateRange } from "~/lib/date";
+import { ResumeSectionTitle } from "./ResumeComponents";
 
 interface WorkExperienceSectionProps {
   experience: OnboardingFormData["experience"];
@@ -29,30 +28,28 @@ export function ExperienceSection({
       <ResumeSectionTitle title="Work Experience" templateId={templateId} />
       {sortedExperience.map((job, index) => (
         <div key={index} className={classes.experience.item}>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className={classes.experience.company}>
-                  {job.company}
-                </span>
-                <span>•</span>
-                <span className={classes.experience.location}>
-                  {job.location}
-                </span>
-              </div>
-              <div className={classes.experience.title}>{job.jobTitle}</div>
-            </div>
-            <div className={classes.experience.date}>
+          <div className="mb-1 flex justify-between">
+            <span className={classes.experience.company}>{job.company}</span>
+            <span className={classes.experience.date}>
               {formatDateRange(job.startDate, job.endDate, job.isCurrentJob)}
-            </div>
+            </span>
           </div>
-          {job.achievements && job.achievements.length > 0 && (
+          <div className="flex justify-between">
+            <span className={classes.experience.title}>{job.jobTitle}</span>
+            <span className={classes.experience.location}>{job.location}</span>
+          </div>
+          {((job.achievements && job.achievements.length > 0) ??
+            job.technologies) && (
             <ul className={classes.experience.achievementList}>
-              {job.achievements.map((achievement, achIndex) => (
-                <li key={achIndex} className={classes.experience.achievement}>
-                  {achievement}
-                </li>
+              {job.achievements?.map((achievement, achIndex) => (
+                <li key={achIndex}>{achievement}</li>
               ))}
+              {job.technologies && (
+                <li>
+                  <span className="font-semibold">Technologies: </span>
+                  {job.technologies}
+                </li>
+              )}
             </ul>
           )}
         </div>
