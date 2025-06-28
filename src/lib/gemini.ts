@@ -91,7 +91,7 @@ DATE REQUIREMENTS (CRITICAL):
 - Always provide dates in YYYY-MM-DD format
 
 PROJECT STRUCTURE GUIDELINES:
-- "description": What the project IS - a brief explanation of the project's purpose, functionality, or what it does
+- "description": What the project IS - a clear, concise summary of the project's purpose in 10 words or less, without periods
 - "achievements": What you DID or ACCOMPLISHED in the project - specific results, metrics, improvements, or notable implementations
 - ONLY include achievements if there are actual accomplishments listed (not just descriptions)
 - If the project section only has a brief description without specific accomplishments, leave achievements as an empty array []
@@ -104,7 +104,7 @@ FORMATTING RULES FOR ACHIEVEMENTS:
 - Do NOT join achievements into a single paragraph - keep them as separate array elements
 - Only include items that show what you accomplished, not what the project does
 - Examples of GOOD achievements: ["Increased performance by 40%", "Reduced load time from 3s to 500ms", "Implemented OAuth authentication", "Led team of 3 developers"]
-- Examples of what should go in description instead: "A web application for managing tasks", "Mobile app built with React Native"
+- Examples of what should go in description instead: "Web application for task management", "Mobile app built with React Native"
 
 Resume text to parse:
 ${resumeText}
