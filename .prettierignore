@@ -1,2 +1,3 @@
 # Ignore shadcn/ui generated components
 src/components/ui/
+tests/
