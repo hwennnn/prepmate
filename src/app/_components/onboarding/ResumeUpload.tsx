@@ -1,10 +1,10 @@
 import { CheckCircle, FileText, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { api } from "~/trpc/react";
 import type { OnboardingFormData } from "./types";
-import toast, { Toaster } from "react-hot-toast";
 
 interface ResumeUploadProps {
   onDataParsed: (data: Partial<OnboardingFormData>) => void;
@@ -19,7 +19,6 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
   const dragCounter = useRef(0);
 
   const notifyError = (err: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     toast.error(err, {
       duration: 4000,
       position: "top-center",
