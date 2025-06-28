@@ -95,11 +95,11 @@ export function ResumeBuilderClient() {
             </p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm">
+            <Button disabled variant="outline" size="sm">
               <Save className="mr-2 h-4 w-4" />
               Save Draft
             </Button>
-            <Button size="sm">
+            <Button disabled size="sm">
               <Download className="mr-2 h-4 w-4" />
               Download PDF
             </Button>
