@@ -1,15 +1,15 @@
 # Testing Guide
 
-Unit testing setup for PrepMate using Vitest and React Testing Library.
+Focused unit testing setup for PrepMate using Vitest and React Testing Library.
 
 ## 📁 Structure
 
 ```
 tests/
 ├── unit/                    # Unit tests
-│   ├── components/         # React component tests
-│   ├── lib/               # Utility function tests
-│   └── server/            # Server-side logic tests
+│   ├── components/         # Critical component tests
+│   │   └── onboarding/    # Form component tests
+│   └── lib/               # Utility function tests (critical business logic only)
 ├── setup/                 # Test configuration
 ├── utils/                 # Test utilities and helpers
 └── README.md
@@ -33,6 +33,24 @@ pnpm test:ci
 ./test-runner.sh ci      # CI mode
 ```
 
+## 🎯 Testing Philosophy
+
+This test suite focuses on **critical business logic only**:
+
+- **Authentication error handling** - Security-critical functionality
+- **Date formatting** - Essential for resume generation
+- **Profile data conversion** - Core business logic for form data processing
+- **Essential form components** - Critical user input handling
+- **Essential utilities** - Critical helper functions (className merging, URL formatting)
+
+### What We Test
+
+- Core business logic that affects user data
+- Security-critical authentication flows
+- Data transformation functions
+- Essential form functionality and validation
+- Essential utility functions
+
 ## 📝 Writing Tests
 
 ### Component Test Template
@@ -43,9 +61,9 @@ import { render, screen } from '../../utils/test-utils'
 import { YourComponent } from '~/path/to/YourComponent'
 
 describe('YourComponent', () => {
-  it('renders correctly', () => {
+  it('handles critical functionality', () => {
     render(<YourComponent />)
-    expect(screen.getByText('Expected Text')).toBeInTheDocument()
+    expect(screen.getByLabelText(/important field/i)).toBeInTheDocument()
   })
 })
 ```
@@ -57,7 +75,7 @@ import { describe, it, expect } from 'vitest'
 import { yourFunction } from '~/lib/utils'
 
 describe('yourFunction', () => {
-  it('handles input correctly', () => {
+  it('handles critical business case', () => {
     expect(yourFunction('input')).toBe('expected')
   })
 })

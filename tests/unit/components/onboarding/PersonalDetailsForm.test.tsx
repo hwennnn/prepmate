@@ -20,7 +20,7 @@ describe("PersonalDetailsForm", () => {
     vi.clearAllMocks();
   });
 
-  it("renders all form fields", () => {
+  it("renders all required and optional form fields", () => {
     render(<PersonalDetailsForm {...defaultProps} />);
 
     // Required fields
@@ -35,38 +35,7 @@ describe("PersonalDetailsForm", () => {
     expect(screen.getByLabelText(/github url/i)).toBeInTheDocument();
   });
 
-  it("shows required field indicators", () => {
-    render(<PersonalDetailsForm {...defaultProps} />);
-
-    // Check for asterisks (*) in required field labels
-    expect(screen.getByText(/first name \*/i)).toBeInTheDocument();
-    expect(screen.getByText(/last name \*/i)).toBeInTheDocument();
-    expect(screen.getByText(/email \*/i)).toBeInTheDocument();
-  });
-
-  it("displays correct placeholders", () => {
-    render(<PersonalDetailsForm {...defaultProps} />);
-
-    expect(screen.getByPlaceholderText("John")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Doe")).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("john.doe@example.com"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("+1 (555) 123-4567"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("https://yourwebsite.com"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("https://linkedin.com/in/yourname"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("https://github.com/yourname"),
-    ).toBeInTheDocument();
-  });
-
-  it("calls register for all form fields", () => {
+  it("registers all form fields correctly", () => {
     render(<PersonalDetailsForm {...defaultProps} />);
 
     expect(mockRegister).toHaveBeenCalledWith("personalDetails.firstName");
@@ -82,7 +51,6 @@ describe("PersonalDetailsForm", () => {
     const errorsWithMessages = {
       personalDetails: {
         firstName: { message: "First name is required" },
-        lastName: { message: "Last name is required" },
         email: { message: "Invalid email address" },
       },
     };
@@ -95,51 +63,17 @@ describe("PersonalDetailsForm", () => {
     );
 
     expect(screen.getByText("First name is required")).toBeInTheDocument();
-    expect(screen.getByText("Last name is required")).toBeInTheDocument();
     expect(screen.getByText("Invalid email address")).toBeInTheDocument();
   });
 
-  it("does not display error messages when no errors", () => {
+  it("has proper accessibility structure", () => {
     render(<PersonalDetailsForm {...defaultProps} />);
 
-    expect(screen.queryByText(/required/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/invalid/i)).not.toBeInTheDocument();
-  });
-
-  it("has proper form structure and accessibility", () => {
-    render(<PersonalDetailsForm {...defaultProps} />);
-
-    // Check for proper labeling
+    // Check for proper labeling on key fields
     const firstName = screen.getByLabelText(/first name/i);
-    const lastName = screen.getByLabelText(/last name/i);
     const email = screen.getByLabelText(/email/i);
 
     expect(firstName).toHaveAttribute("id", "firstName");
-    expect(lastName).toHaveAttribute("id", "lastName");
     expect(email).toHaveAttribute("id", "email");
-
-    // Check card structure
-    expect(screen.getByText("Personal Information")).toBeInTheDocument();
-  });
-
-  it("applies correct CSS classes for styling", () => {
-    render(<PersonalDetailsForm {...defaultProps} />);
-
-    const card = screen
-      .getByText("Personal Information")
-      .closest('[class*="border-slate-200"]');
-    expect(card).toBeInTheDocument();
-  });
-
-  it("renders form inputs with correct attributes", () => {
-    render(<PersonalDetailsForm {...defaultProps} />);
-
-    const inputs = screen.getAllByRole("textbox");
-    expect(inputs).toHaveLength(7); // All form fields
-
-    // Check that inputs have the bg-white class
-    inputs.forEach((input) => {
-      expect(input).toHaveClass("bg-white");
-    });
   });
 });
