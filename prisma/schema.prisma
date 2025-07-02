@@ -121,78 +121,78 @@ model Skills {
   profile    UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
-model Templates {
-  id            String      @id
-  name          String
-  description   String
-  resumes       Resume[]
+model Template {
+  id          String   @id
+  name        String
+  description String
+  resumes     Resume[]
 }
 
 model Resume {
-  id          String @id @default(cuid())
-  templateId  String
-  profileId      String
-  education   ResumeEducation[]
-  experience  ResumeExperience[]
-  projects    ResumeProject[]
-  skills      ResumeSkills?
-  profile     UserProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  template    Template     @relation(fields: [templateId], references: [id], onDelete: Cascade) 
+  id         String             @id @default(cuid())
+  templateId String
+  profileId  String
+  education  ResumeEducation[]
+  experience ResumeExperience[]
+  projects   ResumeProject[]
+  skills     ResumeSkills?
+  profile    UserProfile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  template   Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
 }
 
 model ResumeEducation {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   resumeId    String
   institution String
   degree      String
-  isAttending Boolean     @default(false)
+  isAttending Boolean  @default(false)
   startDate   DateTime
   endDate     DateTime
   gpa         String?
   awards      String?
   coursework  String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  resume      Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model ResumeExperience {
-  id           String      @id @default(cuid())
+  id           String    @id @default(cuid())
   resumeId     String
   company      String
   jobTitle     String
   location     String
-  isCurrentJob Boolean     @default(false)
+  isCurrentJob Boolean   @default(false)
   startDate    DateTime
   endDate      DateTime?
   achievements String[]
   technologies String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  resume       Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  resume       Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model ResumeProject {
-  id           String      @id @default(cuid())
+  id           String   @id @default(cuid())
   resumeId     String
   name         String
   description  String
   url          String?
   achievements String[]
   technologies String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  resume       Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  resume       Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model ResumeSkills {
-  id         String      @id @default(cuid())
-  resumeId   String      @unique
+  id         String   @id @default(cuid())
+  resumeId   String   @unique
   languages  String?
   frameworks String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  resume     Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  resume     Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
