@@ -9,111 +9,239 @@ const ai = new GoogleGenAI({ apiKey: env.GOOGLE_GEMINI_API_KEY });
 
 export async function parseResumeText(resumeText: string) {
   try {
-    const prompt = `
-You are an expert resume parser. Extract information from the following resume text and return it as a JSON object with this exact structure:
+    const prompt = `Extract information from this resume text and structure it according to the schema. Extract ALL available information in each section.
 
-{
-  "personalDetails": {
-    "firstName": "string",
-    "lastName": "string", 
-    "email": "string",
-    "phoneNumber": "string (omit if not found)",
-    "website": "string (omit if not found)",
-    "linkedinUrl": "string (omit if not found)",
-    "githubUrl": "string (omit if not found)"
-  },
-  "education": [
-    {
-      "institution": "string",
-      "degree": "string",
-      "isAttending": boolean,
-      "startDate": "YYYY-MM-DD",
-      "endDate": "YYYY-MM-DD",
-      "gpa": "string (omit if not found)",
-      "awards": "string (omit if not found)",
-      "coursework": "string (omit if not found)"
-    }
-  ],
-  "experience": [
-    {
-      "company": "string",
-      "jobTitle": "string",
-      "location": "string",
-      "isCurrentJob": boolean,
-      "startDate": "YYYY-MM-DD", 
-      "endDate": "YYYY-MM-DD (omit if isCurrentJob=true)",
-      "achievements": ["string", "string"] (omit if not found),
-      "technologies": "string (omit if not found)"
-    }
-  ],
-  "projects": [
-    {
-      "name": "string",
-      "description": "string",
-      "url": "string (omit if not found)",
-      "achievements": ["string", "string"] (omit if not found),
-      "technologies": "string (omit if not found)"
-    }
-  ],
-  "skills": {
-    "languages": "string (comma-separated) (omit if not found)",
-    "frameworks": "string (comma-separated) (omit if not found)"
-  }
-}
-
-IMPORTANT EXTRACTION GUIDELINES:
-1. Extract ALL information available in each section - don't leave anything out
-2. For education: Include ALL degrees, certifications, courses mentioned
-3. For experience: Include ALL jobs, internships, volunteer work
-4. For projects: Include ALL projects mentioned with complete details and technologies used
-5. For skills: Separate programming languages from frameworks/tools
-6. Use actual dates when available, or reasonable estimates based on context
-7. For boolean fields like isCurrentJob/isAttending, determine from context (present tense, "current", etc.)
-8. Extract URLs carefully - look for LinkedIn, GitHub, personal websites, project URLs
-
-MISSING VALUE HANDLING (CRITICAL):
-- For REQUIRED fields (firstName, lastName, email, institution, degree, company, jobTitle, location, startDate): Always extract or provide reasonable defaults
-- For OPTIONAL fields, OMIT the field entirely from JSON if information is not found in resume:
-  * personalDetails: phoneNumber, website, linkedinUrl, githubUrl
-  * education: gpa, awards, coursework  
-  * experience: endDate (when isCurrentJob=true), achievements, technologies
-  * projects: url, achievements, technologies
-  * skills: languages, frameworks (omit entire fields if no skills section found)
-- NEVER include fields with undefined, null, or empty values - completely omit them from JSON
-- This ensures valid JSON that can be parsed without errors
-
-DATE REQUIREMENTS (CRITICAL):
-- Education: BOTH startDate and endDate are ALWAYS required (even if currently attending)
-- Experience: startDate is ALWAYS required
-- Experience: endDate is REQUIRED only if isCurrentJob is false (past positions)
-- Experience: endDate should be empty string "" if isCurrentJob is true (current positions)
-- For currently attending education, use estimated graduation date for endDate
-- Always provide dates in YYYY-MM-DD format
-
-PROJECT STRUCTURE GUIDELINES:
-- "description": What the project IS - a clear, concise summary of the project's purpose in 10 words or less, without periods
-- "achievements": What you DID or ACCOMPLISHED in the project - specific results, metrics, improvements, or notable implementations
-- ONLY include achievements if there are actual accomplishments listed (not just descriptions)
-- If the project section only has a brief description without specific accomplishments, leave achievements as an empty array []
-
-FORMATTING RULES FOR ACHIEVEMENTS:
-- achievements should be an ARRAY of strings, not a single string
-- Each bullet point should represent a specific accomplishment or result
-- Remove bullet point symbols (•, -, *, etc.) from each achievement
-- Clean up each achievement to be a complete, well-formatted sentence
-- Do NOT join achievements into a single paragraph - keep them as separate array elements
-- Only include items that show what you accomplished, not what the project does
-- Examples of GOOD achievements: ["Increased performance by 40%", "Reduced load time from 3s to 500ms", "Implemented OAuth authentication", "Led team of 3 developers"]
-- Examples of what should go in description instead: "Web application for task management", "Mobile app built with React Native"
-
-Resume text to parse:
-${resumeText}
-
-Return only the JSON object, no additional text or formatting.`;
+Resume text:
+${resumeText}`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash-001",
       contents: prompt,
+      config: {
+        systemInstruction:
+          "You are an expert resume parser that extracts structured information from resume text.",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            personalDetails: {
+              type: "object",
+              properties: {
+                firstName: {
+                  type: "string",
+                  description:
+                    "Required field. Extract from resume or provide reasonable default.",
+                },
+                lastName: {
+                  type: "string",
+                  description:
+                    "Required field. Extract from resume or provide reasonable default.",
+                },
+                email: {
+                  type: "string",
+                  description:
+                    "Required field. Extract from resume or provide reasonable default.",
+                },
+                phoneNumber: {
+                  type: "string",
+                  description:
+                    "Optional field. Omit entirely if not found in resume.",
+                },
+                website: {
+                  type: "string",
+                  description:
+                    "Optional field. Extract personal website URL. Omit entirely if not found.",
+                },
+                linkedinUrl: {
+                  type: "string",
+                  description:
+                    "Optional field. Extract LinkedIn profile URL carefully. Omit entirely if not found.",
+                },
+                githubUrl: {
+                  type: "string",
+                  description:
+                    "Optional field. Extract GitHub profile URL carefully. Omit entirely if not found.",
+                },
+              },
+              required: ["firstName", "lastName", "email"],
+            },
+            education: {
+              type: "array",
+              description:
+                "Include ALL degrees, certifications, courses mentioned in the resume.",
+              items: {
+                type: "object",
+                properties: {
+                  institution: {
+                    type: "string",
+                    description:
+                      "Required field. Name of educational institution.",
+                  },
+                  degree: {
+                    type: "string",
+                    description:
+                      "Required field. Degree, certification, or course name.",
+                  },
+                  isAttending: {
+                    type: "boolean",
+                    description:
+                      "Required field. Determine from context (present tense, 'current', etc.)",
+                  },
+                  startDate: {
+                    type: "string",
+                    description:
+                      "Required field. YYYY-MM-DD format. Use actual date or reasonable estimate.",
+                  },
+                  endDate: {
+                    type: "string",
+                    description:
+                      "Required field. YYYY-MM-DD format. For currently attending, use estimated graduation date.",
+                  },
+                  gpa: {
+                    type: "string",
+                    description:
+                      "Optional field. Omit entirely if not found in resume.",
+                  },
+                  awards: {
+                    type: "string",
+                    description:
+                      "Optional field. Academic honors or awards. Omit entirely if not found.",
+                  },
+                  coursework: {
+                    type: "string",
+                    description:
+                      "Optional field. Relevant coursework mentioned. Omit entirely if not found.",
+                  },
+                },
+                required: [
+                  "institution",
+                  "degree",
+                  "isAttending",
+                  "startDate",
+                  "endDate",
+                ],
+              },
+            },
+            experience: {
+              type: "array",
+              description:
+                "Include ALL jobs, internships, volunteer work mentioned in the resume.",
+              items: {
+                type: "object",
+                properties: {
+                  company: {
+                    type: "string",
+                    description:
+                      "Required field. Company or organization name.",
+                  },
+                  jobTitle: {
+                    type: "string",
+                    description: "Required field. Position or role title.",
+                  },
+                  location: {
+                    type: "string",
+                    description:
+                      "Required field. Work location (city, state/country).",
+                  },
+                  isCurrentJob: {
+                    type: "boolean",
+                    description:
+                      "Required field. Determine from context (present tense, 'current', etc.)",
+                  },
+                  startDate: {
+                    type: "string",
+                    description:
+                      "Required field. YYYY-MM-DD format. Use actual date or reasonable estimate.",
+                  },
+                  endDate: {
+                    type: "string",
+                    description:
+                      "Required only if isCurrentJob is false. YYYY-MM-DD format. Omit entirely if current job.",
+                  },
+                  achievements: {
+                    type: "array",
+                    items: { type: "string" },
+                    description:
+                      "Optional field. Array of specific accomplishments or results. Each should be a complete sentence without bullet symbols. Examples: 'Increased performance by 40%', 'Led team of 3 developers'. Omit entirely if no accomplishments listed.",
+                  },
+                  technologies: {
+                    type: "string",
+                    description:
+                      "Optional field. Technologies or tools used in this role. Omit entirely if not found.",
+                  },
+                },
+                required: [
+                  "company",
+                  "jobTitle",
+                  "location",
+                  "isCurrentJob",
+                  "startDate",
+                ],
+              },
+            },
+            projects: {
+              type: "array",
+              description:
+                "Include ALL projects mentioned with complete details and technologies used.",
+              items: {
+                type: "object",
+                properties: {
+                  name: {
+                    type: "string",
+                    description: "Required field. Project name or title.",
+                  },
+                  description: {
+                    type: "string",
+                    description:
+                      "Required field. What the project IS - a clear, concise summary of the project's purpose in 10 words or less, without periods. Example: 'Web application for task management'",
+                  },
+                  url: {
+                    type: "string",
+                    description:
+                      "Optional field. Project URL (GitHub, live demo, etc.). Omit entirely if not found.",
+                  },
+                  achievements: {
+                    type: "array",
+                    items: { type: "string" },
+                    description:
+                      "Optional field. What you DID or ACCOMPLISHED in the project - specific results, metrics, improvements. Each should be a complete sentence without bullet symbols. Only include if actual accomplishments are listed, not just descriptions. Leave as empty array if only brief description without accomplishments. Omit entirely if no achievements found.",
+                  },
+                  technologies: {
+                    type: "string",
+                    description:
+                      "Optional field. Technologies, frameworks, or tools used. Omit entirely if not found.",
+                  },
+                },
+                required: ["name", "description"],
+              },
+            },
+            skills: {
+              type: "object",
+              description:
+                "Separate programming languages from frameworks/tools. Omit entire fields if no skills section found.",
+              properties: {
+                languages: {
+                  type: "string",
+                  description:
+                    "Optional field. Comma-separated programming languages only. Omit entirely if not found.",
+                },
+                frameworks: {
+                  type: "string",
+                  description:
+                    "Optional field. Comma-separated frameworks, libraries, and tools (not programming languages). Omit entirely if not found.",
+                },
+              },
+            },
+          },
+          required: [
+            "personalDetails",
+            "education",
+            "experience",
+            "projects",
+            "skills",
+          ],
+        },
+      },
     });
 
     const text = response.text;
