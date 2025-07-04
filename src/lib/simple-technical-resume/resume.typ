@@ -1,3 +1,4 @@
+// @Credits: https://github.com/steadyfall/simple-technical-resume-template
 #let resume(
   paper: "a4",
   top-margin: 0.4in,
