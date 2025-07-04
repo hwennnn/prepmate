@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { convertToFormData } from "~/lib/profile";
 import { api } from "~/trpc/react";
+import { TemplateSwitcher } from "~/components/template-switcher";
 import { ResumeForm } from "./ResumeForm";
 import { ResumePreview } from "./ResumePreview";
 
@@ -19,6 +20,40 @@ export function ResumeBuilderClient() {
   const searchParams = useSearchParams();
   const templateId = searchParams.get("template");
   const [formData, setFormData] = useState<OnboardingFormData | null>(null);
+
+  // Resume save functionality
+
+  // PDF Export functionality
+  const exportPDF = api.resume.exportLivePDF.useMutation();
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (!formData || !templateId) return;
+
+    try {
+      const result = await exportPDF.mutateAsync({
+        formData,
+        templateId,
+      });
+
+      // Convert base64 to downloadable file
+      const pdfBlob = new Blob(
+        [Uint8Array.from(atob(result.pdf), (c) => c.charCodeAt(0))],
+        { type: "application/pdf" },
+      );
+
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF download failed:", error);
+      // Add toast notification here
+    }
+  }, [formData, templateId, exportPDF]);
 
   // Fetch user profile to pre-populate form
   const {
@@ -95,13 +130,23 @@ export function ResumeBuilderClient() {
             </p>
           </div>
           <div className="flex items-center space-x-3">
+            {/** Template switching */}
+            {templateId && <TemplateSwitcher currentTemplateId={templateId} />}
+
+            {/** TODO: Handle save */}
             <Button disabled variant="outline" size="sm">
               <Save className="mr-2 h-4 w-4" />
               Save Draft
             </Button>
-            <Button disabled size="sm">
+
+            {/** Handle Export */}
+            <Button
+              onClick={handleDownloadPDF}
+              disabled={!formData || !templateId || exportPDF.isPending}
+              size="sm"
+            >
               <Download className="mr-2 h-4 w-4" />
-              Download PDF
+              {exportPDF.isPending ? "Generating..." : "Download PDF"}
             </Button>
           </div>
         </div>
