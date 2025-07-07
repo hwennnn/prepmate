@@ -1,4 +1,4 @@
-#import "/lib/simple-technical-resume/lib.typ": *
+#import "/libraries/simple-technical-resume/lib.typ": *
 
 // Utility function
 // Remove https or http in urls
@@ -31,7 +31,9 @@
 	} else { none }
 }
 
-// Your template implementation goes here
+// Utility functions end here
+
+// Classic Template starts here
 #let my-resume(data) = {
   let personal = data.personalDetails
 
@@ -55,7 +57,7 @@
       education-heading(
         edu.institution,
         "", // Location
-        edu.degree, 
+        edu.degree, // degree
         "", // Major
         datetime(
           year: int(edu.startDate.split("-").at(0)),
@@ -71,8 +73,8 @@
         }
       )[
         #if edu.gpa != "" { [- *GPA:* #edu.gpa] }
-        //#if edu.awards != "" { [- *Awards:* #edu.awards] }
-        //#if edu.coursework != "" { [- *Coursework:* #edu.coursework] }
+        #if edu.awards != "" { [- *Awards:* #edu.awards] }
+        #if edu.coursework != "" { [- *Coursework:* #edu.coursework] }
       ]
     }
   ]
@@ -103,6 +105,29 @@
         #if exp.technologies != "" { [- *Technologies:* #exp.technologies]}
       ]
     }
+  ]
+
+  // Projects Section
+  custom-title("Projects")[
+    #for proj in data.projects {
+      project-heading(
+        proj.name,
+        proj.description,
+      )
+      [
+        #for achievement in proj.achievements [
+          - #achievement
+        ]
+      ]
+    }
+  ]
+
+  // Skills Section
+  custom-title("Skills")[
+    #skills()[
+      - *Programming Languages:* #data.skills.languages
+      - *Frameworks & Technologies:* #data.skills.frameworks
+    ]
   ]
 }
 

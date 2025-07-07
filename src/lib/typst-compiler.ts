@@ -1,3 +1,4 @@
+"use server";
 import { $typst } from "@myriaddreamin/typst.ts";
 import { join } from "path";
 import { readFileSync } from "fs";
@@ -25,31 +26,41 @@ export async function compileResume({
   try {
     // Template directory
     const templateDir = "src/templates/resume";
-    const libDir = "src/lib/simple-technical-resume";
+    const librariesDir = "src/templates/libraries";
 
-    // Load template and library files
+    // Load template file
     const templatePath = join(process.cwd(), templateDir, `${templateId}.typ`);
     const templateContent = readFileSync(templatePath, "utf-8");
 
-    const libTypPath = join(process.cwd(), libDir, "lib.typ");
-    const libTypContent = readFileSync(libTypPath, "utf-8");
+    // Load all available libraries
+    const libraries = ["simple-technical-resume", "basic-resume"];
+    const libraryFiles = new Map();
 
-    const resumeTypPath = join(process.cwd(), libDir, "resume.typ");
-    const resumeTypContent = readFileSync(resumeTypPath, "utf-8");
+    for (const lib of libraries) {
+      const libPath = join(process.cwd(), librariesDir, lib);
+      const libTypPath = join(libPath, "lib.typ");
+      const resumeTypPath = join(libPath, "resume.typ");
 
-    // Format data for Typst (convert Dates to strings)
+      libraryFiles.set(
+        `/libraries/${lib}/lib.typ`,
+        readFileSync(libTypPath, "utf-8"),
+      );
+      libraryFiles.set(
+        `/libraries/${lib}/resume.typ`,
+        readFileSync(resumeTypPath, "utf-8"),
+      );
+    }
+
+    // Format data for Typst
     const formattedData = formatDataForTypst(formData);
 
     // Add source files to the virtual file system
     await $typst.addSource("/main.typ", templateContent);
-    await $typst.addSource(
-      "/lib/simple-technical-resume/lib.typ",
-      libTypContent,
-    );
-    await $typst.addSource(
-      "/lib/simple-technical-resume/resume.typ",
-      resumeTypContent,
-    );
+
+    // Add all library files to the virtual file system
+    for (const [path, content] of libraryFiles) {
+      await $typst.addSource(path as string, content as string);
+    }
 
     // Return the PDF compilation result directly
     const buffer = await $typst.pdf({
