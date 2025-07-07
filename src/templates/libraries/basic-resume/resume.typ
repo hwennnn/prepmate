@@ -41,7 +41,11 @@
   orcid: "",
   accent-color: "#000000",
   font: "New Computer Modern",
+<<<<<<< HEAD
   paper: "a4",
+=======
+  paper: "us-letter",
+>>>>>>> 22552d5 (feat: Implemented export pdf feature for modern resume template.)
   author-font-size: 20pt,
   font-size: 10pt,
   body,
