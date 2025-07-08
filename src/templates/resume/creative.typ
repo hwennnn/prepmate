@@ -1,125 +1,156 @@
-#import "@preview/resume-ng:1.0.0": *
+// Creative template using vercanard package
 
-// Creative template using resume-ng package (placeholder)
-// TODO: Replace with more creative template later
-// Maps to your OnboardingFormData structure
+// Importing the resume template function library locally
+#import "/libraries/vercanard/lib.typ": *
 
-#let creative-resume(data) = {
-  // Extract personal details
-  let personal = data.personalDetails
-  
-  // Build contacts array
-  let contacts = ()
-  if personal.phoneNumber != none and personal.phoneNumber != "" {
-    contacts.push(personal.phoneNumber)
-  }
-  if personal.email != none {
-    contacts.push(link("mailto:" + personal.email, personal.email))
-  }
-  if personal.githubUrl != none and personal.githubUrl != "" {
-    contacts.push(link(personal.githubUrl, "GitHub"))
-  }
-  if personal.linkedinUrl != none and personal.linkedinUrl != "" {
-    contacts.push(link(personal.linkedinUrl, "LinkedIn"))
-  }
-  if personal.website != none and personal.website != "" {
-    contacts.push(link(personal.website, "Portfolio"))
-  }
-
-  // Configure the resume-ng template
-  show: project.with(
-    title: "Resume",
-    author: (name: personal.firstName + " " + personal.lastName),
-    contacts: contacts
-  )
-
-  // Education Section
-  if data.education != none and data.education.len() > 0 {
-    resume-section("Education")
-    for edu in data.education {
-      let endDateStr = if edu.isAttending { "Present" } else { edu.endDate.display("[year]-[month repr:numerical padding:zero]") }
-      
-      resume-education(
-        university: edu.institution,
-        degree: edu.degree,
-        school: "", 
-        start: edu.startDate.display("[year]-[month repr:numerical padding:zero]"),
-        end: endDateStr
-      )[
-        #if edu.gpa != none and edu.gpa != "" [
-          *GPA: #edu.gpa*. 
-        ]
-        #if edu.awards != none and edu.awards != "" [
-          Awards: #edu.awards. 
-        ]
-        #if edu.coursework != none and edu.coursework != "" [
-          Relevant Coursework: #edu.coursework.
-        ]
-      ]
-    }
-  }
-
-  // Experience Section
-  if data.experience != none and data.experience.len() > 0 {
-    resume-section("Experience")
-    for exp in data.experience {
-      let endDateStr = if exp.isCurrentJob { "Present" } else { exp.endDate.display("[year]-[month repr:numerical padding:zero]") }
-      
-      resume-work(
-        company: exp.company,
-        duty: exp.jobTitle,
-        start: exp.startDate.display("[year]-[month repr:numerical padding:zero]"),
-        end: endDateStr,
-        location: exp.location
-      )[
-        #if exp.achievements != none {
-          for achievement in exp.achievements [
-            • #achievement
-          ]
-        }
-        #if exp.technologies != none and exp.technologies != "" [
-          
-          *Technologies used:* #exp.technologies
-        ]
-      ]
-    }
-  }
-
-  // Projects Section
-  if data.projects != none and data.projects.len() > 0 {
-    resume-section("Projects")
-    for project in data.projects {
-      resume-work(
-        company: project.name,
-        duty: if project.url != none and project.url != "" { link(project.url, "View Project") } else { "Personal Project" },
-        start: "",
-        end: "",
-        location: ""
-      )[
-        #project.description
-        
-        #if project.achievements != none {
-          for achievement in project.achievements [
-            • #achievement
-          ]
-        }
-        #if project.technologies != none and project.technologies != "" [
-          
-          *Technologies:* #project.technologies
-        ]
-      ]
-    }
-  }
-
-  // Skills Section
-  if data.skills != none {
-    resume-section("Technical Skills")
-    if data.skills.languages != none and data.skills.languages != "" [
-      *Programming Languages:* #data.skills.languages
-      
-    ]
-    if data.skills.frameworks != none and data.skills.frameworks != "" [
-      *Frameworks & Technologies:* #data.skills.frameworks
-    ]
+// ================= Utility function ===============
+// Remove https or http in urls
+#let linkParse(url) = {
+  if url.starts-with("https") {
+    url.replace("https://", "")
+  } else if url.starts-with("http") {
+    url.replace("http://", "")
+  } else {
+    url
   }
 }
+
+#let githubParse(url) = {
+  if url.contains("github") {
+    url.split("github.com/").at(1)
+  } else {
+    url
+  }
+}
+
+// Date formatting
+#let format-date(date) = {
+  // Define an array of three-letter month names
+  let months = (
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  )
+  
+  // Split the input string into parts
+  let parts = date.split("-")
+  let year = parts.at(0)
+  let monthNum = int(parts.at(1))
+  
+  let month = months.at(monthNum - 1)
+
+  // Return formatted string
+  [#month #year]
+}
+
+// =========== End of Utility Functions =============
+
+// ================== MAIN =====================
+#let creative-template(data) = {
+  let personal = data.personalDetails
+  
+  show: resume.with(
+    name: personal.firstName + " " + personal.lastName,
+    title: "",
+    accent-color: rgb("f3bc54"),
+    margin: 1.6cm,
+    aside: [
+      // Contact Info
+      = Contact
+      - #link("mailto:" + personal.email)
+      - #personal.phoneNumber
+      - #link(personal.website)
+      - #link(personal.githubUrl)
+      - #link(personal.linkedinUrl)
+
+      // Skills
+      = Skills
+      - *Programming Languages:*
+      #tagListStyle(data.skills.languages.split(", ").split(",").flatten())
+
+      - *Frameworks & Technologies:*
+      #tagListStyle(data.skills.frameworks.split(", ").split(",").flatten())
+    ]
+  )
+
+  // ============ Main content ===========
+  
+  // Work Experience
+  [= Experience]
+  [
+    #for exp in data.experience {
+      entry(
+        exp.company,
+        [
+          #if exp.isCurrentJob {
+            [#format-date(exp.startDate) - Present]
+          } else {
+            [#format-date(exp.startDate) - #format-date(exp.endDate)]
+          }
+        ],
+        exp.jobTitle,
+        exp.location,
+        [
+          #for achievement in exp.achievements {
+            [ - #achievement ]
+          }
+          #if exp.technologies != "" {
+            [- *Technologies:* #exp.technologies]
+          }
+        ]
+      )
+    }
+  ]
+
+  // Projects
+  [= Projects]
+  [
+    #for proj in data.projects {
+      entry(
+        proj.name,
+        link(linkParse(githubParse(proj.url))),
+        proj.technologies,
+        "",
+        [
+          - #proj.description
+          #for achievement in proj.achievements {
+            [ - #achievement ]
+          }
+        ]
+      )
+    }
+  ]
+
+  // Education
+  [= Education]
+  [
+    #for edu in data.education {
+      entry(
+        edu.institution,
+        [
+          #if edu.isAttending {
+            [#format-date(edu.startDate) - Present]
+          } else {
+            [#format-date(edu.startDate) - #format-date(edu.endDate)]
+          }
+        ],
+        edu.degree,
+        edu.gpa,
+        [
+          #if edu.awards != "" {
+            [- *Awards:* #edu.awards]
+          }
+          #if edu.coursework != "" {
+            [- *Relevant Coursework:* #edu.coursework]
+          }
+        ]
+      )
+    }
+  ]
+}
+// ================== END OF MAIN =====================
+
+// Defining data
+#let data = json.decode(sys.inputs.data)
+
+// Call the template
+#creative-template(data)

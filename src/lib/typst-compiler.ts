@@ -3,6 +3,7 @@ import { $typst } from "@myriaddreamin/typst.ts";
 import { join } from "path";
 import { readFileSync } from "fs";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
+import { templateLibs } from "~/templates/template-lib-map";
 
 /*
  *  Procedure:
@@ -32,24 +33,28 @@ export async function compileResume({
     const templatePath = join(process.cwd(), templateDir, `${templateId}.typ`);
     const templateContent = readFileSync(templatePath, "utf-8");
 
-    // Load all available libraries
-    const libraries = ["simple-technical-resume", "basic-resume"];
-    const libraryFiles = new Map();
+    // Load template libraries
+    const requiredLib = templateLibs[templateId];
 
-    for (const lib of libraries) {
-      const libPath = join(process.cwd(), librariesDir, lib);
-      const libTypPath = join(libPath, "lib.typ");
-      const resumeTypPath = join(libPath, "resume.typ");
-
-      libraryFiles.set(
-        `/libraries/${lib}/lib.typ`,
-        readFileSync(libTypPath, "utf-8"),
-      );
-      libraryFiles.set(
-        `/libraries/${lib}/resume.typ`,
-        readFileSync(resumeTypPath, "utf-8"),
+    if (!requiredLib) {
+      throw new Error(
+        `Template library not found for templateId: ${templateId}`,
       );
     }
+
+    const libraryFiles = new Map();
+    const libPath = join(process.cwd(), librariesDir, requiredLib);
+    const libTypPath = join(libPath, "lib.typ");
+    const resumeTypPath = join(libPath, "resume.typ");
+
+    libraryFiles.set(
+      `/libraries/${requiredLib}/lib.typ`,
+      readFileSync(libTypPath, "utf-8"),
+    );
+    libraryFiles.set(
+      `/libraries/${requiredLib}/resume.typ`,
+      readFileSync(resumeTypPath, "utf-8"),
+    );
 
     // Format data for Typst
     const formattedData = formatDataForTypst(formData);

@@ -1,7 +1,9 @@
+// Modern template using basic-resume package
+
+// Importing the resume template function library locally
 #import "/libraries/basic-resume/lib.typ": *
 
-// Modern template using basic-resume package
-// Utility function
+// ================= Utility function ===============
 // Remove https or http in urls
 #let linkParse(link) = {
 	if link.starts-with("https") {
@@ -32,9 +34,10 @@
   [#month #year]
 }
 
-// End of Utility Functions
+// =========== End of Utility Functions =============
 
-// Modern Template Function starts here
+// ================== MAIN =====================
+
 #let modern-template(data) = {
   let personal = data.personalDetails
 
@@ -122,6 +125,7 @@
   [ - *Programming Languages*: #data.skills.languages]
   [ - *Frameworks and Technologies*: #data.skills.frameworks]
 }
+// ================== END OF MAIN =====================
 
 // Defining data
 #let data = json.decode(sys.inputs.data)

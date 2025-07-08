@@ -1,6 +1,9 @@
+// Classic template using simple-technical-resume package
+
+// Importing the resume template function library locally
 #import "/libraries/simple-technical-resume/lib.typ": *
 
-// Utility function
+// =============== Utility function ================
 // Remove https or http in urls
 #let linkParse(link) = {
 	if link.starts-with("https") {
@@ -11,8 +14,6 @@
     link
   }
 }
-
-// Empty String if null
 
 // Extract github username
 #let github-user(url) = {
@@ -31,10 +32,10 @@
 	} else { none }
 }
 
-// Utility functions end here
+// ============ End of Utility functions ===============
 
-// Classic Template starts here
-#let my-resume(data) = {
+// ================== MAIN =====================
+#let classic-template(data) = {
   let personal = data.personalDetails
 
   let github-user = github-user(personal.githubUrl)
@@ -130,9 +131,10 @@
     ]
   ]
 }
+// ================== END OF MAIN =====================
 
 // Defining data
 #let data = json.decode(sys.inputs.data)
 
 // Call the template
-#my-resume(data)
+#classic-template(data)
