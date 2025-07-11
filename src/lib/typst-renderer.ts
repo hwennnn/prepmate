@@ -147,7 +147,10 @@ export class TypstResumeRenderer {
       // Format data
       const formattedData = formatDataForTypst(formData);
 
-      // Add template to virtual file system
+      // Add template to vritual file system
+      //await $typst.addSource("/main.typ", templateContent);
+
+      /* MODIFICATION */
       if (window.$typst) {
         await window.$typst.addSource("/main.typ", templateContent);
 
@@ -156,7 +159,8 @@ export class TypstResumeRenderer {
         }
 
         const svgBuffer = await window.$typst.svg({
-          mainFilePath: "/main.typ",
+          /* MODIFICATION */
+          mainFilePath: "/main.typ", // Use the file we added to VFS
           inputs: { data: JSON.stringify(formattedData) },
         });
 

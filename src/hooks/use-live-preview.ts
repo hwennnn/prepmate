@@ -8,10 +8,6 @@ interface UseLivePreviewOptions {
   formData: OnboardingFormData;
   templateId: string;
   enabled?: boolean;
-<<<<<<< HEAD
-=======
-  //debounceMs?: number;
->>>>>>> e1d7839 (feat: Implemented Typst live compilation feature)
 }
 
 export function useLivePreview({
@@ -22,11 +18,7 @@ export function useLivePreview({
   // States to manage
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [error, setError] = useState<string | null>(null); // error state
-<<<<<<< HEAD
   const [svgContent, setSVGContent] = useState<string[] | null>(); // svg content state
-=======
-  const [svgContent, setSVGContent] = useState<string | null>(); // svg content state
->>>>>>> e1d7839 (feat: Implemented Typst live compilation feature)
   const [isInitialized, setInitialized] = useState(false); // Initialization state
 
   // Initialization promise reference (persistent so no re-initialization of compiler)
@@ -149,8 +141,6 @@ export function useLivePreview({
     refresh,
   };
 }
-<<<<<<< HEAD
-=======
 
 /*
 "use client";
@@ -294,4 +284,3 @@ export function useLivePreview({
   };
 }
 */
->>>>>>> e1d7839 (feat: Implemented Typst live compilation feature)
