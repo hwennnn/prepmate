@@ -4,6 +4,7 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { templateLibs } from "~/templates/template-lib-map";
+import { formatDataForTypst } from "~/lib/profile";
 
 /*
  *  Procedure:
@@ -76,30 +77,7 @@ export async function compileResume({
     return buffer;
   } catch (error) {
     console.error("Compilation error: ", error);
-    throw new Error("Compilation failed");
+    //throw new Error("Compilation failed");
+    throw error;
   }
-}
-
-// Helper function to format dates - Converts form data to typst-compatible format
-// Date Object -> String (YYYY-MM-DD)
-function formatDataForTypst(formData: OnboardingFormData) {
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return undefined;
-    return date.toISOString().split("T")[0]; // "2018-08-15T00:00:00.000Z" -> "2018-08-15"
-  };
-
-  // Reconstruct form data
-  return {
-    ...formData,
-    education: formData.education?.map((edu) => ({
-      ...edu,
-      startDate: formatDate(edu.startDate),
-      endDate: formatDate(edu.endDate),
-    })),
-    experience: formData.experience?.map((exp) => ({
-      ...exp,
-      startDate: formatDate(exp.startDate),
-      endDate: exp.endDate ? formatDate(exp.endDate) : undefined,
-    })),
-  };
 }

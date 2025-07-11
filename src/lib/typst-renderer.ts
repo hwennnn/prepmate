@@ -1,0 +1,184 @@
+"use client";
+
+//import { $typst } from "@myriaddreamin/typst.ts";
+import type { OnboardingFormData } from "~/app/_components/onboarding/types";
+import { templateLibs } from "~/templates/template-lib-map";
+import { formatDataForTypst } from "~/lib/profile";
+
+interface RenderOptions {
+  formData: OnboardingFormData;
+  templateId: string;
+}
+
+export class TypstResumeRenderer {
+  // Caches for optimization (for repeated api calls)
+  // Initialization tracker to use cache
+  private isInitialized = false;
+
+  // Maps templateId: string -> typst template content: string
+  private templateCache = new Map<string, string>();
+
+  // Maps templateId: string -> library files: Map resume.typ/lib.typ -> lib content: string
+  private libraryCache = new Map<string, Map<string, string>>();
+
+  // Initialize function (mainly for state management)
+  async initialize() {
+    if (this.isInitialized) return;
+
+    try {
+      //this.isInitialized = true;
+      /* MODIFICATION */
+      await new Promise<void>((resolve) => {
+        const poll = () => {
+          if (window.__typstInited && window.$typst) resolve();
+          else setTimeout(poll, 50);
+        };
+        poll();
+      });
+      this.isInitialized = true;
+      /* END OF MODIFICATION */
+    } catch (error) {
+      console.error("Failed to intialize typst renderer: ", error);
+      throw error;
+    }
+  }
+
+  // Load Template function
+  async loadTemplate(templateId: string): Promise<string> {
+    // Check if cache contains the templateId
+    const cached = this.templateCache.get(templateId);
+    if (cached) {
+      return cached;
+    }
+
+    try {
+      // client api call to fetch template contents
+      const res = await fetch(`/api/templates/${templateId}`);
+
+      // handle invalid res
+      if (!res.ok) {
+        throw new Error(`Failed to load template: ${res.statusText}`);
+      }
+
+      // extract template content from res body
+      const templateContent = await res.text();
+
+      // update template cache
+      this.templateCache.set(templateId, templateContent);
+
+      // return template content
+      return templateContent;
+    } catch (error) {
+      console.error("Failed to load template: ", error);
+      throw error;
+    }
+  }
+
+  // Function to load library files for template compilation
+  async loadLibrary(templateId: string): Promise<Map<string, string>> {
+    // Check if cache contains the templateId
+    const cached = this.libraryCache.get(templateId);
+    if (cached) {
+      return cached;
+    }
+
+    try {
+      await this.initialize(); /* MODIFICATION */
+      // Load required library based on templateId
+      const requiredLib = templateLibs[templateId];
+
+      // Check if required library found
+      if (!requiredLib) {
+        throw new Error(
+          `Template library not found for templateId: ${templateId}`,
+        );
+      }
+      // Set up library files mapping lib/resume.typ -> lib/resume file content
+      const libraryFiles = new Map<string, string>();
+
+      // Fetch lib.typ path for particular templateId
+      const libTypRes = await fetch(`/api/libraries/${requiredLib}/lib.typ`);
+      if (libTypRes.ok) {
+        // Update libraryFiles
+        libraryFiles.set(
+          `/libraries/${requiredLib}/lib.typ`,
+          await libTypRes.text(),
+        );
+      }
+
+      // Fetch resume.typ path for particular templateId
+      const resumeTypRes = await fetch(
+        `/api/libraries/${requiredLib}/resume.typ`,
+      );
+      if (resumeTypRes.ok) {
+        // Update libraryFiles
+        libraryFiles.set(
+          `/libraries/${requiredLib}/resume.typ`,
+          await resumeTypRes.text(),
+        );
+      }
+
+      // Update LibraryCache
+      this.libraryCache.set(templateId, libraryFiles);
+
+      // return libraryFiles
+      return libraryFiles;
+    } catch (error) {
+      console.error(`Error loading libraries for ${templateId}: `, error);
+      throw error;
+    }
+  }
+
+  // Rendering Function Typst -> SVG
+  async renderToSVG({ formData, templateId }: RenderOptions): Promise<string> {
+    try {
+      // Load template and library
+      const templateContent = await this.loadTemplate(templateId);
+      const libraryFiles = await this.loadLibrary(templateId);
+
+      // Format data
+      const formattedData = formatDataForTypst(formData);
+
+      // Add template to vritual file system
+      //await $typst.addSource("/main.typ", templateContent);
+
+      /* MODIFICATION */
+      if (window.$typst) {
+        await window.$typst.addSource("/main.typ", templateContent);
+
+        for (const [path, content] of libraryFiles) {
+          await window.$typst.addSource(path, content); /* MODIFICATION */
+        }
+        const svgBuffer = await window.$typst.svg({
+          /* MODIFICATION */
+          mainFilePath: "/main.typ", // Use the file we added to VFS
+          inputs: { data: JSON.stringify(formattedData) },
+        });
+
+        return svgBuffer;
+      } else {
+        throw new Error("window.$typst is not defined");
+      }
+      /* END OF MODIFICATION */
+
+      // Add library files to virtual file system
+      //for (const [path, content] of libraryFiles) {
+      //	await $typst.addSource(path, content);
+      //}
+
+      // Compile to SVG
+      // const svgBuffer = await $typst.svg({
+      //	mainFilePath: "/main.typ", // Use the file we added to VFS
+      //	inputs: { data: JSON.stringify(formattedData) },
+      //});
+
+      // return svgBuffer;
+    } catch (error) {
+      console.error("Live rendering compilation error: ", error);
+      throw error;
+    }
+  }
+}
+
+// Singleton instance
+export const liveRenderer = new TypstResumeRenderer();

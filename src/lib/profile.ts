@@ -61,3 +61,27 @@ export const convertToFormData = (
     },
   };
 };
+
+export const formatDataForTypst = (formData: OnboardingFormData) => {
+  const formatDate = (date: Date | undefined) => {
+    if (!date) return undefined;
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toISOString().split("T")[0]; // "2018-08-15T00:00:00.000Z" -> "2018-08-15"
+    //return date.toISOString().split("T")[0]; // "2018-08-15T00:00:00.000Z" -> "2018-08-15"
+  };
+
+  // Reconstruct form data
+  return {
+    ...formData,
+    education: formData.education?.map((edu) => ({
+      ...edu,
+      startDate: formatDate(edu.startDate),
+      endDate: formatDate(edu.endDate),
+    })),
+    experience: formData.experience?.map((exp) => ({
+      ...exp,
+      startDate: formatDate(exp.startDate),
+      endDate: exp.endDate ? formatDate(exp.endDate) : undefined,
+    })),
+  };
+};
