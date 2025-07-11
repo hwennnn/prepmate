@@ -16,11 +16,15 @@ export function Providers({ children, session }: ProvidersProps) {
     // only inject once
     if (window.__typstInited) return;
 
+    // Script injection to load typst compiler on client
+    // @see: https://github.com/Myriad-Dreamin/typst.ts/blob/main/packages/typst.ts/index.html
     const script = document.createElement("script");
     script.type = "module";
     script.src =
       "https://cdn.jsdelivr.net/npm/@myriaddreamin/typst.ts@0.6.1-rc1/dist/esm/contrib/all-in-one-lite.bundle.js";
 
+    // On mounting of root page - to eliminate cold-start
+    // Download typst compiler WASM (both compiler and renderer wasm needed)
     script.onload = () => {
       // Type guard to ensure $typst exists
       if (window.$typst) {
@@ -33,7 +37,7 @@ export function Providers({ children, session }: ProvidersProps) {
             "https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer@0.6.1-rc1/pkg/typst_ts_renderer_bg.wasm",
         });
       }
-      window.__typstInited = true;
+      window.__typstInited = true; // Update global window for clients to trace
     };
     document.head.appendChild(script);
   }, []);

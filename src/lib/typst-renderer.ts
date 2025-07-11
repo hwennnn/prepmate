@@ -1,6 +1,5 @@
 "use client";
 
-//import { $typst } from "@myriaddreamin/typst.ts";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 import { templateLibs } from "~/templates/template-lib-map";
 import { formatDataForTypst } from "~/lib/profile";
@@ -26,17 +25,19 @@ export class TypstResumeRenderer {
     if (this.isInitialized) return;
 
     try {
-      //this.isInitialized = true;
-      /* MODIFICATION */
+      /* Typst compiler initialization */
+      // Await custom promise to confirm that typst compiler wasm has been loaded
       await new Promise<void>((resolve) => {
+        // Use poll to periodically perform checks
         const poll = () => {
           if (window.__typstInited && window.$typst) resolve();
           else setTimeout(poll, 50);
         };
         poll();
       });
+
+      // Update state if no problems
       this.isInitialized = true;
-      /* END OF MODIFICATION */
     } catch (error) {
       console.error("Failed to intialize typst renderer: ", error);
       throw error;
@@ -52,6 +53,9 @@ export class TypstResumeRenderer {
     }
 
     try {
+      // Check if typst compiler initialized
+      await this.initialize();
+
       // client api call to fetch template contents
       const res = await fetch(`/api/templates/${templateId}`);
 
@@ -83,7 +87,8 @@ export class TypstResumeRenderer {
     }
 
     try {
-      await this.initialize(); /* MODIFICATION */
+      // Check if typst compiler initialized
+      await this.initialize();
       // Load required library based on templateId
       const requiredLib = templateLibs[templateId];
 
@@ -140,17 +145,13 @@ export class TypstResumeRenderer {
       const formattedData = formatDataForTypst(formData);
 
       // Add template to vritual file system
-      //await $typst.addSource("/main.typ", templateContent);
-
-      /* MODIFICATION */
       if (window.$typst) {
         await window.$typst.addSource("/main.typ", templateContent);
 
         for (const [path, content] of libraryFiles) {
-          await window.$typst.addSource(path, content); /* MODIFICATION */
+          await window.$typst.addSource(path, content);
         }
         const svgBuffer = await window.$typst.svg({
-          /* MODIFICATION */
           mainFilePath: "/main.typ", // Use the file we added to VFS
           inputs: { data: JSON.stringify(formattedData) },
         });
@@ -159,20 +160,6 @@ export class TypstResumeRenderer {
       } else {
         throw new Error("window.$typst is not defined");
       }
-      /* END OF MODIFICATION */
-
-      // Add library files to virtual file system
-      //for (const [path, content] of libraryFiles) {
-      //	await $typst.addSource(path, content);
-      //}
-
-      // Compile to SVG
-      // const svgBuffer = await $typst.svg({
-      //	mainFilePath: "/main.typ", // Use the file we added to VFS
-      //	inputs: { data: JSON.stringify(formattedData) },
-      //});
-
-      // return svgBuffer;
     } catch (error) {
       console.error("Live rendering compilation error: ", error);
       throw error;

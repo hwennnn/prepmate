@@ -1,11 +1,10 @@
-//import type { InitOptions, $typst as TypstAPI } from "@myriaddreamin/typst.ts";
-
 export {};
 
 declare global {
+  // Declaring Javascript wrapper interface to silent es-linting
+  // for when initializing typst compiler from CDN (web assembly modules)
+  // For client only
   interface Window {
-    //initTypst?: (opts?: InitOptions) => Promise<void>;
-    //$typst?: TypstAPI;
     $typst?: {
       setCompilerInitOptions: (options: { getModule: () => string }) => void;
       setRendererInitOptions: (options: { getModule: () => string }) => void;

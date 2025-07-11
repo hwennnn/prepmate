@@ -1,9 +1,6 @@
 "use client";
 
-//import { useMemo } from "react";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
-//import { ClassicTemplate, CreativeTemplate, ModernTemplate } from "./templates";
-//import UniversalTemplate from "./templates/UniversalTemplate";
 import { useLivePreview } from "~/hooks/use-live-preview";
 
 import { RefreshCw } from "lucide-react";
