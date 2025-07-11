@@ -8,6 +8,10 @@ interface UseLivePreviewOptions {
   formData: OnboardingFormData;
   templateId: string;
   enabled?: boolean;
+<<<<<<< HEAD
+=======
+  //debounceMs?: number;
+>>>>>>> e1d7839 (feat: Implemented Typst live compilation feature)
 }
 
 export function useLivePreview({
@@ -18,7 +22,11 @@ export function useLivePreview({
   // States to manage
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [error, setError] = useState<string | null>(null); // error state
+<<<<<<< HEAD
   const [svgContent, setSVGContent] = useState<string[] | null>(); // svg content state
+=======
+  const [svgContent, setSVGContent] = useState<string | null>(); // svg content state
+>>>>>>> e1d7839 (feat: Implemented Typst live compilation feature)
   const [isInitialized, setInitialized] = useState(false); // Initialization state
 
   // Initialization promise reference (persistent so no re-initialization of compiler)
@@ -141,3 +149,149 @@ export function useLivePreview({
     refresh,
   };
 }
+<<<<<<< HEAD
+=======
+
+/*
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { OnboardingFormData } from "~/app/_components/onboarding/types";
+import { liveRenderer } from "~/lib/typst-renderer";
+
+interface UseLivePreviewOptions {
+  formData: OnboardingFormData;
+  templateId: string;
+  enabled?: boolean;
+  debounceMs?: number;
+}
+
+interface LivePreviewState {
+  isLoading: boolean;
+  error: string | null;
+  svgContent: string | null;
+  isInitialized: boolean;
+}
+
+export function useLivePreview({
+  formData,
+  templateId,
+  enabled = true,
+  debounceMs = 300,
+}: UseLivePreviewOptions) {
+  const [state, setState] = useState<LivePreviewState>({
+    isLoading: false,
+    error: null,
+    svgContent: null,
+    isInitialized: false,
+  });
+
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const lastDataRef = useRef<string>("");
+  const initializationRef = useRef<Promise<void> | null>(null);
+
+  // Initialize the renderer
+  const initialize = useCallback(async () => {
+    if (initializationRef.current) {
+      return initializationRef.current;
+    }
+
+    initializationRef.current = (async () => {
+      try {
+        setState((prev) => ({ ...prev, isLoading: true, error: null }));
+        await liveRenderer.initialize();
+        setState((prev) => ({ ...prev, isInitialized: true }));
+      } catch (error) {
+        setState((prev) => ({
+          ...prev,
+          error:
+            error instanceof Error ? error.message : "Initialization failed",
+        }));
+      } finally {
+        setState((prev) => ({ ...prev, isLoading: false }));
+      }
+    })();
+
+    return initializationRef.current;
+  }, []);
+
+  // Render function
+  const render = useCallback(async () => {
+    if (!enabled || !state.isInitialized) return;
+
+    const currentData = JSON.stringify({ formData, templateId });
+    if (currentData === lastDataRef.current) return;
+
+    lastDataRef.current = currentData;
+
+    try {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+      const svgContent = await liveRenderer.renderToSVG({
+        formData,
+        templateId,
+      });
+
+      setState((prev) => ({
+        ...prev,
+        svgContent,
+        isLoading: false,
+      }));
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        error: error instanceof Error ? error.message : "Rendering failed",
+        isLoading: false,
+      }));
+    }
+  }, [formData, templateId, enabled, state.isInitialized]);
+
+  // Debounced render function
+  const debouncedRender = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      void render();
+    }, debounceMs);
+  }, [render, debounceMs]);
+
+  // Initialize on mount
+  useEffect(() => {
+    if (enabled) {
+      void initialize();
+    }
+  }, [enabled, initialize]);
+
+  // Trigger render when data changes
+  useEffect(() => {
+    if (enabled && state.isInitialized) {
+      debouncedRender();
+    }
+  }, [formData, templateId, enabled, state.isInitialized, debouncedRender]);
+
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Manual refresh function
+  const refresh = useCallback(() => {
+    if (enabled && state.isInitialized) {
+      lastDataRef.current = ""; // Force re-render
+      void render();
+    }
+  }, [enabled, state.isInitialized, render]);
+
+  return {
+    ...state,
+    refresh,
+  };
+}
+*/
+>>>>>>> e1d7839 (feat: Implemented Typst live compilation feature)
