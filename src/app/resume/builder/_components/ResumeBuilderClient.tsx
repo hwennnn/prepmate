@@ -8,7 +8,6 @@ import {
 } from "~/lib/profile";
 import { notifyToaster as notify } from "~/lib/notification";
 import { api } from "~/trpc/react";
-import { TemplateSwitcher } from "~/components/template-switcher";
 import { ResumeForm } from "./ResumeForm";
 import { ResumePreview } from "./ResumePreview";
 
