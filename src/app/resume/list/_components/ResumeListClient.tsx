@@ -10,6 +10,7 @@ import { ErrorMessage } from "~/components/error-message";
 import { Header } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { Toaster } from "react-hot-toast";
 
 export function ResumeListClient() {
   const { data: resumes, isLoading, error } = api.resume.getResumes.useQuery();
@@ -76,6 +77,7 @@ export function ResumeListClient() {
           </div>
         )}
       </div>
+      <Toaster />
     </div>
   );
 }
