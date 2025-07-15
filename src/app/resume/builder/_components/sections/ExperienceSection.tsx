@@ -18,8 +18,8 @@ export function ExperienceSection({
     return null;
   }
 
-  // Sort experience by date
-  const sortedExperience = experience.sort(
+  // Sort experience by date (create copy without mutating original)
+  const sortedExperience = [...experience].sort(
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
   );
 
@@ -27,11 +27,16 @@ export function ExperienceSection({
     <div className={classes.section.wrapper}>
       <ResumeSectionTitle title="Work Experience" templateId={templateId} />
       {sortedExperience.map((job, index) => (
-        <div key={index} className={classes.experience.item}>
+        <div
+          key={`${job.company}-${index}`}
+          className={classes.experience.item}
+        >
           <div className="mb-1 flex justify-between">
             <span className={classes.experience.company}>{job.company}</span>
             <span className={classes.experience.date}>
-              {formatDateRange(job.startDate, job.endDate, job.isCurrentJob)}
+              {job.startDate
+                ? formatDateRange(job.startDate, job.endDate, job.isCurrentJob)
+                : null}
             </span>
           </div>
           <div className="flex justify-between">
