@@ -1,7 +1,7 @@
 "use client";
 import type { Template } from "@prisma/client";
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { Button } from "~/components/ui/button";
 
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
@@ -15,7 +15,10 @@ interface TemplateSwitcherProps {
 export function TemplateSwitcher({ currentTemplateId }: TemplateSwitcherProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = useParams();
   const [isOpen, setIsOpen] = useState(false);
+
+  const resumeId = params.id as string | undefined;
 
   // Fetch available templates
   const {
@@ -25,10 +28,18 @@ export function TemplateSwitcher({ currentTemplateId }: TemplateSwitcherProps) {
   } = api.resume.getTemplates.useQuery();
 
   const handleTemplateChange = (newTemplateId: string) => {
-    // Update URL with new template
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("template", newTemplateId);
-    router.push(`/resume/builder?${params.toString()}`);
+    // Update URL with new template - handle both new and edit modes
+    if (resumeId) {
+      // Edit mode: stay on the same resume but with new template in query
+      const urlParams = new URLSearchParams(searchParams.toString());
+      urlParams.set("template", newTemplateId);
+      router.push(`/resume/builder/${resumeId}?${urlParams.toString()}`);
+    } else {
+      // New mode: update template in query params
+      const urlParams = new URLSearchParams(searchParams.toString());
+      urlParams.set("template", newTemplateId);
+      router.push(`/resume/builder?${urlParams.toString()}`);
+    }
     setIsOpen(false);
   };
 

@@ -57,7 +57,7 @@ export function DashboardClientPage() {
           description="Create professional resumes with AI-powered optimization and beautiful templates."
           icon={FileText}
           iconColor="text-blue-600"
-          href="/resume"
+          href="/resume/list"
           buttonText="Build Resume"
           buttonVariant="default"
         />

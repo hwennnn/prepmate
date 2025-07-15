@@ -111,3 +111,84 @@ export const completeProfileSchema = z.object({
 });
 
 export type OnboardingFormData = z.infer<typeof completeProfileSchema>;
+
+// Resume-related schemas
+export const templateSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+});
+
+export const resumeProfileSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+});
+
+export const resumeSchema = z.object({
+  id: z.string(),
+  templateId: z.string(),
+  profileId: z.string(),
+  template: templateSchema,
+  profile: resumeProfileSchema,
+});
+
+// Resume database models (different from form schemas)
+export const resumeEducationSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  institution: z.string(),
+  degree: z.string(),
+  isAttending: z.boolean(),
+  startDate: z.date(),
+  endDate: z.date(),
+  gpa: z.string().optional(),
+  awards: z.string().optional(),
+  coursework: z.string().optional(),
+});
+
+export const resumeExperienceSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  company: z.string(),
+  jobTitle: z.string(),
+  location: z.string(),
+  isCurrentJob: z.boolean(),
+  startDate: z.date(),
+  endDate: z.date().optional(),
+  achievements: z.array(z.string()),
+  technologies: z.string().optional(),
+});
+
+export const resumeProjectSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  name: z.string(),
+  description: z.string(),
+  url: z.string().optional(),
+  achievements: z.array(z.string()),
+  technologies: z.string().optional(),
+});
+
+export const resumeSkillsSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  languages: z.string().optional(),
+  frameworks: z.string().optional(),
+});
+
+// Complete resume with all relations
+export const fullResumeSchema = resumeSchema.extend({
+  education: z.array(resumeEducationSchema),
+  experience: z.array(resumeExperienceSchema),
+  projects: z.array(resumeProjectSchema),
+  skills: resumeSkillsSchema.optional(),
+});
+
+export type Resume = z.infer<typeof resumeSchema>;
+export type FullResume = z.infer<typeof fullResumeSchema>;
+export type Template = z.infer<typeof templateSchema>;
+export type ResumeProfile = z.infer<typeof resumeProfileSchema>;
+export type ResumeEducation = z.infer<typeof resumeEducationSchema>;
+export type ResumeExperience = z.infer<typeof resumeExperienceSchema>;
+export type ResumeProject = z.infer<typeof resumeProjectSchema>;
+export type ResumeSkills = z.infer<typeof resumeSkillsSchema>;

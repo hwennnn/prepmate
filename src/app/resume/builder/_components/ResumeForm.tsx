@@ -59,7 +59,8 @@ export function ResumeForm({ initialData, onChange }: ResumeFormProps) {
         // Debounce the update to prevent rapid-fire changes
         timeoutRef.current = setTimeout(() => {
           onChange(data);
-        }, 100);
+        }, 1500); // Increased debounce interval from 100ms to 1500ms
+        // gives users enough time to make changes to the form.
       }
     },
     [onChange],
@@ -72,14 +73,15 @@ export function ResumeForm({ initialData, onChange }: ResumeFormProps) {
 
   // Reset form when initialData changes, but prevent recursion
   useEffect(() => {
-    const initialDataString = JSON.stringify(initialData);
-    const currentDataString = JSON.stringify(formData);
-
-    // Only reset if the data is actually different
-    if (initialDataString !== currentDataString) {
+    // Set current form data
+    const newInitialDataString = JSON.stringify(initialData);
+    // If current form data does not match the initiald data
+    if (newInitialDataString !== lastUpdateRef.current) {
+      // update initial data reference to new data
+      lastUpdateRef.current = newInitialDataString;
       reset(initialData);
     }
-  }, [initialData, formData, reset]);
+  }, [initialData, reset]);
 
   // Cleanup timeout on unmount
   useEffect(() => {

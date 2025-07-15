@@ -67,21 +67,34 @@ export const formatDataForTypst = (formData: OnboardingFormData) => {
     if (!date) return undefined;
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return dateObj.toISOString().split("T")[0]; // "2018-08-15T00:00:00.000Z" -> "2018-08-15"
-    //return date.toISOString().split("T")[0]; // "2018-08-15T00:00:00.000Z" -> "2018-08-15"
   };
+
+  // Filter out incomplete entries to prevent compilation errors
+  const validExperience = formData.experience?.filter(
+    (exp) => exp.company && exp.jobTitle && exp.startDate,
+  );
+
+  const validEducation = formData.education?.filter(
+    (edu) => edu.institution && edu.degree && edu.startDate && edu.endDate,
+  );
+
+  const validProjects = formData.projects?.filter(
+    (proj) => proj.name && proj.description,
+  );
 
   // Reconstruct form data
   return {
     ...formData,
-    education: formData.education?.map((edu) => ({
+    education: validEducation?.map((edu) => ({
       ...edu,
       startDate: formatDate(edu.startDate),
       endDate: formatDate(edu.endDate),
     })),
-    experience: formData.experience?.map((exp) => ({
+    experience: validExperience?.map((exp) => ({
       ...exp,
       startDate: formatDate(exp.startDate),
       endDate: exp.endDate ? formatDate(exp.endDate) : undefined,
     })),
+    projects: validProjects,
   };
 };
