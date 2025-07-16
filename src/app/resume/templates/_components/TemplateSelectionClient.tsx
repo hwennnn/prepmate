@@ -7,7 +7,7 @@ import { Header } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { TemplatePreview } from "~/app/resume/_components/TemplatePreview";
+import { TemplatePreview } from "~/app/resume/templates/_components/TemplatePreview";
 
 // Mock templates for now - we'll replace this with real data later
 const templates = [

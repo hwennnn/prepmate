@@ -14,11 +14,26 @@ export const resumeRouter = createTRPCRouter({
   }),
 
   // Get All resumes for specific user
-  // - Maybe just include resume field in getProfile procedure in onboarding.ts
   getResumes: protectedProcedure.query(async ({ ctx }) => {
-    const resumes = await ctx.db.userProfile.findUnique({
+    // Get user profile associated with session
+    const userProfile = await ctx.db.userProfile.findUnique({
       where: { userId: ctx.session.user.id },
-      select: { resume: true },
+      select: { id: true },
+    });
+
+    if (!userProfile) {
+      throw new Error("No such user found");
+    }
+
+    // Get resume associated with user
+    const resumes = await ctx.db.resume.findMany({
+      where: { profileId: userProfile.id },
+      include: {
+        template: {
+          select: { id: true, name: true, description: true },
+        },
+      },
+      orderBy: { id: "desc" },
     });
     return resumes;
   }),
@@ -27,10 +42,22 @@ export const resumeRouter = createTRPCRouter({
   getResume: protectedProcedure
     .input(z.object({ resumeId: z.string() }))
     .query(async ({ ctx, input }) => {
+      // Get user profile associated with session
+      const userProfile = await ctx.db.userProfile.findUnique({
+        where: {
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (!userProfile) {
+        throw new Error("No such user found");
+      }
+
+      // Get specific resume by resumeId
       const resume = await ctx.db.resume.findUnique({
         where: {
           id: input.resumeId,
-          profileId: ctx.session.user.id, // Security: only user's resumes
+          profileId: userProfile.id, // Security: only user's resumes
         },
         include: {
           template: true,
@@ -38,7 +65,6 @@ export const resumeRouter = createTRPCRouter({
           experience: true,
           projects: true,
           skills: true,
-          profile: true,
         },
       });
       // Resume null check
@@ -54,13 +80,32 @@ export const resumeRouter = createTRPCRouter({
     .input(
       z.object({
         templateId: z.string(),
+        resumeName: z.string(),
+        personalDetails: z.object({
+          firstName: z.string(),
+          lastName: z.string(),
+          email: z.string(),
+          phoneNumber: z.string().optional(),
+          website: z.string().optional(),
+          linkedinUrl: z.string().optional(),
+          githubUrl: z.string().optional(),
+        }),
         formData: completeProfileSchema,
         resumeId: z.string().optional(), // If provided = update, if not = create
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { templateId, formData, resumeId } = input;
-      const userId = ctx.session.user.id;
+      const { templateId, resumeName, personalDetails, formData, resumeId } =
+        input;
+      // Get user profile associated with session
+      const userProfile = await ctx.db.userProfile.findUnique({
+        where: { userId: ctx.session.user.id },
+        select: { id: true },
+      });
+
+      if (!userProfile) {
+        throw new Error("User not found");
+      }
       /*
        * Logic:
        * 1. Check if it is update (resumeId nullcheck)
@@ -73,11 +118,18 @@ export const resumeRouter = createTRPCRouter({
         const resume = await ctx.db.resume.update({
           where: {
             id: resumeId,
-            profileId: userId, // Security: only user's resumes
+            profileId: userProfile.id, // Security: only user's resumes
           },
           data: {
-            id: templateId,
-            profileId: userId,
+            templateId: templateId, // for updates, just assign templateId
+            resumeName: resumeName,
+            firstName: personalDetails.firstName,
+            lastName: personalDetails.lastName,
+            email: personalDetails.email,
+            phoneNumber: personalDetails.phoneNumber,
+            website: personalDetails.website,
+            linkedinUrl: personalDetails.linkedinUrl,
+            githubUrl: personalDetails.githubUrl,
             education: {
               deleteMany: {}, // delete existing data
               create:
@@ -135,6 +187,14 @@ export const resumeRouter = createTRPCRouter({
                 }
               : undefined,
           },
+          include: {
+            template: true,
+            education: true,
+            experience: true,
+            projects: true,
+            skills: true,
+            profile: true,
+          },
         });
 
         return resume;
@@ -143,7 +203,15 @@ export const resumeRouter = createTRPCRouter({
         const resume = await ctx.db.resume.create({
           data: {
             templateId: templateId,
-            profileId: userId,
+            profileId: userProfile.id,
+            resumeName: resumeName,
+            firstName: personalDetails.firstName,
+            lastName: personalDetails.lastName,
+            email: personalDetails.email,
+            phoneNumber: personalDetails.phoneNumber,
+            website: personalDetails.website,
+            linkedinUrl: personalDetails.linkedinUrl,
+            githubUrl: personalDetails.githubUrl,
             education: {
               create:
                 formData.education?.map((edu) => ({
@@ -189,10 +257,43 @@ export const resumeRouter = createTRPCRouter({
                 }
               : undefined,
           },
+          include: {
+            template: true,
+          },
         });
 
         return resume;
       }
+    }),
+
+  // Delete resume by id
+  deleteResume: protectedProcedure
+    .input(
+      z.object({
+        resumeId: z.string(), // Required, not optional
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { resumeId } = input;
+      // Get user profile associated with session
+      const userProfile = await ctx.db.userProfile.findUnique({
+        where: { userId: ctx.session.user.id },
+        select: { id: true },
+      });
+
+      if (!userProfile) {
+        throw new Error("User not found");
+      }
+
+      // Security: Only delete if resume belongs to this user
+      await ctx.db.resume.delete({
+        where: {
+          id: resumeId,
+          profileId: userProfile.id, // Security check
+        },
+      });
+
+      return { success: true, deletedId: resumeId };
     }),
 
   // Export PDF from builder

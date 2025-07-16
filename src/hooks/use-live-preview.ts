@@ -18,7 +18,7 @@ export function useLivePreview({
   // States to manage
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [error, setError] = useState<string | null>(null); // error state
-  const [svgContent, setSVGContent] = useState<string | null>(); // svg content state
+  const [svgContent, setSVGContent] = useState<string[] | null>(); // svg content state
   const [isInitialized, setInitialized] = useState(false); // Initialization state
 
   // Initialization promise reference (persistent so no re-initialization of compiler)

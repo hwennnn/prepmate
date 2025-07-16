@@ -39,12 +39,25 @@ export function ResumePreview({ formData, templateId }: ResumePreviewProps) {
           </div>
         ) : (
           <div className="relative">
-            {!isLoading && svgContent ? (
-              <div className="w-full overflow-auto bg-white shadow-sm">
-                <div
-                  className="min-w-full bg-white"
-                  dangerouslySetInnerHTML={{ __html: svgContent }}
-                />
+            {!isLoading && svgContent && svgContent.length > 0 ? (
+              <div className="w-full space-y-4 bg-white shadow-sm">
+                {svgContent.map((pageContent, index) => (
+                  <div
+                    key={index}
+                    className="relative overflow-hidden border bg-white shadow-sm"
+                  >
+                    {/* A4 aspect ratio container (1:1.414) */}
+                    <div
+                      className="w-full"
+                      style={{ aspectRatio: "1 / 1.414" }}
+                    >
+                      <div
+                        className="h-full w-full bg-white [&>svg]:h-full [&>svg]:w-full [&>svg]:object-contain"
+                        dangerouslySetInnerHTML={{ __html: pageContent }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : !isLoading && isInitialized ? (
               <ErrorMessage

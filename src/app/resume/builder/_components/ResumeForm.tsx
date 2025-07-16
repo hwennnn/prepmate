@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Briefcase, Code, FolderOpen, GraduationCap, User } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { EducationForm } from "~/app/_components/onboarding/EducationForm";
 import { ExperienceForm } from "~/app/_components/onboarding/ExperienceForm";
@@ -21,10 +21,7 @@ interface ResumeFormProps {
 }
 
 export function ResumeForm({ initialData, onChange }: ResumeFormProps) {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
-  const lastUpdateRef = useRef<string>("");
+  const lastSentDataRef = useRef<string>("");
 
   const {
     register,
@@ -32,63 +29,23 @@ export function ResumeForm({ initialData, onChange }: ResumeFormProps) {
     watch,
     setValue,
     formState: { errors },
-    reset,
   } = useForm<OnboardingFormData>({
     resolver: zodResolver(completeProfileSchema),
     mode: "onChange",
     defaultValues: initialData,
   });
 
-  // Watch all form data for real-time updates
+  // Simple direct onChange without debouncing to avoid infinite loops
   const formData = watch();
 
-  // Stabilized onChange callback with debouncing
-  const debouncedOnChange = useCallback(
-    (data: OnboardingFormData) => {
-      const currentDataString = JSON.stringify(data);
-
-      // Only update if data actually changed
-      if (currentDataString !== lastUpdateRef.current) {
-        lastUpdateRef.current = currentDataString;
-
-        // Clear any existing timeout
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-
-        // Debounce the update to prevent rapid-fire changes
-        timeoutRef.current = setTimeout(() => {
-          onChange(data);
-        }, 100);
-      }
-    },
-    [onChange],
-  );
-
-  // Update parent component when form data changes
   useEffect(() => {
-    debouncedOnChange(formData);
-  }, [formData, debouncedOnChange]);
-
-  // Reset form when initialData changes, but prevent recursion
-  useEffect(() => {
-    const initialDataString = JSON.stringify(initialData);
+    // Only call onChange if data actually changed
     const currentDataString = JSON.stringify(formData);
-
-    // Only reset if the data is actually different
-    if (initialDataString !== currentDataString) {
-      reset(initialData);
+    if (currentDataString !== lastSentDataRef.current) {
+      lastSentDataRef.current = currentDataString;
+      onChange(formData);
     }
-  }, [initialData, formData, reset]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+  }, [formData, onChange]);
 
   return (
     <div className="space-y-6">
