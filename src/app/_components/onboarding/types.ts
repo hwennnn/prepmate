@@ -119,17 +119,21 @@ export const templateSchema = z.object({
   description: z.string(),
 });
 
-export const resumeProfileSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-});
-
+// For getting list of resumes, for each resume
+// api returns direct personal fields and template data
 export const resumeSchema = z.object({
   id: z.string(),
   templateId: z.string(),
   profileId: z.string(),
+  resumeName: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phoneNumber: z.string().optional(),
+  website: z.string().optional(),
+  linkedinUrl: z.string().optional(),
+  githubUrl: z.string().optional(),
   template: templateSchema,
-  profile: resumeProfileSchema,
 });
 
 // Resume database models (different from form schemas)
@@ -177,18 +181,17 @@ export const resumeSkillsSchema = z.object({
 });
 
 // Complete resume with all relations
-export const fullResumeSchema = resumeSchema.extend({
+export const completeResumeSchema = resumeSchema.extend({
   education: z.array(resumeEducationSchema),
   experience: z.array(resumeExperienceSchema),
   projects: z.array(resumeProjectSchema),
   skills: resumeSkillsSchema.optional(),
 });
 
+// Used for return type of getResumes, where Resume only requires
+// fields form resumeSchema
 export type Resume = z.infer<typeof resumeSchema>;
-export type FullResume = z.infer<typeof fullResumeSchema>;
-export type Template = z.infer<typeof templateSchema>;
-export type ResumeProfile = z.infer<typeof resumeProfileSchema>;
-export type ResumeEducation = z.infer<typeof resumeEducationSchema>;
-export type ResumeExperience = z.infer<typeof resumeExperienceSchema>;
-export type ResumeProject = z.infer<typeof resumeProjectSchema>;
-export type ResumeSkills = z.infer<typeof resumeSkillsSchema>;
+
+// Possibly used for return type from the getResume, where whole resumeSchema
+// is necessary, for clearer type definition/safety
+export type ResumeFormData = z.infer<typeof completeResumeSchema>;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { api } from "~/trpc/react";
 import { ResumeCard } from "./ResumeCard";
 import { EmptyState } from "./EmptyState";
+import { convertResumesToList } from "~/lib/profile";
 
 import { Plus } from "lucide-react";
 import { ErrorMessage } from "~/components/error-message";
@@ -13,7 +14,13 @@ import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { Toaster } from "react-hot-toast";
 
 export function ResumeListClient() {
-  const { data: resumes, isLoading, error } = api.resume.getResumes.useQuery();
+  const {
+    data: resumesData,
+    isLoading,
+    error,
+  } = api.resume.getResumes.useQuery();
+
+  const resumes = convertResumesToList(resumesData);
 
   if (isLoading) {
     return (
