@@ -34,10 +34,6 @@ export function ResumeCard({ resume }: ResumeCardProps) {
     // router.push(`/resume/view/${resume.id}`);
   };
 
-  const resumeTitle = resume.profile
-    ? `${resume.profile.firstName} ${resume.profile.lastName}'s Resume`
-    : `Resume (${resume.template.name})`;
-
   const handleDelete = useCallback(async () => {
     if (!resume.id) return;
 
@@ -63,7 +59,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-slate-900 dark:text-white">
-              {resumeTitle}
+              {resume.resumeName}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               {resume.template.name} Template
