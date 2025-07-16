@@ -64,7 +64,6 @@ model UserProfile {
   resume      Resume[]
   skills      Skills?
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  resume      Resume[]
 }
 
 model Education {
