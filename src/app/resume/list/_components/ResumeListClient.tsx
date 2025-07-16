@@ -4,7 +4,7 @@ import Link from "next/link";
 import { api } from "~/trpc/react";
 import { ResumeCard } from "./ResumeCard";
 import { EmptyState } from "./EmptyState";
-import { convertToResumeListData } from "~/lib/profile";
+import { convertResumesToList } from "~/lib/profile";
 
 import { Plus } from "lucide-react";
 import { ErrorMessage } from "~/components/error-message";
@@ -20,7 +20,7 @@ export function ResumeListClient() {
     error,
   } = api.resume.getResumes.useQuery();
 
-  const resumes = convertToResumeListData(resumesData);
+  const resumes = convertResumesToList(resumesData);
 
   if (isLoading) {
     return (

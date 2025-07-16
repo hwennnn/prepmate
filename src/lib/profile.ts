@@ -10,7 +10,7 @@ import type {
   GetResumesData,
 } from "~/server/api/routers/types";
 
-export const convertToFormData = (
+export const convertProfileToOnboardingForm = (
   profileData: GetProfileData | null | undefined,
 ): OnboardingFormData | undefined => {
   if (!profileData) return undefined;
@@ -107,7 +107,7 @@ export const formatDataForTypst = (formData: OnboardingFormData) => {
   };
 };
 
-export const convertToResumeFormData = (
+export const convertResumeToDisplayForm = (
   resumeData: GetResumeData | null | undefined,
 ): ResumeFormData | undefined => {
   if (!resumeData) return undefined;
@@ -156,7 +156,7 @@ export const convertToResumeFormData = (
   };
 };
 
-export const convertToResumeListData = (
+export const convertResumesToList = (
   resumesData: GetResumesData | null | undefined,
 ): Resume[] => {
   if (!resumesData) return [];
@@ -172,14 +172,14 @@ export const convertToResumeListData = (
 };
 
 // Helper function to convert resume data to ResumeBuilderFormData
-export const convertResumeToFormData = (
+export const convertResumeToBuilderForm = (
   resumeData: GetResumeData | null | undefined,
 ):
   | (OnboardingFormData & { resumeName: string; templateId: string })
   | undefined => {
   if (!resumeData) return undefined;
 
-  const converted = convertToResumeFormData(resumeData);
+  const converted = convertResumeToDisplayForm(resumeData);
   if (!converted) return undefined;
 
   return {
@@ -202,7 +202,7 @@ export const convertResumeToFormData = (
 };
 
 // Helper function to convert profile data to ResumeBuilderFormData with default resume name
-export const convertProfileToResumeFormData = (
+export const convertProfileToBuilderForm = (
   profileData: GetProfileData | null | undefined,
   templateId?: string,
 ):
@@ -210,7 +210,7 @@ export const convertProfileToResumeFormData = (
   | undefined => {
   if (!profileData) return undefined;
 
-  const converted = convertToFormData(profileData);
+  const converted = convertProfileToOnboardingForm(profileData);
   if (!converted) return undefined;
 
   return {

@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useParams } from "next/navigation";
 import {
-  convertResumeToFormData,
-  convertProfileToResumeFormData,
+  convertResumeToBuilderForm,
+  convertProfileToBuilderForm,
 } from "~/lib/profile";
 import { notifyToaster as notify } from "~/lib/notification";
 import { api } from "~/trpc/react";
@@ -170,7 +170,7 @@ export function ResumeBuilderClient() {
   // If editing, use existing resume data, otherwise use profile
   useEffect(() => {
     if (isEditMode && resumeData) {
-      const convertedData = convertResumeToFormData(resumeData);
+      const convertedData = convertResumeToBuilderForm(resumeData);
       if (convertedData) {
         setFormData({
           personalDetails: convertedData.personalDetails,
@@ -182,7 +182,7 @@ export function ResumeBuilderClient() {
         setResumeName(convertedData.resumeName);
       }
     } else if (profile) {
-      const initialData = convertProfileToResumeFormData(profile);
+      const initialData = convertProfileToBuilderForm(profile);
       if (initialData) {
         setFormData({
           personalDetails: initialData.personalDetails,

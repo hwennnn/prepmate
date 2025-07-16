@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { convertToFormData } from '../../../src/lib/profile';
+import { convertProfileToOnboardingForm } from '../../../src/lib/profile';
 import type { GetProfileData } from '../../../src/server/api/routers/types';
 
 // Mock data generator for testing
@@ -66,15 +66,15 @@ const createMockProfileData = (overrides: Partial<GetProfileData> = {}): GetProf
   ...overrides,
 });
 
-describe('convertToFormData', () => {
+describe('convertProfileToOnboardingForm', () => {
   it('returns undefined when profileData is null or undefined', () => {
-    expect(convertToFormData(null)).toBeUndefined();
-    expect(convertToFormData(undefined)).toBeUndefined();
+    expect(convertProfileToOnboardingForm(null)).toBeUndefined();
+    expect(convertProfileToOnboardingForm(undefined)).toBeUndefined();
   });
 
   it('converts complete profile data to form data structure', () => {
     const mockData = createMockProfileData();
-    const result = convertToFormData(mockData);
+    const result = convertProfileToOnboardingForm(mockData);
 
     expect(result).toEqual({
       personalDetails: {
@@ -134,7 +134,7 @@ describe('convertToFormData', () => {
       githubUrl: null,
     });
     
-    const result = convertToFormData(mockData);
+    const result = convertProfileToOnboardingForm(mockData);
 
     expect(result?.personalDetails).toEqual({
       firstName: 'John',
@@ -154,7 +154,7 @@ describe('convertToFormData', () => {
       projects: undefined,
     });
     
-    const result = convertToFormData(mockData);
+    const result = convertProfileToOnboardingForm(mockData);
 
     expect(result?.education).toEqual([]);
     expect(result?.experience).toEqual([]);
