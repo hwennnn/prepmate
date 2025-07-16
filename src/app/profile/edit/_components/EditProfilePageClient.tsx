@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import { OnboardingForm } from "~/app/_components/onboarding/OnboardingForm";
 
 import { ErrorMessage } from "~/components/error-message";
-import { convertToFormData } from "~/lib/profile";
+import { convertProfileToOnboardingForm } from "~/lib/profile";
 
 export function EditProfilePageClient() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export function EditProfilePageClient() {
   };
 
   const initialData = useMemo(
-    () => convertToFormData(profileData),
+    () => convertProfileToOnboardingForm(profileData),
     [profileData],
   );
 

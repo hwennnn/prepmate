@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useParams } from "next/navigation";
-import { convertToFormData } from "~/lib/profile";
+import {
+  convertResumeToBuilderForm,
+  convertProfileToBuilderForm,
+} from "~/lib/profile";
 import { notifyToaster as notify } from "~/lib/notification";
 import { api } from "~/trpc/react";
 import { ResumeForm } from "./ResumeForm";
@@ -11,6 +14,8 @@ import { ResumePreview } from "./ResumePreview";
 import { Download, Save } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { ErrorMessage } from "~/components/error-message";
 import { Header } from "~/components/layout";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
@@ -23,6 +28,7 @@ export function ResumeBuilderClient() {
   const templateId = searchParams.get("template");
   const resumeId = (params.id as string) || undefined; // From resume/builder/[id]
   const [formData, setFormData] = useState<OnboardingFormData | null>(null);
+  const [resumeName, setResumeName] = useState<string>("");
 
   /*
    * Since Resume Builder is used for creation and edit
@@ -40,7 +46,7 @@ export function ResumeBuilderClient() {
 
   // Fetch existing resume data if editing
   const {
-    data: existingResume,
+    data: resumeData,
     isLoading: resumeLoading,
     error: resumeError,
   } = api.resume.getResume.useQuery(
@@ -53,11 +59,10 @@ export function ResumeBuilderClient() {
       },
     },
   );
-
   // Prioritize the templateId to follow parameters
   // When new resume, we follow templateId from params
   // When editing resume, we follow saved templateId in resume data
-  const effectiveTemplateId = templateId ?? existingResume?.templateId;
+  const effectiveTemplateId = templateId ?? resumeData?.templateId;
 
   // ======================== Toaster Notification Function ====================
 
@@ -67,12 +72,14 @@ export function ResumeBuilderClient() {
 
   const handleSaveResume = useCallback(async () => {
     // Do nothing if there is no formdata or no templateid
-    if (!formData || !effectiveTemplateId) return;
+    if (!formData || !effectiveTemplateId || !resumeName) return;
 
     try {
       const result = await saveResume.mutateAsync({
-        formData,
+        formData: formData,
         templateId: effectiveTemplateId,
+        resumeName: resumeName,
+        personalDetails: formData.personalDetails,
         resumeId: resumeId ?? undefined,
       });
 
@@ -107,7 +114,15 @@ export function ResumeBuilderClient() {
       console.error("Save failed: ", error);
       notify(false, "Error saving resume!", 2500);
     }
-  }, [formData, saveResume, isEditMode, effectiveTemplateId, resumeId, utils]);
+  }, [
+    formData,
+    resumeName,
+    saveResume,
+    isEditMode,
+    effectiveTemplateId,
+    resumeId,
+    utils,
+  ]);
 
   // ============================= PDF Export functionality ========================
   const exportPDF = api.resume.exportLivePDF.useMutation();
@@ -136,9 +151,12 @@ export function ResumeBuilderClient() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+
+      notify(true, "PDF download started.", 1500);
     } catch (error) {
       console.error("PDF download failed:", error);
       // Add toast notification here
+      notify(false, "PDF download failed.", 2500);
     }
   }, [formData, effectiveTemplateId, exportPDF]);
 
@@ -149,58 +167,47 @@ export function ResumeBuilderClient() {
     setFormData(data);
   }, []);
 
+  // If editing, use existing resume data, otherwise use profile
   useEffect(() => {
-    // If editing, use existing resume data, otherwise use profile
-    if (isEditMode && existingResume) {
-      // Transform resume data to match profile structure for convertToFormData
-      const resumeAsProfileData = {
-        ...existingResume.profile,
-        education: existingResume.education.map((edu) => ({
-          ...edu,
-          profileId: existingResume.profile.id,
-        })),
-        experience: existingResume.experience.map((exp) => ({
-          ...exp,
-          profileId: existingResume.profile.id,
-        })),
-        projects: existingResume.projects.map((proj) => ({
-          ...proj,
-          profileId: existingResume.profile.id,
-        })),
-        skills: existingResume.skills
-          ? {
-              ...existingResume.skills,
-              profileId: existingResume.profile.id,
-              languages: existingResume.skills.languages ?? null,
-              frameworks: existingResume.skills.frameworks ?? null,
-            }
-          : null,
-      };
-
-      const resumeFormData = convertToFormData(resumeAsProfileData);
-      if (resumeFormData) {
-        setFormData(resumeFormData);
+    if (isEditMode && resumeData) {
+      const convertedData = convertResumeToBuilderForm(resumeData);
+      if (convertedData) {
+        setFormData({
+          personalDetails: convertedData.personalDetails,
+          education: convertedData.education,
+          experience: convertedData.experience,
+          projects: convertedData.projects,
+          skills: convertedData.skills,
+        });
+        setResumeName(convertedData.resumeName);
       }
     } else if (profile) {
-      const initialData = convertToFormData(profile);
+      const initialData = convertProfileToBuilderForm(profile);
       if (initialData) {
-        setFormData(initialData);
+        setFormData({
+          personalDetails: initialData.personalDetails,
+          education: initialData.education,
+          experience: initialData.experience,
+          projects: initialData.projects,
+          skills: initialData.skills,
+        });
+        setResumeName(initialData.resumeName);
       }
     }
-  }, [profile, existingResume, isEditMode]);
+  }, [profile, resumeData, isEditMode]);
 
   // Sync URL Template
   useEffect(() => {
-    if (isEditMode && existingResume?.templateId && !templateId) {
+    if (isEditMode && resumeData?.templateId && !templateId) {
       // Update the current url to include the template parameter
       const currentUrl = new URL(window.location.href);
-      currentUrl.searchParams.set("template", existingResume.templateId);
+      currentUrl.searchParams.set("template", resumeData.templateId);
       // Do not reload/re-render page for optimizaation (when switching templates)
       // back button will go back to previous page instead of allowing re-save
       // updates only
       window.history.replaceState({}, "", currentUrl.toString());
     }
-  });
+  }, [isEditMode, resumeData?.templateId, templateId]);
 
   if (profileLoading || (resumeId && resumeLoading)) {
     return (
@@ -278,7 +285,10 @@ export function ResumeBuilderClient() {
             <Button
               onClick={handleSaveResume}
               disabled={
-                !formData || !effectiveTemplateId || saveResume.isPending
+                !formData ||
+                !effectiveTemplateId ||
+                !resumeName ||
+                saveResume.isPending
               }
               variant="outline"
               size="sm"
@@ -306,6 +316,23 @@ export function ResumeBuilderClient() {
         <div className="flex h-[calc(100vh-240px)] gap-8">
           {/* Left Panel - Form */}
           <div className="w-1/2 overflow-auto rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            {/* Resume Name Input */}
+            <div className="mb-6">
+              <Label
+                htmlFor="resumeName"
+                className="text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                Resume Name
+              </Label>
+              <Input
+                id="resumeName"
+                value={resumeName}
+                onChange={(e) => setResumeName(e.target.value)}
+                placeholder="Enter resume name"
+                className="mt-1"
+              />
+            </div>
+
             {formData && (
               <ResumeForm
                 initialData={formData}

@@ -1,9 +1,10 @@
 "use client";
 
-//import { api } from "~/trpc/react";
-//import { useCallback } from "react";
+import { api } from "~/trpc/react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { Resume } from "~/app/_components/onboarding/types";
+import { notifyToaster } from "~/lib/notification";
 
 import { Edit, Eye, Trash2 } from "lucide-react";
 import {
@@ -19,7 +20,8 @@ export interface ResumeCardProps {
 }
 
 export function ResumeCard({ resume }: ResumeCardProps) {
-  //const deleteResume = api.resume.deleteResume.useMutation();
+  const deleteResume = api.resume.deleteResume.useMutation();
+  const utils = api.useUtils();
 
   const router = useRouter();
 
@@ -32,27 +34,24 @@ export function ResumeCard({ resume }: ResumeCardProps) {
     // router.push(`/resume/view/${resume.id}`);
   };
 
-  const resumeTitle = resume.profile
-    ? `${resume.profile.firstName} ${resume.profile.lastName}'s Resume`
-    : `Resume (${resume.template.name})`;
+  const handleDelete = useCallback(async () => {
+    if (!resume.id) return;
 
-  /*
-	const handleDelete = useCallback(async () => {
-		if (!resume.id) return;
+    try {
+      const result = await deleteResume.mutateAsync({
+        resumeId: resume.id,
+      });
 
-		try {
-			const result = await deleteResume.mutateAsync({
-				resumeId: resume.id
-			});
-
-			if (result.success && result.deletedId === resume.id) {
-
-			}
-		} catch (error) {
-
-		}
-	}, []);
-	*/
+      if (result.success && result.deletedId === resume.id) {
+        // Invalidate and refetch the resumes list
+        await utils.resume.getResumes.invalidate();
+        notifyToaster(true, "Deleted resume successfully!", 2500);
+      }
+    } catch (error) {
+      console.error("Failed to delete resume:", error);
+      notifyToaster(false, "Failed to delete resume!", 2500);
+    }
+  }, [resume.id, deleteResume, utils]);
 
   return (
     <Card className="group transition-all hover:shadow-lg">
@@ -60,7 +59,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-slate-900 dark:text-white">
-              {resumeTitle}
+              {resume.resumeName}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               {resume.template.name} Template
@@ -106,6 +105,8 @@ export function ResumeCard({ resume }: ResumeCardProps) {
           <Button
             variant="outline"
             size="sm"
+            onClick={handleDelete}
+            disabled={deleteResume.isPending}
             className="text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
           >
             <Trash2 className="h-3 w-3" />

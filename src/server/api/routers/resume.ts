@@ -15,6 +15,7 @@ export const resumeRouter = createTRPCRouter({
 
   // Get All resumes for specific user
   getResumes: protectedProcedure.query(async ({ ctx }) => {
+    // Get user profile associated with session
     const userProfile = await ctx.db.userProfile.findUnique({
       where: { userId: ctx.session.user.id },
       select: { id: true },
@@ -24,14 +25,12 @@ export const resumeRouter = createTRPCRouter({
       throw new Error("No such user found");
     }
 
+    // Get resume associated with user
     const resumes = await ctx.db.resume.findMany({
       where: { profileId: userProfile.id },
       include: {
         template: {
           select: { id: true, name: true, description: true },
-        },
-        profile: {
-          select: { firstName: true, lastName: true },
         },
       },
       orderBy: { id: "desc" },
@@ -43,6 +42,7 @@ export const resumeRouter = createTRPCRouter({
   getResume: protectedProcedure
     .input(z.object({ resumeId: z.string() }))
     .query(async ({ ctx, input }) => {
+      // Get user profile associated with session
       const userProfile = await ctx.db.userProfile.findUnique({
         where: {
           userId: ctx.session.user.id,
@@ -53,6 +53,7 @@ export const resumeRouter = createTRPCRouter({
         throw new Error("No such user found");
       }
 
+      // Get specific resume by resumeId
       const resume = await ctx.db.resume.findUnique({
         where: {
           id: input.resumeId,
@@ -64,7 +65,6 @@ export const resumeRouter = createTRPCRouter({
           experience: true,
           projects: true,
           skills: true,
-          profile: true,
         },
       });
       // Resume null check
@@ -80,13 +80,24 @@ export const resumeRouter = createTRPCRouter({
     .input(
       z.object({
         templateId: z.string(),
+        resumeName: z.string(),
+        personalDetails: z.object({
+          firstName: z.string(),
+          lastName: z.string(),
+          email: z.string(),
+          phoneNumber: z.string().optional(),
+          website: z.string().optional(),
+          linkedinUrl: z.string().optional(),
+          githubUrl: z.string().optional(),
+        }),
         formData: completeProfileSchema,
         resumeId: z.string().optional(), // If provided = update, if not = create
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { templateId, formData, resumeId } = input;
-      //const userId = ctx.session.user.id;
+      const { templateId, resumeName, personalDetails, formData, resumeId } =
+        input;
+      // Get user profile associated with session
       const userProfile = await ctx.db.userProfile.findUnique({
         where: { userId: ctx.session.user.id },
         select: { id: true },
@@ -111,6 +122,14 @@ export const resumeRouter = createTRPCRouter({
           },
           data: {
             templateId: templateId, // for updates, just assign templateId
+            resumeName: resumeName,
+            firstName: personalDetails.firstName,
+            lastName: personalDetails.lastName,
+            email: personalDetails.email,
+            phoneNumber: personalDetails.phoneNumber,
+            website: personalDetails.website,
+            linkedinUrl: personalDetails.linkedinUrl,
+            githubUrl: personalDetails.githubUrl,
             education: {
               deleteMany: {}, // delete existing data
               create:
@@ -185,6 +204,14 @@ export const resumeRouter = createTRPCRouter({
           data: {
             templateId: templateId,
             profileId: userProfile.id,
+            resumeName: resumeName,
+            firstName: personalDetails.firstName,
+            lastName: personalDetails.lastName,
+            email: personalDetails.email,
+            phoneNumber: personalDetails.phoneNumber,
+            website: personalDetails.website,
+            linkedinUrl: personalDetails.linkedinUrl,
+            githubUrl: personalDetails.githubUrl,
             education: {
               create:
                 formData.education?.map((edu) => ({
@@ -248,6 +275,7 @@ export const resumeRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { resumeId } = input;
+      // Get user profile associated with session
       const userProfile = await ctx.db.userProfile.findUnique({
         where: { userId: ctx.session.user.id },
         select: { id: true },

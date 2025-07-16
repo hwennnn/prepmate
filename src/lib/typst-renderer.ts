@@ -134,8 +134,11 @@ export class TypstResumeRenderer {
     }
   }
 
-  // Rendering Function Typst -> SVG
-  async renderToSVG({ formData, templateId }: RenderOptions): Promise<string> {
+  // Rendering Function Typst -> SVG Pages
+  async renderToSVG({
+    formData,
+    templateId,
+  }: RenderOptions): Promise<string[]> {
     try {
       // Load template and library
       const templateContent = await this.loadTemplate(templateId);
@@ -144,25 +147,80 @@ export class TypstResumeRenderer {
       // Format data
       const formattedData = formatDataForTypst(formData);
 
-      // Add template to vritual file system
+      // Add template to virtual file system
       if (window.$typst) {
         await window.$typst.addSource("/main.typ", templateContent);
 
         for (const [path, content] of libraryFiles) {
           await window.$typst.addSource(path, content);
         }
+
         const svgBuffer = await window.$typst.svg({
-          mainFilePath: "/main.typ", // Use the file we added to VFS
+          mainFilePath: "/main.typ",
           inputs: { data: JSON.stringify(formattedData) },
         });
 
-        return svgBuffer;
+        // Try to split SVG by detecting page boundaries
+        const pages = this.splitSVGByPages(svgBuffer);
+        // Manual pop last page (extra space)
+        pages.pop();
+        return pages;
       } else {
         throw new Error("window.$typst is not defined");
       }
     } catch (error) {
       console.error("Live rendering compilation error: ", error);
       throw error;
+    }
+  }
+
+  // Helper method to split single SVG into pages based on content analysis
+  private splitSVGByPages(svgContent: string): string[] {
+    try {
+      // Parse the SVG content into a DOM element to retrieve content height and width
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(svgContent, "image/svg+xml");
+      const svgElement = doc.querySelector("svg");
+
+      if (!svgElement) {
+        return [svgContent];
+      }
+
+      // Get SVG height
+      const height = parseFloat(svgElement.getAttribute("height") ?? "0");
+
+      // Use A4 page dimensions in points (595.276 x 841.89)
+      const pageWidth = 595.276;
+      const pageHeight = 841.89;
+
+      // Calculate number of pages based on height
+      const numPages = Math.ceil(height / pageHeight);
+
+      if (numPages <= 1) {
+        return [svgContent];
+      }
+
+      // Split into multiple pages
+      const pages: string[] = [];
+
+      for (let i = 0; i < numPages; i++) {
+        const yOffset = i * pageHeight;
+        // Create a new SVG for this page with responsive attributes
+        // Mark as SVG
+        // Scales uniformly to the center
+        const pageContent = `
+          <svg width="${pageWidth}" height="${pageHeight}" viewBox="0 ${yOffset} ${pageWidth} ${pageHeight}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            ${svgElement.innerHTML}
+          </svg>
+        `;
+        // Push the created svg into pages array
+        pages.push(pageContent);
+      }
+
+      return pages;
+    } catch (error) {
+      console.error("Error splitting SVG into pages:", error);
+      return [svgContent]; // Return original if splitting fails
     }
   }
 }
