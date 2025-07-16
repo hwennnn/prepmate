@@ -1,28 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `expectedGradDate` on the `Education` table. All the data in the column will be lost.
-  - The `achievements` column on the `Experience` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - The `achievements` column on the `Project` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - Made the column `startDate` on table `Education` required. This step will fail if there are existing NULL values in that column.
-  - Made the column `endDate` on table `Education` required. This step will fail if there are existing NULL values in that column.
-  - Made the column `location` on table `Experience` required. This step will fail if there are existing NULL values in that column.
-
-*/
--- AlterTable
-ALTER TABLE "Education" DROP COLUMN "expectedGradDate",
-ALTER COLUMN "startDate" SET NOT NULL,
-ALTER COLUMN "endDate" SET NOT NULL;
-
--- AlterTable
-ALTER TABLE "Experience" ALTER COLUMN "location" SET NOT NULL,
-DROP COLUMN "achievements",
-ADD COLUMN     "achievements" TEXT[];
-
--- AlterTable
-ALTER TABLE "Project" DROP COLUMN "achievements",
-ADD COLUMN     "achievements" TEXT[];
-
 -- CreateTable
 CREATE TABLE "Template" (
     "id" TEXT NOT NULL,
