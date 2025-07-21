@@ -18,8 +18,8 @@ export function EducationSection({
     return null;
   }
 
-  //Sort Education by date
-  const sortedEducation = education.sort(
+  //Sort Education by date (create copy without mutating original)
+  const sortedEducation = [...education].sort(
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
   );
 
@@ -27,13 +27,18 @@ export function EducationSection({
     <div className={classes.section.wrapper}>
       <ResumeSectionTitle title="Education" templateId={templateId} />
       {sortedEducation.map((edu, index) => (
-        <div key={index} className={classes.education.item}>
+        <div
+          key={`${edu.institution}-${edu.degree}-${index}`}
+          className={classes.education.item}
+        >
           <div className="mb-1 flex justify-between">
             <span className={classes.education.institution}>
               {edu.institution}
             </span>
             <span className={classes.education.date}>
-              {formatDateRange(edu.startDate, edu.endDate, edu.isAttending)}
+              {edu.startDate
+                ? formatDateRange(edu.startDate, edu.endDate, edu.isAttending)
+                : null}
             </span>
           </div>
           <div className="flex justify-between">

@@ -1,10 +1,11 @@
 import { CheckCircle, FileText, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { api } from "~/trpc/react";
 import type { OnboardingFormData } from "./types";
+import { notifyToaster } from "~/lib/notification";
 
 interface ResumeUploadProps {
   onDataParsed: (data: Partial<OnboardingFormData>) => void;
@@ -18,23 +19,13 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
 
-  const notifyError = (err: string) => {
-    toast.error(err, {
-      duration: 4000,
-      position: "top-center",
-      style: {
-        padding: "0.5cm",
-      },
-    });
-  };
-
   const parseResumeMutation = api.onboarding.parseResume.useMutation({
     onSuccess: (data: Partial<OnboardingFormData>) => {
       onDataParsed(data);
       setIsParsing(false);
     },
     onError: (error: { message?: string }) => {
-      notifyError(error.message ?? "Failed to parse resume");
+      notifyToaster(false, error.message ?? "Failed to parse resume", 4000);
       setIsParsing(false);
     },
   });
@@ -63,7 +54,7 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
   const processFile = (file: File) => {
     const error = validateFile(file);
     if (error) {
-      notifyError(error);
+      notifyToaster(false, error, 4000);
       return;
     }
 
@@ -137,7 +128,7 @@ export function ResumeUpload({ onDataParsed, onClose }: ResumeUploadProps) {
       reader.readAsDataURL(uploadedFile);
     } catch (error) {
       console.error("🚀 ~ handleParseResume ~ error:", error);
-      notifyError("Failed to process file");
+      notifyToaster(false, "Failed to process file", 4000);
       setIsParsing(false);
     }
   };

@@ -111,3 +111,87 @@ export const completeProfileSchema = z.object({
 });
 
 export type OnboardingFormData = z.infer<typeof completeProfileSchema>;
+
+// Resume-related schemas
+export const templateSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+});
+
+// For getting list of resumes, for each resume
+// api returns direct personal fields and template data
+export const resumeSchema = z.object({
+  id: z.string(),
+  templateId: z.string(),
+  profileId: z.string(),
+  resumeName: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phoneNumber: z.string().optional(),
+  website: z.string().optional(),
+  linkedinUrl: z.string().optional(),
+  githubUrl: z.string().optional(),
+  template: templateSchema,
+});
+
+// Resume database models (different from form schemas)
+export const resumeEducationSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  institution: z.string(),
+  degree: z.string(),
+  isAttending: z.boolean(),
+  startDate: z.date(),
+  endDate: z.date(),
+  gpa: z.string().optional(),
+  awards: z.string().optional(),
+  coursework: z.string().optional(),
+});
+
+export const resumeExperienceSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  company: z.string(),
+  jobTitle: z.string(),
+  location: z.string(),
+  isCurrentJob: z.boolean(),
+  startDate: z.date(),
+  endDate: z.date().optional(),
+  achievements: z.array(z.string()),
+  technologies: z.string().optional(),
+});
+
+export const resumeProjectSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  name: z.string(),
+  description: z.string(),
+  url: z.string().optional(),
+  achievements: z.array(z.string()),
+  technologies: z.string().optional(),
+});
+
+export const resumeSkillsSchema = z.object({
+  id: z.string(),
+  resumeId: z.string(),
+  languages: z.string().optional(),
+  frameworks: z.string().optional(),
+});
+
+// Complete resume with all relations
+export const completeResumeSchema = resumeSchema.extend({
+  education: z.array(resumeEducationSchema),
+  experience: z.array(resumeExperienceSchema),
+  projects: z.array(resumeProjectSchema),
+  skills: resumeSkillsSchema.optional(),
+});
+
+// Used for return type of getResumes, where Resume only requires
+// fields form resumeSchema
+export type Resume = z.infer<typeof resumeSchema>;
+
+// Possibly used for return type from the getResume, where whole resumeSchema
+// is necessary, for clearer type definition/safety
+export type ResumeFormData = z.infer<typeof completeResumeSchema>;

@@ -1,7 +1,7 @@
 import { OnboardingCheck } from "~/app/_components/OnboardingCheck";
 import { ResumeBuilderClient } from "~/app/resume/builder/_components/ResumeBuilderClient";
 
-export default function ResumeBuilderPage() {
+export default function EditResumePage() {
   return (
     <OnboardingCheck>
       <ResumeBuilderClient />
@@ -10,6 +10,6 @@ export default function ResumeBuilderPage() {
 }
 
 export const metadata = {
-  title: "Create Resume | PrepMate",
-  description: "Create your professional resume with live preview.",
+  title: "Edit Resume | PrepMate",
+  description: "Edit your professional resume with live preview.",
 };
