@@ -71,39 +71,11 @@ export async function compileResume({
   templateId: string;
 }) {
   try {
-    // Template directory
-    const templateDir = "src/templates/resume";
-    const librariesDir = "src/templates/libraries";
-
-    // Load template file
-    const templatePath = join(process.cwd(), templateDir, `${templateId}.typ`);
-    const templateContent = readFileSync(templatePath, "utf-8");
-
-    // Load template libraries
-    const requiredLib = templateLibs[templateId];
-
-    if (!requiredLib) {
-      throw new Error(
-        `Template library not found for templateId: ${templateId}`,
-      );
-    }
-
-    const libraryFiles = new Map();
-    const libPath = join(process.cwd(), librariesDir, requiredLib);
-    const libTypPath = join(libPath, "lib.typ");
-    const resumeTypPath = join(libPath, "resume.typ");
-
-    libraryFiles.set(
-      `/libraries/${requiredLib}/lib.typ`,
-      readFileSync(libTypPath, "utf-8"),
-    );
-    libraryFiles.set(
-      `/libraries/${requiredLib}/resume.typ`,
-      readFileSync(resumeTypPath, "utf-8"),
-    );
-
-    // Format data for Typst
-    const formattedData = formatDataForTypst(formData);
+    // Load
+    const { templateContent, libraryFiles, formattedData } = compilationInit({
+      formData,
+      templateId,
+    });
 
     // Add source files to the virtual file system
     await $typst.addSource("/main.typ", templateContent);
