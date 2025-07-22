@@ -11,15 +11,17 @@ import { api } from "~/trpc/react";
 import { ResumeForm } from "./ResumeForm";
 import { ResumePreview } from "./ResumePreview";
 
-import { Download, Save } from "lucide-react";
+import { Download, Save, Globe, Lock } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Checkbox } from "~/components/ui/checkbox";
 import { ErrorMessage } from "~/components/error-message";
 import { Header } from "~/components/layout";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { TemplateSwitcher } from "~/components/template-switcher";
+import { usePublicToggle } from "~/hooks/use-public-toggle";
 import type { OnboardingFormData } from "~/app/_components/onboarding/types";
 
 export function ResumeBuilderClient() {
@@ -63,6 +65,20 @@ export function ResumeBuilderClient() {
   // When new resume, we follow templateId from params
   // When editing resume, we follow saved templateId in resume data
   const effectiveTemplateId = templateId ?? resumeData?.templateId;
+
+  // ============================= Public Toggle Functionality ======================
+  // Always call usePublicToggle but conditionally use it
+  const publicToggle = usePublicToggle({
+    resumeId: resumeId ?? "dummy", // Provide fallback to avoid conditional hook
+    initialIsPublic: resumeData?.isPublic ?? false,
+    currentIsPublic: resumeData?.isPublic,
+    onSuccess: () => {
+      // Invalidate resume data to reflect changes
+      if (resumeId) {
+        utils.resume.getResume.invalidate({ resumeId }).catch(console.error);
+      }
+    },
+  });
 
   // ======================== Toaster Notification Function ====================
 
@@ -281,7 +297,37 @@ export function ResumeBuilderClient() {
             {/** Template switching */}
             {templateId && <TemplateSwitcher currentTemplateId={templateId} />}
 
-            {/** TODO: Handle save */}
+            {/** Public/Private Toggle - Only show in edit mode */}
+            {isEditMode && resumeId && (
+              <div className="flex items-center space-x-2 rounded-md border border-slate-200 px-3 py-1 dark:border-slate-800">
+                <Checkbox
+                  id="public-toggle"
+                  checked={publicToggle.isPublic}
+                  onCheckedChange={(_checked) => {
+                    if (!publicToggle.isToggling && resumeId) {
+                      publicToggle.toggle().catch(console.error);
+                    }
+                  }}
+                  disabled={publicToggle.isToggling}
+                />
+                <div className="flex items-center gap-1">
+                  {publicToggle.isPublic ? (
+                    <Globe className="h-3 w-3 text-green-600" />
+                  ) : (
+                    <Lock className="h-3 w-3 text-gray-400" />
+                  )}
+                  <label
+                    htmlFor="public-toggle"
+                    className="cursor-pointer text-sm text-slate-600 dark:text-slate-400"
+                  >
+                    {publicToggle.isPublic ? "Public" : "Private"}
+                    {publicToggle.isToggling && " (updating...)"}
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/** Handle save */}
             <Button
               onClick={handleSaveResume}
               disabled={

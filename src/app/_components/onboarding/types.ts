@@ -133,6 +133,7 @@ export const resumeSchema = z.object({
   website: z.string().optional(),
   linkedinUrl: z.string().optional(),
   githubUrl: z.string().optional(),
+  isPublic: z.boolean(),
   template: templateSchema,
 });
 

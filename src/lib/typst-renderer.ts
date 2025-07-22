@@ -161,7 +161,7 @@ export class TypstResumeRenderer {
         });
 
         // Try to split SVG by detecting page boundaries
-        const pages = this.splitSVGByPages(svgBuffer);
+        const pages = TypstResumeRenderer.splitSVGByPages(svgBuffer);
         // Manual pop last page (extra space)
         pages.pop();
         return pages;
@@ -175,7 +175,7 @@ export class TypstResumeRenderer {
   }
 
   // Helper method to split single SVG into pages based on content analysis
-  private splitSVGByPages(svgContent: string): string[] {
+  public static splitSVGByPages(svgContent: string): string[] {
     try {
       // Parse the SVG content into a DOM element to retrieve content height and width
       const parser = new DOMParser();
