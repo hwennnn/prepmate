@@ -8,6 +8,7 @@ import { notifyToaster } from "~/lib/notification";
 import { Header } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
 import { TemplatePreview } from "~/app/resume/templates/_components/TemplatePreview";
 import { ErrorMessage } from "~/components/error-message";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
@@ -98,6 +99,9 @@ export function TemplateSelectionClient() {
                         <CardTitle className="text-lg">
                           {template.name}
                         </CardTitle>
+                        <Badge variant="secondary" className="capitalize">
+                          {template.id}
+                        </Badge>
                       </div>
                     </CardHeader>
                     <CardContent className="flex flex-grow flex-col justify-between space-y-4">
