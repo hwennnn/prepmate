@@ -80,6 +80,120 @@ export const resumeRouter = createTRPCRouter({
       return resume;
     }),
 
+  // Create minimal resume after template selection
+  createMinimalResume: protectedProcedure
+    .input(z.object({ templateId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { templateId } = input;
+
+      // Get user profile associated with session
+      const userProfile = await ctx.db.userProfile.findUnique({
+        where: { userId: ctx.session.user.id },
+        include: {
+          education: true,
+          experience: true,
+          projects: true,
+          skills: true,
+        },
+      });
+
+      if (!userProfile) {
+        throw new Error("User profile not found");
+      }
+
+      // Create resume with profile data as starting point
+      const resume = await ctx.db.resume.create({
+        data: {
+          templateId: templateId,
+          profileId: userProfile.id,
+          resumeName: `${userProfile.firstName} ${userProfile.lastName} Resume`,
+          firstName: userProfile.firstName,
+          lastName: userProfile.lastName,
+          email: userProfile.email,
+          phoneNumber: userProfile.phoneNumber,
+          website: userProfile.website,
+          linkedinUrl: userProfile.linkedinUrl,
+          githubUrl: userProfile.githubUrl,
+          education: {
+            create: userProfile.education.map((edu) => ({
+              institution: edu.institution,
+              degree: edu.degree,
+              isAttending: edu.isAttending,
+              startDate: edu.startDate,
+              endDate: edu.endDate,
+              gpa: edu.gpa,
+              awards: edu.awards,
+              coursework: edu.coursework,
+            })),
+          },
+          experience: {
+            create: userProfile.experience.map((exp) => ({
+              company: exp.company,
+              jobTitle: exp.jobTitle,
+              location: exp.location,
+              isCurrentJob: exp.isCurrentJob,
+              startDate: exp.startDate,
+              endDate: exp.endDate,
+              achievements: exp.achievements,
+              technologies: exp.technologies,
+            })),
+          },
+          projects: {
+            create: userProfile.projects.map((proj) => ({
+              name: proj.name,
+              description: proj.description,
+              url: proj.url,
+              achievements: proj.achievements,
+              technologies: proj.technologies,
+            })),
+          },
+          skills: userProfile.skills
+            ? {
+                create: {
+                  languages: userProfile.skills.languages,
+                  frameworks: userProfile.skills.frameworks,
+                },
+              }
+            : undefined,
+        },
+      });
+
+      // Create PublicResume entry (default private)
+      const baseSlug = generateSlug(
+        userProfile.firstName,
+        userProfile.lastName,
+      );
+      let finalSlug = baseSlug;
+      let counter = 1;
+
+      // Check for slug conflicts
+      while (true) {
+        const slugTaken = await ctx.db.publicResume.findUnique({
+          where: { slug: finalSlug },
+        });
+
+        if (!slugTaken) break;
+
+        finalSlug = `${baseSlug}-${counter}`;
+        counter = counter + 1;
+      }
+
+      // Create PublicResume entry
+      await ctx.db.publicResume.create({
+        data: {
+          resumeId: resume.id,
+          slug: finalSlug,
+          viewCount: 0,
+        },
+      });
+
+      return {
+        success: true,
+        resumeId: resume.id,
+        templateId: templateId,
+      };
+    }),
+
   // Save resume (for edits and update)
   saveResume: protectedProcedure
     .input(
@@ -283,7 +397,7 @@ export const resumeRouter = createTRPCRouter({
 
           if (!slugTaken) break;
 
-          finalSlug = `${baseSlug}-{counter}`;
+          finalSlug = `${baseSlug}-${counter}`;
           counter = counter + 1;
         }
 

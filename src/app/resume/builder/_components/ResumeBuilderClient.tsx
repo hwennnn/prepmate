@@ -2,10 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useParams } from "next/navigation";
-import {
-  convertResumeToBuilderForm,
-  convertProfileToBuilderForm,
-} from "~/lib/profile";
+import { convertResumeToBuilderForm } from "~/lib/profile";
 import { notifyToaster as notify } from "~/lib/notification";
 import { api } from "~/trpc/react";
 import { ResumeForm } from "./ResumeForm";
@@ -28,33 +25,19 @@ export function ResumeBuilderClient() {
   const searchParams = useSearchParams();
   const params = useParams();
   const templateId = searchParams.get("template");
-  const resumeId = (params.id as string) || undefined; // From resume/builder/[id]
+  const resumeId = params.id as string; // Always expect resumeId from route
   const [formData, setFormData] = useState<OnboardingFormData | null>(null);
   const [resumeName, setResumeName] = useState<string>("");
 
-  /*
-   * Since Resume Builder is used for creation and edit
-   * requires a way to monitor if editing or creation mode
-   */
-  const isEditMode = !!resumeId; // Boolean(resumeId);
-
   // ============================= API Calls ============================
-  // Fetch user profile to pre-populate form
-  const {
-    data: profile,
-    isLoading: profileLoading,
-    error: profileError,
-  } = api.onboarding.getProfile.useQuery();
-
-  // Fetch existing resume data if editing
+  // Fetch resume data for editing
   const {
     data: resumeData,
     isLoading: resumeLoading,
     error: resumeError,
   } = api.resume.getResume.useQuery(
-    { resumeId: resumeId! },
+    { resumeId },
     {
-      enabled: !!resumeId,
       retry: (failureCount, error) => {
         // Don't retry if resume not found
         return failureCount < 3 && !error.message.includes("not found");
@@ -67,16 +50,13 @@ export function ResumeBuilderClient() {
   const effectiveTemplateId = templateId ?? resumeData?.templateId;
 
   // ============================= Public Toggle Functionality ======================
-  // Always call usePublicToggle but conditionally use it
   const publicToggle = usePublicToggle({
-    resumeId: resumeId ?? "dummy", // Provide fallback to avoid conditional hook
+    resumeId,
     initialIsPublic: resumeData?.isPublic ?? false,
     currentIsPublic: resumeData?.isPublic,
     onSuccess: () => {
       // Invalidate resume data to reflect changes
-      if (resumeId) {
-        utils.resume.getResume.invalidate({ resumeId }).catch(console.error);
-      }
+      utils.resume.getResume.invalidate({ resumeId }).catch(console.error);
     },
   });
 
@@ -91,35 +71,16 @@ export function ResumeBuilderClient() {
     if (!formData || !effectiveTemplateId || !resumeName) return;
 
     try {
-      const result = await saveResume.mutateAsync({
+      await saveResume.mutateAsync({
         formData: formData,
         templateId: effectiveTemplateId,
         resumeName: resumeName,
         personalDetails: formData.personalDetails,
-        resumeId: resumeId ?? undefined,
+        resumeId: resumeId,
       });
 
       // Notification
-      notify(
-        true,
-        isEditMode
-          ? "Resume Updated Successfully!"
-          : "Resume Saved Successfully!",
-        2500,
-      );
-
-      // If this is create (no resumeId yet)
-      // Add delay to show notification before redirect to edit mode with new ID
-      if (!resumeId && result?.id) {
-        // redirect to edit mode with resume id and template parameter
-        const redirectUrl = `/resume/builder/${result.id}?template=${effectiveTemplateId}`;
-
-        // Delay redirect to show toast notification
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 1500); // 1.5 second delay to show toast
-        return;
-      }
+      notify(true, "Resume Updated Successfully!", 2500);
 
       // Invalidate queries to mark getResume and getResumes cache entry as stale
       // since data has been changed/updated
@@ -130,15 +91,7 @@ export function ResumeBuilderClient() {
       console.error("Save failed: ", error);
       notify(false, "Error saving resume!", 2500);
     }
-  }, [
-    formData,
-    resumeName,
-    saveResume,
-    isEditMode,
-    effectiveTemplateId,
-    resumeId,
-    utils,
-  ]);
+  }, [formData, resumeName, saveResume, effectiveTemplateId, resumeId, utils]);
 
   // ============================= PDF Export functionality ========================
   const exportPDF = api.resume.exportLivePDF.useMutation();
@@ -183,9 +136,9 @@ export function ResumeBuilderClient() {
     setFormData(data);
   }, []);
 
-  // If editing, use existing resume data, otherwise use profile
+  // Initialize form data from resume data
   useEffect(() => {
-    if (isEditMode && resumeData) {
+    if (resumeData) {
       const convertedData = convertResumeToBuilderForm(resumeData);
       if (convertedData) {
         setFormData({
@@ -197,62 +150,43 @@ export function ResumeBuilderClient() {
         });
         setResumeName(convertedData.resumeName);
       }
-    } else if (profile) {
-      const initialData = convertProfileToBuilderForm(profile);
-      if (initialData) {
-        setFormData({
-          personalDetails: initialData.personalDetails,
-          education: initialData.education,
-          experience: initialData.experience,
-          projects: initialData.projects,
-          skills: initialData.skills,
-        });
-        setResumeName(initialData.resumeName);
-      }
     }
-  }, [profile, resumeData, isEditMode]);
+  }, [resumeData]);
 
   // Sync URL Template
   useEffect(() => {
-    if (isEditMode && resumeData?.templateId && !templateId) {
+    if (resumeData?.templateId && !templateId) {
       // Update the current url to include the template parameter
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set("template", resumeData.templateId);
-      // Do not reload/re-render page for optimizaation (when switching templates)
+      // Do not reload/re-render page for optimization (when switching templates)
       // back button will go back to previous page instead of allowing re-save
       // updates only
       window.history.replaceState({}, "", currentUrl.toString());
     }
-  }, [isEditMode, resumeData?.templateId, templateId]);
+  }, [resumeData?.templateId, templateId]);
 
-  if (profileLoading || (resumeId && resumeLoading)) {
+  if (resumeLoading) {
     return (
-      <LoadingSpinner fullScreen text="Loading your profile..." size="lg" />
+      <LoadingSpinner fullScreen text="Loading your resume..." size="lg" />
     );
   }
 
-  if (profileError || !formData) {
-    return (
-      <ErrorMessage
-        error={profileError}
-        title="Failed to Load Profile"
-        description="We couldn't load your profile data. Please try again."
-        showHomeButton={true}
-        showTechnicalDetails={true}
-      />
-    );
-  }
-
-  // Handle resume error separately to prevent blocking entire page ^
-  if (isEditMode && resumeId && resumeError) {
+  if (resumeError) {
     return (
       <ErrorMessage
         error={resumeError}
-        title="Failed to Load Resume Data"
+        title="Failed to Load Resume"
         description="We couldn't load your resume data. Please try again."
         showHomeButton={true}
         showTechnicalDetails={true}
       />
+    );
+  }
+
+  if (!formData) {
+    return (
+      <LoadingSpinner fullScreen text="Preparing resume data..." size="lg" />
     );
   }
 
@@ -285,47 +219,43 @@ export function ResumeBuilderClient() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-              {isEditMode ? "Edit Resume" : "Create Resume"}
+              Edit Resume
             </h1>
             <p className="mt-2 text-slate-600 dark:text-slate-400">
-              {isEditMode
-                ? "Update your professional resume with live preview"
-                : "Build your professional resume with live preview"}
+              Update your professional resume with live preview
             </p>
           </div>
           <div className="flex items-center space-x-3">
             {/** Template switching */}
             {templateId && <TemplateSwitcher currentTemplateId={templateId} />}
 
-            {/** Public/Private Toggle - Only show in edit mode */}
-            {isEditMode && resumeId && (
-              <div className="flex items-center space-x-2 rounded-md border border-slate-200 px-3 py-1 dark:border-slate-800">
-                <Checkbox
-                  id="public-toggle"
-                  checked={publicToggle.isPublic}
-                  onCheckedChange={(_checked) => {
-                    if (!publicToggle.isToggling && resumeId) {
-                      publicToggle.toggle().catch(console.error);
-                    }
-                  }}
-                  disabled={publicToggle.isToggling}
-                />
-                <div className="flex items-center gap-1">
-                  {publicToggle.isPublic ? (
-                    <Globe className="h-3 w-3 text-green-600" />
-                  ) : (
-                    <Lock className="h-3 w-3 text-gray-400" />
-                  )}
-                  <label
-                    htmlFor="public-toggle"
-                    className="cursor-pointer text-sm text-slate-600 dark:text-slate-400"
-                  >
-                    {publicToggle.isPublic ? "Public" : "Private"}
-                    {publicToggle.isToggling && " (updating...)"}
-                  </label>
-                </div>
+            {/** Public/Private Toggle */}
+            <div className="flex items-center space-x-2 rounded-md border border-slate-200 px-3 py-1 dark:border-slate-800">
+              <Checkbox
+                id="public-toggle"
+                checked={publicToggle.isPublic}
+                onCheckedChange={(_checked) => {
+                  if (!publicToggle.isToggling) {
+                    publicToggle.toggle().catch(console.error);
+                  }
+                }}
+                disabled={publicToggle.isToggling}
+              />
+              <div className="flex items-center gap-1">
+                {publicToggle.isPublic ? (
+                  <Globe className="h-3 w-3 text-green-600" />
+                ) : (
+                  <Lock className="h-3 w-3 text-gray-400" />
+                )}
+                <label
+                  htmlFor="public-toggle"
+                  className="cursor-pointer text-sm text-slate-600 dark:text-slate-400"
+                >
+                  {publicToggle.isPublic ? "Public" : "Private"}
+                  {publicToggle.isToggling && " (updating...)"}
+                </label>
               </div>
-            )}
+            </div>
 
             {/** Handle save */}
             <Button
@@ -340,11 +270,7 @@ export function ResumeBuilderClient() {
               size="sm"
             >
               <Save className="mr-2 h-4 w-4" />
-              {saveResume.isPending
-                ? "Saving ..."
-                : isEditMode
-                  ? "Update"
-                  : "Save Draft"}
+              {saveResume.isPending ? "Saving..." : "Update"}
             </Button>
 
             {/** Handle Export */}
