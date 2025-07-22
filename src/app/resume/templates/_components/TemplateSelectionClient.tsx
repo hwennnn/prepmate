@@ -26,7 +26,7 @@ export function TemplateSelectionClient() {
     isLoading: templatesLoading,
   } = api.resume.getTemplates.useQuery();
 
-  const createResume = api.resume.createMinimalResume.useMutation();
+  const createResume = api.resume.createResume.useMutation();
 
   const handleProceed = async () => {
     if (!selectedTemplateId) return;

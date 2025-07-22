@@ -81,7 +81,7 @@ export const resumeRouter = createTRPCRouter({
     }),
 
   // Create minimal resume after template selection
-  createMinimalResume: protectedProcedure
+  createResume: protectedProcedure
     .input(z.object({ templateId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { templateId } = input;
@@ -225,193 +225,90 @@ export const resumeRouter = createTRPCRouter({
       if (!userProfile) {
         throw new Error("User not found");
       }
-      /*
-       * Logic:
-       * 1. Check if it is update (resumeId nullcheck)
-       * 2. Upsert (Update or Insert )
-       * 		2a. If resumeId exists, update where resumeId, userId
-       * 		2b. Else create
-       */
-      if (resumeId) {
-        // Update Exisiting Resume Entry
-        const resume = await ctx.db.resume.update({
-          where: {
-            id: resumeId,
-            profileId: userProfile.id, // Security: only user's resumes
-          },
-          data: {
-            templateId: templateId, // for updates, just assign templateId
-            resumeName: resumeName,
-            firstName: personalDetails.firstName,
-            lastName: personalDetails.lastName,
-            email: personalDetails.email,
-            phoneNumber: personalDetails.phoneNumber,
-            website: personalDetails.website,
-            linkedinUrl: personalDetails.linkedinUrl,
-            githubUrl: personalDetails.githubUrl,
-            education: {
-              deleteMany: {}, // delete existing data
-              create:
-                formData.education?.map((edu) => ({
-                  // resumeId: resumeId,
-                  institution: edu.institution,
-                  degree: edu.degree,
-                  isAttending: edu.isAttending,
-                  startDate: edu.startDate,
-                  endDate: edu.endDate,
-                  gpa: edu.gpa,
-                  awards: edu.awards,
-                  coursework: edu.coursework,
-                })) ?? [],
-            },
-            experience: {
-              deleteMany: {}, // delete existing
-              create:
-                formData.experience?.map((exp) => ({
-                  // resumeId: resumeId,
-                  company: exp.company,
-                  jobTitle: exp.jobTitle,
-                  location: exp.location,
-                  isCurrentJob: exp.isCurrentJob,
-                  startDate: exp.startDate,
-                  endDate: exp.endDate,
-                  achievements: exp.achievements ?? [],
-                  technologies: exp.technologies,
-                })) ?? [],
-            },
-            projects: {
-              deleteMany: {}, // delete existing
-              create:
-                formData.projects?.map((proj) => ({
-                  // resumeId: resumeId,
-                  name: proj.name,
-                  description: proj.description,
-                  url: proj.url,
-                  achievements: proj.achievements ?? [],
-                  technologies: proj.technologies,
-                })) ?? [],
-            },
-            skills: formData.skills
-              ? {
-                  upsert: {
-                    create: {
-                      languages: formData.skills.languages,
-                      frameworks: formData.skills.frameworks,
-                    },
-                    update: {
-                      languages: formData.skills.languages,
-                      frameworks: formData.skills.frameworks,
-                    },
-                  },
-                }
-              : undefined,
-          },
-          include: {
-            template: true,
-            education: true,
-            experience: true,
-            projects: true,
-            skills: true,
-            profile: true,
-          },
-        });
 
-        return resume;
-      } else {
-        // Create new resume entry
-        const resume = await ctx.db.resume.create({
-          data: {
-            templateId: templateId,
-            profileId: userProfile.id,
-            resumeName: resumeName,
-            firstName: personalDetails.firstName,
-            lastName: personalDetails.lastName,
-            email: personalDetails.email,
-            phoneNumber: personalDetails.phoneNumber,
-            website: personalDetails.website,
-            linkedinUrl: personalDetails.linkedinUrl,
-            githubUrl: personalDetails.githubUrl,
-            education: {
-              create:
-                formData.education?.map((edu) => ({
-                  institution: edu.institution,
-                  degree: edu.degree,
-                  isAttending: edu.isAttending,
-                  startDate: edu.startDate,
-                  endDate: edu.endDate,
-                  gpa: edu.gpa,
-                  awards: edu.awards,
-                  coursework: edu.coursework,
-                })) ?? [],
-            },
-            experience: {
-              create:
-                formData.experience?.map((exp) => ({
-                  company: exp.company,
-                  jobTitle: exp.jobTitle,
-                  location: exp.location,
-                  isCurrentJob: exp.isCurrentJob,
-                  startDate: exp.startDate,
-                  endDate: exp.endDate,
-                  achievements: exp.achievements ?? [],
-                  technologies: exp.technologies,
-                })) ?? [],
-            },
-            projects: {
-              create:
-                formData.projects?.map((proj) => ({
-                  name: proj.name,
-                  description: proj.description,
-                  url: proj.url,
-                  achievements: proj.achievements ?? [],
-                  technologies: proj.technologies,
-                })) ?? [],
-            },
-            skills: formData.skills
-              ? {
+      // Update Exisiting Resume Entry
+      const resume = await ctx.db.resume.update({
+        where: {
+          id: resumeId,
+          profileId: userProfile.id, // Security: only user's resumes
+        },
+        data: {
+          templateId: templateId, // for updates, just assign templateId
+          resumeName: resumeName,
+          firstName: personalDetails.firstName,
+          lastName: personalDetails.lastName,
+          email: personalDetails.email,
+          phoneNumber: personalDetails.phoneNumber,
+          website: personalDetails.website,
+          linkedinUrl: personalDetails.linkedinUrl,
+          githubUrl: personalDetails.githubUrl,
+          education: {
+            deleteMany: {}, // delete existing data
+            create:
+              formData.education?.map((edu) => ({
+                // resumeId: resumeId,
+                institution: edu.institution,
+                degree: edu.degree,
+                isAttending: edu.isAttending,
+                startDate: edu.startDate,
+                endDate: edu.endDate,
+                gpa: edu.gpa,
+                awards: edu.awards,
+                coursework: edu.coursework,
+              })) ?? [],
+          },
+          experience: {
+            deleteMany: {}, // delete existing
+            create:
+              formData.experience?.map((exp) => ({
+                // resumeId: resumeId,
+                company: exp.company,
+                jobTitle: exp.jobTitle,
+                location: exp.location,
+                isCurrentJob: exp.isCurrentJob,
+                startDate: exp.startDate,
+                endDate: exp.endDate,
+                achievements: exp.achievements ?? [],
+                technologies: exp.technologies,
+              })) ?? [],
+          },
+          projects: {
+            deleteMany: {}, // delete existing
+            create:
+              formData.projects?.map((proj) => ({
+                // resumeId: resumeId,
+                name: proj.name,
+                description: proj.description,
+                url: proj.url,
+                achievements: proj.achievements ?? [],
+                technologies: proj.technologies,
+              })) ?? [],
+          },
+          skills: formData.skills
+            ? {
+                upsert: {
                   create: {
                     languages: formData.skills.languages,
                     frameworks: formData.skills.frameworks,
                   },
-                }
-              : undefined,
-          },
-          include: {
-            template: true,
-          },
-        });
-
-        // Create PublicResume entry for every new resume (default private)
-        const baseSlug = generateSlug(
-          personalDetails.firstName,
-          personalDetails.lastName,
-        );
-        let finalSlug = baseSlug;
-        let counter = 1;
-
-        // Check for slug conflicts
-        while (true) {
-          const slugTaken = await ctx.db.publicResume.findUnique({
-            where: { slug: finalSlug },
-          });
-
-          if (!slugTaken) break;
-
-          finalSlug = `${baseSlug}-${counter}`;
-          counter = counter + 1;
-        }
-
-        // Create PublicResume entry
-        await ctx.db.publicResume.create({
-          data: {
-            resumeId: resume.id,
-            slug: finalSlug,
-            viewCount: 0,
-          },
-        });
-
-        return resume;
-      }
+                  update: {
+                    languages: formData.skills.languages,
+                    frameworks: formData.skills.frameworks,
+                  },
+                },
+              }
+            : undefined,
+        },
+        include: {
+          template: true,
+          education: true,
+          experience: true,
+          projects: true,
+          skills: true,
+          profile: true,
+        },
+      });
+      return resume;
     }),
 
   // Delete resume by id
