@@ -39,8 +39,8 @@ describe('generateSlug', () => {
 
   it('may create slugs that fail validation (edge case)', () => {
     // Short names create slugs < 5 chars, which fail isValidSlug
-    expect(generateSlug('Al', 'Li')).toBe('al-li');
-    expect(isValidSlug(generateSlug('Al', 'Li'))).toBe(false);
+    expect(generateSlug('Al', 'B')).toBe('al-b');
+    expect(isValidSlug(generateSlug('Al', 'B'))).toBe(false);
   });
 });
 
