@@ -15,7 +15,10 @@ export async function generateMetadata({
   params,
 }: PublicResumePageProps): Promise<Metadata> {
   try {
-    const data = await api.resume.getPublicResume({ slug: params.slug });
+    const data = await api.resume.getPublicResume({
+      slug: params.slug,
+      countView: false,
+    });
     const { resume } = data;
 
     return {
@@ -34,7 +37,10 @@ export default async function PublicResumePage({
   params,
 }: PublicResumePageProps) {
   try {
-    const data = await api.resume.getPublicResume({ slug: params.slug });
+    const data = await api.resume.getPublicResume({
+      slug: params.slug,
+      countView: true,
+    });
 
     return (
       <div className="min-h-screen bg-gray-50">
