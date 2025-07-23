@@ -16,6 +16,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { usePublicToggle } from "~/hooks/use-public-toggle";
+import { TemplatePreview } from "../../templates/_components/TemplatePreview";
 
 export interface ResumeCardProps {
   resume: Resume;
@@ -126,18 +127,21 @@ export function ResumeCard({ resume }: ResumeCardProps) {
 
       <CardContent className="pb-3">
         {/* Preview Thumbnail placeholder for now */}
+        <div className="mb-3 aspect-[3/4] rounded-lg">
+          <TemplatePreview templateId={resume.template.id} />
+        </div>
+        {/*
         <div className="mb-3 aspect-[3/4] rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700">
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
               <div className="mb-2 text-2xl">📄</div>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                {/*TODO: RESUME PREVIEW*/}
                 Resume Preview
               </p>
             </div>
           </div>
         </div>
-
+        */}
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <span>ID: {resume.id.slice(0, 8)}...</span>
           {publicData && (

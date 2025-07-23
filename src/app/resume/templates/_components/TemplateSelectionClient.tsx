@@ -9,7 +9,7 @@ import { Header } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { TemplatePreview } from "~/app/resume/templates/_components/TemplatePreview";
+import Image from "next/image";
 import { ErrorMessage } from "~/components/error-message";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
@@ -107,7 +107,17 @@ export function TemplateSelectionClient() {
                     <CardContent className="flex flex-grow flex-col justify-between space-y-4">
                       <div className="space-y-4">
                         {/* Template Preview */}
-                        <TemplatePreview templateId={template.id} />
+                        <div className="mb-4">
+                          <Image
+                            src={`/template-previews/${template.id}.png`}
+                            alt={`${template.name} resume template preview`}
+                            width={600}
+                            height={800}
+                            className="h-auto w-full rounded-lg border transition-colors group-hover:border-blue-300 dark:border-slate-700 dark:group-hover:border-blue-500"
+                            quality={100}
+                            priority={false}
+                          />
+                        </div>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
                           {template.description}
                         </p>
