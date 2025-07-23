@@ -10,7 +10,7 @@ import { generateSlug } from "~/lib/slug";
 
 export const resumeRouter = createTRPCRouter({
   // Get available templates
-  getTemplates: protectedProcedure.query(async ({ ctx }) => {
+  getTemplates: publicProcedure.query(async ({ ctx }) => {
     const templates = await ctx.db.template.findMany({
       select: { id: true, name: true, description: true },
       orderBy: { name: "asc" },
