@@ -8,7 +8,7 @@ export function TemplatePreview({ templateId }: TemplatePreviewProps) {
   return (
     <div className="aspect-[8.5/11] overflow-hidden rounded-lg border-2 bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md">
       {templateId === "modern" && (
-        <div className="h-full w-full space-y-2">
+        <div className="h-full w-full animate-pulse space-y-2 transition-all duration-500 ease-out hover:animate-none">
           <div className="space-y-1">
             <div className="h-3 w-3/4 rounded bg-slate-800"></div>
             <div className="h-1 w-1/2 rounded bg-slate-400"></div>
@@ -36,7 +36,7 @@ export function TemplatePreview({ templateId }: TemplatePreviewProps) {
         </div>
       )}
       {templateId === "classic" && (
-        <div className="h-full w-full space-y-2">
+        <div className="h-full w-full animate-pulse space-y-2 transition-all duration-500 ease-out hover:animate-none">
           <div className="space-y-1 text-center">
             <div className="mx-auto h-3 w-2/3 rounded bg-slate-800"></div>
             <div className="mx-auto h-1 w-1/2 rounded bg-slate-400"></div>
@@ -61,7 +61,7 @@ export function TemplatePreview({ templateId }: TemplatePreviewProps) {
         </div>
       )}
       {templateId === "creative" && (
-        <div className="h-full w-full space-y-2">
+        <div className="h-full w-full animate-pulse space-y-2 transition-all duration-500 ease-out hover:animate-none">
           <div className="flex space-x-2">
             <div className="h-8 w-1 rounded bg-gradient-to-b from-purple-500 to-pink-500"></div>
             <div className="flex-1 space-y-1">

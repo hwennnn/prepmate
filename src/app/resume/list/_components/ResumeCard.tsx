@@ -16,6 +16,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { usePublicToggle } from "~/hooks/use-public-toggle";
+import { TemplatePreview } from "../../templates/_components/TemplatePreview";
 
 export interface ResumeCardProps {
   resume: Resume;
@@ -26,6 +27,8 @@ export function ResumeCard({ resume }: ResumeCardProps) {
   const utils = api.useUtils();
 
   const router = useRouter();
+
+  const [isCopied, setCopied] = useState(false);
 
   // Manage state of analytics data
   const [publicData, setPublicData] = useState<{
@@ -90,6 +93,22 @@ export function ResumeCard({ resume }: ResumeCardProps) {
     }
   };
 
+  const handleShare = async () => {
+    if (publicData?.slug) {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/r/${publicData.slug}`,
+      );
+      setCopied(true);
+    }
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setCopied(false);
+    }, 3000);
+    return () => clearTimeout(timeout);
+  }, [isCopied]);
+
   const handleDelete = useCallback(async () => {
     if (!resume.id) return;
 
@@ -112,7 +131,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
   return (
     <Card className="group transition-all hover:shadow-lg">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+        <div className="flex w-full items-center justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-slate-900 dark:text-white">
               {resume.resumeName}
@@ -121,23 +140,21 @@ export function ResumeCard({ resume }: ResumeCardProps) {
               {resume.template.name} Template
             </p>
           </div>
+          <Button
+            onClick={handleShare}
+            size="sm"
+            className="px3 onclick:bg-green h-6 rounded-xl text-xs"
+          >
+            {!isCopied ? "Share" : "Copied to clipboard!"}
+          </Button>
         </div>
       </CardHeader>
 
       <CardContent className="pb-3">
         {/* Preview Thumbnail placeholder for now */}
-        <div className="mb-3 aspect-[3/4] rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700">
-          <div className="flex h-full items-center justify-center">
-            <div className="text-center">
-              <div className="mb-2 text-2xl">📄</div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {/*TODO: RESUME PREVIEW*/}
-                Resume Preview
-              </p>
-            </div>
-          </div>
+        <div className="mb-3 aspect-[3/4] rounded-lg">
+          <TemplatePreview templateId={resume.template.id} />
         </div>
-
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <span>ID: {resume.id.slice(0, 8)}...</span>
           {publicData && (

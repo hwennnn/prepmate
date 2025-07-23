@@ -10,7 +10,7 @@ import { generateSlug } from "~/lib/slug";
 
 export const resumeRouter = createTRPCRouter({
   // Get available templates
-  getTemplates: protectedProcedure.query(async ({ ctx }) => {
+  getTemplates: publicProcedure.query(async ({ ctx }) => {
     const templates = await ctx.db.template.findMany({
       select: { id: true, name: true, description: true },
       orderBy: { name: "asc" },
@@ -368,10 +368,15 @@ export const resumeRouter = createTRPCRouter({
   // Public Resume Procedures
 
   // Procedure to get the resume data from slug url
-  // input: slug parameter
+  // input: slug parameter, countView boolean (default true)
   // output: resume data, view count, slug, private preview boolean
   getPublicResume: publicProcedure
-    .input(z.object({ slug: z.string() }))
+    .input(
+      z.object({
+        slug: z.string(),
+        countView: z.boolean().default(true),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const publicResume = await ctx.db.publicResume.findUnique({
         where: { slug: input.slug },
@@ -404,9 +409,9 @@ export const resumeRouter = createTRPCRouter({
         throw new Error("Resume is private.");
       }
 
-      // View count management - Increment only for public views
+      // View count management - Increment only for public views and when countView is true
       let currViewCount = publicResume.viewCount;
-      if (publicResume.resume.isPublic && !isOwner) {
+      if (input.countView && publicResume.resume.isPublic && !isOwner) {
         // update database
         const updatedPublicResume = await ctx.db.publicResume.update({
           where: { id: publicResume.id },
@@ -712,6 +717,30 @@ export const resumeRouter = createTRPCRouter({
         isPublic: resume.isPublic,
         slug: resume.PublicResume.slug,
         viewCount: resume.PublicResume.viewCount,
+      };
+    }),
+
+  getDashBoardAnalytics: protectedProcedure
+    .input(z.object({ profileId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const resumes = await ctx.db.resume.findMany({
+        where: {
+          profileId: input.profileId,
+          profile: { userId: ctx.session.user.id },
+        },
+        include: {
+          PublicResume: { select: { viewCount: true } },
+        },
+      });
+
+      const totalViews = resumes.reduce(
+        (sum, curr) => sum + (curr.PublicResume?.viewCount ?? 0),
+        0,
+      );
+
+      return {
+        totalViews: totalViews,
+        numberOfResumes: resumes.length,
       };
     }),
 });

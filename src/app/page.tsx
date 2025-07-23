@@ -62,8 +62,9 @@ export default async function Home() {
                 variant="outline"
                 size="lg"
                 className="px-8 py-6 text-lg transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                asChild
               >
-                View Templates
+                <Link href="/templates">View Templates</Link>
               </Button>
             </div>
 
