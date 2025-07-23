@@ -4,9 +4,9 @@ import { api } from "~/trpc/server";
 import { PublicResumeView } from "../_components/PublicResumeView";
 
 interface PublicResumePageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Metadata for SEO optimization.
@@ -14,9 +14,10 @@ interface PublicResumePageProps {
 export async function generateMetadata({
   params,
 }: PublicResumePageProps): Promise<Metadata> {
+  const resolvedParams = await params;
   try {
     const data = await api.resume.getPublicResume({
-      slug: params.slug,
+      slug: resolvedParams.slug,
       countView: false,
     });
     const { resume } = data;
@@ -36,9 +37,10 @@ export async function generateMetadata({
 export default async function PublicResumePage({
   params,
 }: PublicResumePageProps) {
+  const resolvedParams = await params;
   try {
     const data = await api.resume.getPublicResume({
-      slug: params.slug,
+      slug: resolvedParams.slug,
       countView: true,
     });
 
