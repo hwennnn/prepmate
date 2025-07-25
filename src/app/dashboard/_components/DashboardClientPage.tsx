@@ -16,6 +16,13 @@ export function DashboardClientPage() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  // Get profile analytics
+  const { data: analytics, isLoading } =
+    api.resume.getDashBoardAnalytics.useQuery(
+      { profileId: profile?.id ?? "" },
+      { enabled: !!profile?.id },
+    );
+
   const handleRetry = () => {
     void refetch();
   };
@@ -114,31 +121,37 @@ export function DashboardClientPage() {
         <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
           Quick Overview
         </h2>
-        <div className="grid gap-4 md:grid-cols-4">
-          <StatsCard
-            value={1}
-            label="Profile Complete"
-            valueColor="text-blue-600"
-          />
+        {isLoading && !analytics ? (
+          <div className="flex min-h-[400px] items-center justify-center">
+            <LoadingSpinner text="Loading resume..." />
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-4">
+            <StatsCard
+              value={1}
+              label="Profile Complete"
+              valueColor="text-blue-600"
+            />
 
-          <StatsCard
-            value={0}
-            label="Resumes Created"
-            valueColor="text-green-600"
-          />
+            <StatsCard
+              value={analytics?.numberOfResumes ?? 0}
+              label="Resumes Created"
+              valueColor="text-green-600"
+            />
 
-          <StatsCard
-            value={0}
-            label="Total Views"
-            valueColor="text-purple-600"
-          />
+            <StatsCard
+              value={analytics?.totalViews ?? 0}
+              label="Total Views"
+              valueColor="text-purple-600"
+            />
 
-          <StatsCard
-            value={0}
-            label="Applications"
-            valueColor="text-orange-600"
-          />
-        </div>
+            <StatsCard
+              value={0}
+              label="Applications"
+              valueColor="text-orange-600"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

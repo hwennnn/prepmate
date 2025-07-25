@@ -44,7 +44,7 @@ export function LoadingSpinner({
     return (
       <div className="flex items-center space-x-2">
         {spinner}
-        <span className="text-slate-600 dark:text-slate-400">{text}</span>
+        <span className="text-slate-600 dark:text-slate-400 px-2">{text}</span>
       </div>
     );
   }
