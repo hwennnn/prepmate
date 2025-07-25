@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { completeProfileSchema } from "~/app/_components/onboarding/types";
+import { enhanceBulletPoints } from "~/lib/gemini";
 import { generateSlug } from "~/lib/slug";
 import { compileResume, compileResumeToSVG } from "~/lib/typst-compiler";
 import {
@@ -820,5 +821,48 @@ export const resumeRouter = createTRPCRouter({
         totalViews: totalViews,
         numberOfResumes: resumes.length,
       };
+    }),
+
+  // Enhance bullet points with AI
+  enhanceBulletPoints: protectedProcedure
+    .input(
+      z.object({
+        bulletPoints: z
+          .array(z.string())
+          .min(1, "At least one bullet point is required"),
+        context: z.object({
+          type: z.enum(["experience", "project"]),
+          title: z.string().min(1, "Title is required"),
+          company: z.string().optional(),
+          description: z.string().optional(),
+        }),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { bulletPoints, context } = input;
+
+      // Filter out empty bullet points
+      const validBulletPoints = bulletPoints.filter(
+        (point) => point.trim().length > 0,
+      );
+
+      if (validBulletPoints.length === 0) {
+        throw new Error("No valid bullet points to enhance");
+      }
+
+      try {
+        const enhancedPoints = await enhanceBulletPoints({
+          bulletPoints: validBulletPoints,
+          context,
+        });
+
+        return {
+          original: validBulletPoints,
+          enhanced: enhancedPoints,
+        };
+      } catch (error) {
+        console.error("Error in enhanceBulletPoints procedure:", error);
+        throw new Error("Failed to enhance bullet points. Please try again.");
+      }
     }),
 });
