@@ -245,8 +245,9 @@ export function TemplateSelectionClient() {
                         <Image
                           src={`/template-previews/${template.id}.png`}
                           alt={`${template.name} template preview`}
-                          width={120}
-                          height={160}
+                          width={360}
+                          height={480}
+                          quality={100}
                           className="h-full w-full object-cover transition-transform group-hover:scale-105"
                         />
                       </div>
