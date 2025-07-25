@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { ErrorMessage } from "~/components/error-message";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList } from "~/components/ui/tabs";
 import { api } from "~/trpc/react";
@@ -16,7 +17,6 @@ import { ProjectsForm } from "./ProjectsForm";
 import { ResumeUpload } from "./ResumeUpload";
 import { SkillsForm } from "./SkillsForm";
 import { completeProfileSchema, type OnboardingFormData } from "./types";
-import { ErrorMessage } from "~/components/error-message";
 
 const steps = [
   { id: "personal", label: "Personal", description: "Basic information" },
@@ -31,11 +31,13 @@ type StepId = (typeof steps)[number]["id"];
 interface OnboardingFormProps {
   initialData?: OnboardingFormData;
   onComplete: () => void;
+  submitButtonText?: string;
 }
 
 export function OnboardingForm({
   onComplete,
   initialData,
+  submitButtonText = "Complete Setup",
 }: OnboardingFormProps) {
   const isEditMode = !!initialData;
 
@@ -388,7 +390,7 @@ export function OnboardingForm({
                   {isSubmitting ? (
                     <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   ) : (
-                    "Complete Setup"
+                    submitButtonText
                   )}
                 </Button>
               </form>

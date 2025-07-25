@@ -1,12 +1,12 @@
 import { z } from "zod";
+import { completeProfileSchema } from "~/app/_components/onboarding/types";
+import { generateSlug } from "~/lib/slug";
+import { compileResume, compileResumeToSVG } from "~/lib/typst-compiler";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { completeProfileSchema } from "~/app/_components/onboarding/types";
-import { compileResume, compileResumeToSVG } from "~/lib/typst-compiler";
-import { generateSlug } from "~/lib/slug";
 
 export const resumeRouter = createTRPCRouter({
   // Get available templates
@@ -20,22 +20,33 @@ export const resumeRouter = createTRPCRouter({
 
   // Get All resumes for specific user
   getResumes: protectedProcedure.query(async ({ ctx }) => {
-    // Get user profile associated with session
-    const userProfile = await ctx.db.userProfile.findUnique({
+    // Get all user profiles associated with session
+    const userProfiles = await ctx.db.userProfile.findMany({
       where: { userId: ctx.session.user.id },
       select: { id: true },
     });
 
-    if (!userProfile) {
-      throw new Error("No such user found");
+    if (userProfiles.length === 0) {
+      throw new Error("No profiles found for user");
     }
 
-    // Get resume associated with user
+    const profileIds = userProfiles.map((profile) => profile.id);
+
+    // Get resumes associated with any of the user's profiles
     const resumes = await ctx.db.resume.findMany({
-      where: { profileId: userProfile.id },
+      where: { profileId: { in: profileIds } },
       include: {
         template: {
           select: { id: true, name: true, description: true },
+        },
+        profile: {
+          select: {
+            id: true,
+            profileName: true,
+            isDefault: true,
+            firstName: true,
+            lastName: true,
+          },
         },
       },
       orderBy: { id: "desc" },
@@ -47,22 +58,10 @@ export const resumeRouter = createTRPCRouter({
   getResume: protectedProcedure
     .input(z.object({ resumeId: z.string() }))
     .query(async ({ ctx, input }) => {
-      // Get user profile associated with session
-      const userProfile = await ctx.db.userProfile.findUnique({
-        where: {
-          userId: ctx.session.user.id,
-        },
-      });
-
-      if (!userProfile) {
-        throw new Error("No such user found");
-      }
-
-      // Get specific resume by resumeId
+      // Get specific resume by resumeId and verify it belongs to the user
       const resume = await ctx.db.resume.findUnique({
         where: {
           id: input.resumeId,
-          profileId: userProfile.id, // Security: only user's resumes
         },
         include: {
           template: true,
@@ -70,11 +69,20 @@ export const resumeRouter = createTRPCRouter({
           experience: true,
           projects: true,
           skills: true,
+          profile: {
+            select: { userId: true }, // Only need userId for security check
+          },
         },
       });
-      // Resume null check
+
+      // Resume not found
       if (!resume) {
         throw new Error("Resume not found");
+      }
+
+      // Security check: ensure the resume belongs to the current user
+      if (resume.profile.userId !== ctx.session.user.id) {
+        throw new Error("Resume not found"); // Don't reveal that it exists
       }
 
       return resume;
@@ -82,23 +90,48 @@ export const resumeRouter = createTRPCRouter({
 
   // Create minimal resume after template selection
   createResume: protectedProcedure
-    .input(z.object({ templateId: z.string() }))
+    .input(
+      z.object({
+        templateId: z.string(),
+        profileId: z.string().optional(), // Optional profile ID, defaults to default profile
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const { templateId } = input;
+      const { templateId, profileId } = input;
 
-      // Get user profile associated with session
-      const userProfile = await ctx.db.userProfile.findUnique({
-        where: { userId: ctx.session.user.id },
-        include: {
-          education: true,
-          experience: true,
-          projects: true,
-          skills: true,
-        },
-      });
+      // Get the profile to use (specified or default)
+      let userProfile;
+      if (profileId) {
+        userProfile = await ctx.db.userProfile.findFirst({
+          where: {
+            id: profileId,
+            userId: ctx.session.user.id, // Security: only user's profiles
+          },
+          include: {
+            education: true,
+            experience: true,
+            projects: true,
+            skills: true,
+          },
+        });
+      } else {
+        // Use default profile
+        userProfile = await ctx.db.userProfile.findFirst({
+          where: {
+            userId: ctx.session.user.id,
+            isDefault: true,
+          },
+          include: {
+            education: true,
+            experience: true,
+            projects: true,
+            skills: true,
+          },
+        });
+      }
 
       if (!userProfile) {
-        throw new Error("User profile not found");
+        throw new Error("Profile not found");
       }
 
       // Create resume with profile data as starting point
@@ -216,21 +249,30 @@ export const resumeRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { templateId, resumeName, personalDetails, formData, resumeId } =
         input;
-      // Get user profile associated with session
-      const userProfile = await ctx.db.userProfile.findUnique({
-        where: { userId: ctx.session.user.id },
-        select: { id: true },
+
+      // Verify the resume belongs to the user
+      const existingResume = await ctx.db.resume.findUnique({
+        where: { id: resumeId },
+        include: {
+          profile: {
+            select: { userId: true },
+          },
+        },
       });
 
-      if (!userProfile) {
-        throw new Error("User not found");
+      if (!existingResume) {
+        throw new Error("Resume not found");
       }
 
-      // Update Exisiting Resume Entry
+      // Security check: ensure the resume belongs to the current user
+      if (existingResume.profile.userId !== ctx.session.user.id) {
+        throw new Error("Resume not found");
+      }
+
+      // Update Existing Resume Entry
       const resume = await ctx.db.resume.update({
         where: {
           id: resumeId,
-          profileId: userProfile.id, // Security: only user's resumes
         },
         data: {
           templateId: templateId, // for updates, just assign templateId
@@ -320,22 +362,29 @@ export const resumeRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { resumeId } = input;
-      // Get user profile associated with session
-      const userProfile = await ctx.db.userProfile.findUnique({
-        where: { userId: ctx.session.user.id },
-        select: { id: true },
+
+      // Verify the resume exists and belongs to the user
+      const existingResume = await ctx.db.resume.findUnique({
+        where: { id: resumeId },
+        include: {
+          profile: {
+            select: { userId: true },
+          },
+        },
       });
 
-      if (!userProfile) {
-        throw new Error("User not found");
+      if (!existingResume) {
+        throw new Error("Resume not found");
       }
 
-      // Security: Only delete if resume belongs to this user
+      // Security check: ensure the resume belongs to the current user
+      if (existingResume.profile.userId !== ctx.session.user.id) {
+        throw new Error("Resume not found");
+      }
+
+      // Delete the resume
       await ctx.db.resume.delete({
-        where: {
-          id: resumeId,
-          profileId: userProfile.id, // Security check
-        },
+        where: { id: resumeId },
       });
 
       return { success: true, deletedId: resumeId };
@@ -625,7 +674,6 @@ export const resumeRouter = createTRPCRouter({
   // Procedure to check Slug availability [ NOT NEEDED ATM ]
 
   // Procedure to toggle public/private status
-  // input: resumeId, isPublic (current state)
   togglePublic: protectedProcedure
     .input(
       z.object({
@@ -636,24 +684,30 @@ export const resumeRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { resumeId, isPublic } = input;
 
-      // Get user profile id associated with session
-      const userProfile = await ctx.db.userProfile.findUnique({
-        where: { userId: ctx.session.user.id },
-        select: { id: true },
+      // Verify the resume exists and belongs to the user
+      const existingResume = await ctx.db.resume.findUnique({
+        where: { id: resumeId },
+        include: {
+          profile: {
+            select: { userId: true },
+          },
+        },
       });
 
-      if (!userProfile) {
-        throw new Error("User not found!");
+      if (!existingResume) {
+        throw new Error("Resume not found");
+      }
+
+      // Security check: ensure the resume belongs to the current user
+      if (existingResume.profile.userId !== ctx.session.user.id) {
+        throw new Error("Resume not found");
       }
 
       // Use transaction for data consistency
       const result = await ctx.db.$transaction(async (tx) => {
         // Backend controls the toggle logic - single source of truth
         const updatedResume = await tx.resume.update({
-          where: {
-            id: resumeId,
-            profileId: userProfile.id, // Security: only user's resumes
-          },
+          where: { id: resumeId },
           data: { isPublic: !isPublic }, // Backend flips the state
         });
 
@@ -685,28 +739,24 @@ export const resumeRouter = createTRPCRouter({
   getPublicResumeAnalytics: protectedProcedure
     .input(z.object({ resumeId: z.string() }))
     .query(async ({ ctx, input }) => {
-      // Get user profile id associated with session
-      const userProfile = await ctx.db.userProfile.findUnique({
-        where: { userId: ctx.session.user.id },
-        select: { id: true },
-      });
-
-      if (!userProfile) {
-        throw new Error("User not found!");
-      }
-
+      // Verify the resume exists and belongs to the user
       const resume = await ctx.db.resume.findUnique({
-        where: {
-          id: input.resumeId,
-          profileId: userProfile.id,
-        },
+        where: { id: input.resumeId },
         include: {
           PublicResume: true,
+          profile: {
+            select: { userId: true },
+          },
         },
       });
 
       if (!resume) {
-        throw new Error("Resume not found.");
+        throw new Error("Resume not found");
+      }
+
+      // Security check: ensure the resume belongs to the current user
+      if (resume.profile.userId !== ctx.session.user.id) {
+        throw new Error("Resume not found");
       }
 
       if (!resume.PublicResume) {
@@ -721,13 +771,41 @@ export const resumeRouter = createTRPCRouter({
     }),
 
   getDashBoardAnalytics: protectedProcedure
-    .input(z.object({ profileId: z.string() }))
+    .input(z.object({ profileId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const resumes = await ctx.db.resume.findMany({
-        where: {
+      let whereClause;
+
+      if (input.profileId) {
+        // Get resumes for specific profile
+        // First verify the profile belongs to the user
+        const profile = await ctx.db.userProfile.findFirst({
+          where: {
+            id: input.profileId,
+            userId: ctx.session.user.id,
+          },
+        });
+
+        if (!profile) {
+          throw new Error("Profile not found");
+        }
+
+        whereClause = {
           profileId: input.profileId,
-          profile: { userId: ctx.session.user.id },
-        },
+        };
+      } else {
+        // Get resumes for all user's profiles
+        const userProfiles = await ctx.db.userProfile.findMany({
+          where: { userId: ctx.session.user.id },
+          select: { id: true },
+        });
+
+        whereClause = {
+          profileId: { in: userProfiles.map((p) => p.id) },
+        };
+      }
+
+      const resumes = await ctx.db.resume.findMany({
+        where: whereClause,
         include: {
           PublicResume: { select: { viewCount: true } },
         },
