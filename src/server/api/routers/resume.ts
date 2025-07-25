@@ -350,6 +350,13 @@ export const resumeRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const userProfile = await ctx.db.userProfile.findUnique({
+        where: { userId: ctx.session.user.id },
+        select: { firstName: true, lastName: true },
+      });
+      if (!userProfile) {
+        throw new Error("User not found!");
+      }
       const pdfBuffer = await compileResume({
         formData: input.formData,
         templateId: input.templateId,
@@ -358,10 +365,10 @@ export const resumeRouter = createTRPCRouter({
       if (!pdfBuffer) {
         throw new Error("PDF generation failed");
       }
-
+      const resumeName = `${userProfile.firstName}-${userProfile.lastName}-${input.templateId}-template.pdf`;
       return {
         pdf: Buffer.from(pdfBuffer).toString("base64"), // encode the buffer as b64 string
-        filename: `${ctx.session.user.id}-${input.templateId}.pdf`,
+        filename: resumeName,
       };
     }),
 
