@@ -77,6 +77,7 @@ describe('convertProfileToOnboardingForm', () => {
     const result = convertProfileToOnboardingForm(mockData);
 
     expect(result).toEqual({
+      profileId: 'user-123',
       personalDetails: {
         firstName: 'John',
         lastName: 'Doe',
