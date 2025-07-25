@@ -89,24 +89,6 @@ export function DashboardClientPage() {
         />
 
         <FeatureCard
-          title="Mock Interviews"
-          description="Practice with AI-powered mock interviews tailored to your target roles."
-          icon={Settings}
-          iconColor="text-orange-600"
-          buttonText="Coming Soon"
-          isComingSoon={true}
-        />
-
-        <FeatureCard
-          title="Job Matching"
-          description="Get personalized job recommendations based on your profile and preferences."
-          icon={Settings}
-          iconColor="text-red-600"
-          buttonText="Coming Soon"
-          isComingSoon={true}
-        />
-
-        <FeatureCard
           title="Application Tracker"
           description="Keep track of your job applications and follow up efficiently."
           icon={Settings}
@@ -128,12 +110,6 @@ export function DashboardClientPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-4">
             <StatsCard
-              value={1}
-              label="Profile Complete"
-              valueColor="text-blue-600"
-            />
-
-            <StatsCard
               value={analytics?.numberOfResumes ?? 0}
               label="Resumes Created"
               valueColor="text-green-600"
@@ -143,12 +119,6 @@ export function DashboardClientPage() {
               value={analytics?.totalViews ?? 0}
               label="Total Views"
               valueColor="text-purple-600"
-            />
-
-            <StatsCard
-              value={0}
-              label="Applications"
-              valueColor="text-orange-600"
             />
           </div>
         )}
