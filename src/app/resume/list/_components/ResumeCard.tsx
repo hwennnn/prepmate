@@ -260,19 +260,19 @@ export function ResumeCard({ resume }: ResumeCardProps) {
               </div>
               <div className="flex gap-4">
                 <Button
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+                <Button
                   onClick={handleDelete}
                   disabled={deleteResume.isPending}
                   variant="destructive"
                   className="w-full"
                 >
                   {deleteResume.isPending ? "Deleting..." : "Delete"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setOpen(false)}
-                  className="w-full"
-                >
-                  Cancel
                 </Button>
               </div>
             </div>
