@@ -102,7 +102,7 @@ export function useLivePreview({
     timerRef.current = setTimeout(() => {
       // anonymous function here runs after timeout
       void render(); // ignore promise
-    }, 1000);
+    }, 1500);
   }, [render]);
 
   // Manual refresh function
