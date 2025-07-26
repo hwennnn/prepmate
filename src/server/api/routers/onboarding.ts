@@ -48,18 +48,36 @@ export const onboardingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      // Check if user has any profiles (for backward compatibility)
-      const existingProfile = await ctx.db.userProfile.findFirst({
-        where: {
-          userId,
-          isDefault: true, // Update the default profile during onboarding
-        },
-      });
+      let existingProfile;
+
+      if (input.profileId) {
+        // Edit mode: Update specific profile by ID
+        existingProfile = await ctx.db.userProfile.findFirst({
+          where: {
+            id: input.profileId,
+            userId, // Security: ensure user owns this profile
+          },
+        });
+
+        if (!existingProfile) {
+          throw new Error(
+            "Profile not found or you don't have permission to edit it",
+          );
+        }
+      } else {
+        // Onboarding mode: Check if user has any profiles (for backward compatibility)
+        existingProfile = await ctx.db.userProfile.findFirst({
+          where: {
+            userId,
+            isDefault: true, // Update the default profile during onboarding
+          },
+        });
+      }
 
       let profileData;
 
       if (existingProfile) {
-        // Update existing default profile
+        // Update existing profile
         profileData = await ctx.db.userProfile.update({
           where: { id: existingProfile.id },
           data: {
@@ -73,7 +91,7 @@ export const onboardingRouter = createTRPCRouter({
           },
         });
       } else {
-        // Create new default profile
+        // Create new default profile (only during onboarding)
         profileData = await ctx.db.userProfile.create({
           data: {
             userId,
