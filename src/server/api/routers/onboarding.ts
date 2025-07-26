@@ -19,8 +19,12 @@ export const onboardingRouter = createTRPCRouter({
 
   // Get user's profile data for editing
   getProfile: protectedProcedure.query(async ({ ctx }) => {
-    const profile = await ctx.db.userProfile.findUnique({
-      where: { userId: ctx.session.user.id },
+    // For backward compatibility, return the default profile
+    const profile = await ctx.db.userProfile.findFirst({
+      where: {
+        userId: ctx.session.user.id,
+        isDefault: true,
+      },
       include: {
         education: {
           orderBy: { startDate: "desc" },
@@ -44,41 +48,61 @@ export const onboardingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      // Create or update user profile
-      const profile = await ctx.db.userProfile.upsert({
-        where: { userId },
-        create: {
+      // Check if user has any profiles (for backward compatibility)
+      const existingProfile = await ctx.db.userProfile.findFirst({
+        where: {
           userId,
-          firstName: input.personalDetails.firstName,
-          lastName: input.personalDetails.lastName,
-          email: input.personalDetails.email,
-          phoneNumber: input.personalDetails.phoneNumber ?? null,
-          website: input.personalDetails.website ?? null,
-          linkedinUrl: input.personalDetails.linkedinUrl ?? null,
-          githubUrl: input.personalDetails.githubUrl ?? null,
-        },
-        update: {
-          firstName: input.personalDetails.firstName,
-          lastName: input.personalDetails.lastName,
-          email: input.personalDetails.email,
-          phoneNumber: input.personalDetails.phoneNumber ?? null,
-          website: input.personalDetails.website ?? null,
-          linkedinUrl: input.personalDetails.linkedinUrl ?? null,
-          githubUrl: input.personalDetails.githubUrl ?? null,
+          isDefault: true, // Update the default profile during onboarding
         },
       });
+
+      let profileData;
+
+      if (existingProfile) {
+        // Update existing default profile
+        profileData = await ctx.db.userProfile.update({
+          where: { id: existingProfile.id },
+          data: {
+            firstName: input.personalDetails.firstName,
+            lastName: input.personalDetails.lastName,
+            email: input.personalDetails.email,
+            phoneNumber: input.personalDetails.phoneNumber ?? null,
+            website: input.personalDetails.website ?? null,
+            linkedinUrl: input.personalDetails.linkedinUrl ?? null,
+            githubUrl: input.personalDetails.githubUrl ?? null,
+          },
+        });
+      } else {
+        // Create new default profile
+        profileData = await ctx.db.userProfile.create({
+          data: {
+            userId,
+            profileName: "Default Profile",
+            isDefault: true,
+            firstName: input.personalDetails.firstName,
+            lastName: input.personalDetails.lastName,
+            email: input.personalDetails.email,
+            phoneNumber: input.personalDetails.phoneNumber ?? null,
+            website: input.personalDetails.website ?? null,
+            linkedinUrl: input.personalDetails.linkedinUrl ?? null,
+            githubUrl: input.personalDetails.githubUrl ?? null,
+          },
+        });
+      }
+
+      const profileId = profileData.id;
 
       // Handle education records
       if (input.education && input.education.length > 0) {
         // Delete existing education records
         await ctx.db.education.deleteMany({
-          where: { profileId: profile.id },
+          where: { profileId: profileId },
         });
 
         // Create new education records
         await ctx.db.education.createMany({
           data: input.education.map((edu) => ({
-            profileId: profile.id,
+            profileId: profileId,
             institution: edu.institution,
             degree: edu.degree,
             isAttending: edu.isAttending,
@@ -95,13 +119,13 @@ export const onboardingRouter = createTRPCRouter({
       if (input.experience && input.experience.length > 0) {
         // Delete existing experience records
         await ctx.db.experience.deleteMany({
-          where: { profileId: profile.id },
+          where: { profileId: profileId },
         });
 
         // Create new experience records
         await ctx.db.experience.createMany({
           data: input.experience.map((exp) => ({
-            profileId: profile.id,
+            profileId: profileId,
             company: exp.company,
             jobTitle: exp.jobTitle,
             location: exp.location,
@@ -118,13 +142,13 @@ export const onboardingRouter = createTRPCRouter({
       if (input.projects && input.projects.length > 0) {
         // Delete existing project records
         await ctx.db.project.deleteMany({
-          where: { profileId: profile.id },
+          where: { profileId: profileId },
         });
 
         // Create new project records
         await ctx.db.project.createMany({
           data: input.projects.map((proj) => ({
-            profileId: profile.id,
+            profileId: profileId,
             name: proj.name,
             description: proj.description,
             url: proj.url ?? null,
@@ -137,9 +161,9 @@ export const onboardingRouter = createTRPCRouter({
       // Handle skills
       if (input.skills) {
         await ctx.db.skills.upsert({
-          where: { profileId: profile.id },
+          where: { profileId: profileId },
           create: {
-            profileId: profile.id,
+            profileId: profileId,
             languages: input.skills.languages,
             frameworks: input.skills.frameworks,
           },
@@ -150,7 +174,7 @@ export const onboardingRouter = createTRPCRouter({
         });
       }
 
-      return profile;
+      return profileData;
     }),
 
   // Mark onboarding as complete

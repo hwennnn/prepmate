@@ -35,20 +35,22 @@ model Session {
 }
 
 model User {
-  id                     String       @id @default(cuid())
+  id                     String        @id @default(cuid())
   name                   String?
-  email                  String?      @unique
+  email                  String?       @unique
   emailVerified          DateTime?
   image                  String?
-  hasCompletedOnboarding Boolean      @default(false)
+  hasCompletedOnboarding Boolean       @default(false)
   accounts               Account[]
   sessions               Session[]
-  profile                UserProfile?
+  profiles               UserProfile[]
 }
 
 model UserProfile {
   id          String       @id @default(cuid())
-  userId      String       @unique
+  userId      String
+  profileName String       @default("Default Profile")
+  isDefault   Boolean      @default(false)
   firstName   String
   lastName    String
   email       String
@@ -129,25 +131,25 @@ model Template {
 }
 
 model Resume {
-  id            String             @id @default(cuid())
-  templateId    String
-  profileId     String
-  resumeName    String
-  firstName     String
-  lastName      String
-  email         String
-  phoneNumber   String?
-  website       String?
-  linkedinUrl   String?
-  githubUrl     String?
-  profile       UserProfile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  template      Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  education     ResumeEducation[]
-  experience    ResumeExperience[]
-  projects      ResumeProject[]
-  skills        ResumeSkills?
-  isPublic      Boolean            @default(false)
-  PublicResume  PublicResume? 
+  id           String             @id @default(cuid())
+  templateId   String
+  profileId    String
+  resumeName   String
+  firstName    String
+  lastName     String
+  email        String
+  phoneNumber  String?
+  website      String?
+  linkedinUrl  String?
+  githubUrl    String?
+  profile      UserProfile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  template     Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  education    ResumeEducation[]
+  experience   ResumeExperience[]
+  projects     ResumeProject[]
+  skills       ResumeSkills?
+  isPublic     Boolean            @default(false)
+  PublicResume PublicResume?
 }
 
 model ResumeEducation {
@@ -206,13 +208,13 @@ model ResumeSkills {
 }
 
 model PublicResume {
-  id          String      @id @default(cuid())
-  resumeId    String      @unique
-  slug        String      @unique
-  viewCount   Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  resume      Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  resumeId  String   @unique
+  slug      String   @unique
+  viewCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

@@ -108,10 +108,10 @@ export const completeProfileSchema = z.object({
   experience: z.array(experienceSchema).optional(),
   projects: z.array(projectSchema).optional(),
   skills: skillsSchema.optional(),
+  profileId: z.string().optional(),
 });
 
 export type OnboardingFormData = z.infer<typeof completeProfileSchema>;
-
 // Resume-related schemas
 export const templateSchema = z.object({
   id: z.string(),

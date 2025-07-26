@@ -1,4 +1,5 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Sparkles, Trash2 } from "lucide-react";
+import { useState } from "react";
 import type {
   FieldErrors,
   UseFormSetValue,
@@ -7,6 +8,7 @@ import type {
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { BulletPointEnhancer } from "./BulletPointEnhancer";
 import type { OnboardingFormData } from "./types";
 
 interface AchievementsFieldProps {
@@ -26,6 +28,30 @@ export function AchievementsField({
 }: AchievementsFieldProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const achievements = (watch(fieldKey as any) as string[]) ?? [];
+  const [isEnhancerOpen, setIsEnhancerOpen] = useState(false);
+
+  // Extract context from fieldKey for enhancement
+  const getEnhancementContext = () => {
+    const pathParts = fieldKey.split(".");
+    const type = pathParts[0] as "experience" | "project";
+    const index = parseInt(pathParts[1] ?? "0");
+
+    if (type === "experience") {
+      const experienceData = watch("experience")?.[index];
+      return {
+        type: "experience" as const,
+        title: experienceData?.jobTitle ?? "Position",
+        company: experienceData?.company,
+      };
+    } else {
+      const projectData = watch("projects")?.[index];
+      return {
+        type: "project" as const,
+        title: projectData?.name ?? "Project",
+        description: projectData?.description,
+      };
+    }
+  };
 
   const addAchievement = () => {
     const currentAchievements = achievements;
@@ -48,6 +74,22 @@ export function AchievementsField({
     newAchievements[achievementIndex] = value;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setValue(fieldKey as any, newAchievements);
+  };
+
+  const handleEnhanceAccept = (enhancedPoints: string[]) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setValue(fieldKey as any, enhancedPoints);
+    setIsEnhancerOpen(false);
+  };
+
+  const handleEnhanceClick = () => {
+    const validAchievements = achievements.filter((a) => a.trim().length > 0);
+    if (validAchievements.length === 0) {
+      // Add a placeholder achievement if none exist
+      addAchievement();
+      return;
+    }
+    setIsEnhancerOpen(true);
   };
 
   // Extract error for a specific achievement index
@@ -108,16 +150,31 @@ export function AchievementsField({
         <Label className="text-slate-700 dark:text-slate-300">
           Key Achievements
         </Label>
-        <Button
-          type="button"
-          onClick={addAchievement}
-          size="sm"
-          variant="outline"
-          className="h-8 px-2 text-xs"
-        >
-          <Plus className="mr-1 h-3 w-3" />
-          Add Achievement
-        </Button>
+        <div className="flex gap-2">
+          {achievements.length > 0 &&
+            achievements.some((a) => a.trim().length > 0) && (
+              <Button
+                type="button"
+                onClick={handleEnhanceClick}
+                size="sm"
+                variant="outline"
+                className="h-8 border-blue-300 px-2 text-xs text-blue-600 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-950"
+              >
+                <Sparkles className="mr-1 h-3 w-3" />
+                Enhance with AI
+              </Button>
+            )}
+          <Button
+            type="button"
+            onClick={addAchievement}
+            size="sm"
+            variant="outline"
+            className="h-8 px-2 text-xs"
+          >
+            <Plus className="mr-1 h-3 w-3" />
+            Add Achievement
+          </Button>
+        </div>
       </div>
 
       {achievements.length === 0 && (
@@ -170,6 +227,14 @@ export function AchievementsField({
           {arrayFieldError?.message}
         </p>
       )}
+
+      <BulletPointEnhancer
+        bulletPoints={achievements}
+        context={getEnhancementContext()}
+        onAccept={handleEnhanceAccept}
+        onCancel={() => setIsEnhancerOpen(false)}
+        isOpen={isEnhancerOpen}
+      />
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import type { Education, Experience, Project } from "@prisma/client";
 import type {
   OnboardingFormData,
-  ResumeFormData,
   Resume,
+  ResumeFormData,
 } from "~/app/_components/onboarding/types";
 import type {
   GetProfileData,
@@ -16,6 +16,7 @@ export const convertProfileToOnboardingForm = (
   if (!profileData) return undefined;
 
   return {
+    profileId: profileData.id,
     personalDetails: {
       firstName: profileData.firstName ?? "",
       lastName: profileData.lastName ?? "",
