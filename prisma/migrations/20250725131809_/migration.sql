@@ -14,19 +14,5 @@
 DROP INDEX "UserProfile_userId_key";
 
 -- AlterTable
-ALTER TABLE "Education" DROP COLUMN "expectedGradDate",
-ALTER COLUMN "startDate" SET NOT NULL,
-ALTER COLUMN "endDate" SET NOT NULL;
-
--- AlterTable
-ALTER TABLE "Experience" ALTER COLUMN "location" SET NOT NULL,
-DROP COLUMN "achievements",
-ADD COLUMN     "achievements" TEXT[];
-
--- AlterTable
-ALTER TABLE "Project" DROP COLUMN "achievements",
-ADD COLUMN     "achievements" TEXT[];
-
--- AlterTable
 ALTER TABLE "UserProfile" ADD COLUMN     "isDefault" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "profileName" TEXT NOT NULL;
