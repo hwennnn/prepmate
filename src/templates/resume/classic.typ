@@ -60,6 +60,7 @@
         "", // Location
         edu.degree, // degree
         "", // Major
+        gpa: edu.gpa,
         datetime(
           year: int(edu.startDate.split("-").at(0)),
           month: int(edu.startDate.split("-").at(1)),
@@ -73,7 +74,6 @@
           )
         }
       )[
-        #if edu.gpa != "" { [- *GPA:* #edu.gpa] }
         #if edu.awards != "" { [- *Awards:* #edu.awards] }
         #if edu.coursework != "" { [- *Coursework:* #edu.coursework] }
       ]
@@ -113,12 +113,12 @@
     #for proj in data.projects {
       project-heading(
         proj.name,
-        proj.description,
-      )
-      [
+        description: proj.description,
+      )[
         #for achievement in proj.achievements [
           - #achievement
         ]
+        #if proj.technologies != "" { [- *Technologies:* #proj.technologies]}
       ]
     }
   ]

@@ -72,10 +72,10 @@
           end-date: format-date(ed.endDate)
         )
       },
-      degree: ed.degree
+      degree: ed.degree,
+      gpa: ed.gpa
     )
     [
-      - Cumulative GPA: #ed.gpa
       #if ed.awards != "" { [- *Awards:* #ed.awards] }
       #if ed.coursework != "" { [- *Relevant Coursework:* #ed.coursework] }
     ]
@@ -109,15 +109,14 @@
   for proj in data.projects {
     project(
       name: proj.name,
-      //role: 
-      //dates:
-      url: proj.url
+      url: proj.url,
+      description: proj.description
     )
     [
-      - #proj.description
       #for achievement in proj.achievements [
         - #achievement
       ]
+      #if proj.technologies != "" {[- *Technologies:* #proj.technologies]}
     ]
   }
 

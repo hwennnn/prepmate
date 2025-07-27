@@ -185,8 +185,8 @@
 
   generic_2x2(
     (1fr, 1fr),
-    [*#title*], [*#period_worked(start-date, end-date)*], 
-    [#company], emph(location)
+    [*#company*], [*#period_worked(start-date, end-date)*], 
+    emph(title), emph(location)
   )
   v(-0.2em)
   if body != [] {
@@ -198,15 +198,14 @@
 }
 
 // Pretty self-explanatory.
-#let project-heading(name, stack: "", project-url: "", body) = {
-  if project-url.len() != 0 { link(project-url)[*#name*] } else {
+#let project-heading(name, stack: "", project-url: "", description: "", body) = {
+  if project-url.len() != 0 { 
+    [*#link(project-url)[#name]*] 
+  } else {
     [*#name*] 
   }
-  if stack != "" {
-    [
-      #show "|": sep => { h(0.3em); [|]; h(0.3em) }
-      |*#stack*
-    ]
+  if description != "" {
+    [ – #description]
   }
   v(-0.2em)
   if body != [] {
@@ -218,15 +217,15 @@
 }
 
 // Pretty self-explanatory.
-#let education-heading(institution, location, degree, major, start-date, end-date, body) = {
+#let education-heading(institution, location, degree, major, gpa: "", start-date, end-date, body) = {
   // sanity checks
   assert.eq(type(start-date), datetime)
   assert(type(end-date) == datetime or type(end-date) == str)
 
   generic_2x2(
-    (70%, 30%),
-    [*#institution*], [*#location*], 
-    [#degree, #major], period_worked(start-date, end-date)
+    (1fr, 1fr),
+    [*#institution*], [*#period_worked(start-date, end-date)*], 
+    [#degree], if gpa != "" { emph("GPA: " + gpa) } else { "" }
   )
   v(-0.2em)
   if body != [] {

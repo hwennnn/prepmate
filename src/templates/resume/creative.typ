@@ -78,8 +78,9 @@
   [= Experience]
   [
     #for exp in data.experience {
-      entry(
+      work-entry(
         exp.company,
+        exp.jobTitle,
         [
           #if exp.isCurrentJob {
             [#format-date(exp.startDate) - Present]
@@ -87,7 +88,6 @@
             [#format-date(exp.startDate) - #format-date(exp.endDate)]
           }
         ],
-        exp.jobTitle,
         exp.location,
         [
           #for achievement in exp.achievements {
@@ -105,15 +105,16 @@
   [= Projects]
   [
     #for proj in data.projects {
-      entry(
+      project-entry(
         proj.name,
-        link(linkParse(githubParse(proj.url))),
-        proj.technologies,
-        "",
+        url: proj.url,
+        description: proj.description,
         [
-          - #proj.description
           #for achievement in proj.achievements {
             [ - #achievement ]
+          }
+          #if proj.technologies != "" {
+            [- *Technologies:* #proj.technologies]
           }
         ]
       )
@@ -124,8 +125,9 @@
   [= Education]
   [
     #for edu in data.education {
-      entry(
+      edu-entry(
         edu.institution,
+        edu.degree,
         [
           #if edu.isAttending {
             [#format-date(edu.startDate) - Present]
@@ -133,8 +135,7 @@
             [#format-date(edu.startDate) - #format-date(edu.endDate)]
           }
         ],
-        edu.degree,
-        edu.gpa,
+        gpa: edu.gpa,
         [
           #if edu.awards != "" {
             [- *Awards:* #edu.awards]
