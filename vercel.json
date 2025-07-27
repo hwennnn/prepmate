@@ -1,7 +1,7 @@
 {
   "functions": {
-    "api/**": {
-      "includeFiles": "/vercel/path0/node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
+    "api/**/*.ts": {
+      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
     }
   },
   "build": {

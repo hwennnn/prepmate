@@ -24,6 +24,7 @@ const config = {
     "**": [
       "./node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/*.wasm",
       "./node_modules/@myriaddreamin/typst-ts-renderer/pkg/*.wasm",
+      "./node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm",
       // pnpm paths
       "./node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@*/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/*.wasm",
       "./node_modules/.pnpm/@myriaddreamin+typst-ts-renderer@*/node_modules/@myriaddreamin/typst-ts-renderer/pkg/*.wasm",
