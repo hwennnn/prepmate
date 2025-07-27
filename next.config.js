@@ -14,6 +14,12 @@ const config = {
     "/api/trpc/[...trpc]": [
       "./node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/*.wasm",
       "./node_modules/@myriaddreamin/typst-ts-renderer/pkg/*.wasm",
+      "./node_modules/@myriaddreamin/typst.ts/dist/**",
+    ],
+    // Include for all server routes that might use typst compilation
+    "**": [
+      "./node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/*.wasm",
+      "./node_modules/@myriaddreamin/typst-ts-renderer/pkg/*.wasm",
     ],
   },
 };
