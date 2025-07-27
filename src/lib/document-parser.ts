@@ -13,10 +13,63 @@ async function parsePDF(buffer: Buffer): Promise<string> {
   }
 }
 
+// Helper function to convert HTML to text while preserving hyperlinks
+function convertHtmlToTextWithLinks(html: string): string {
+  // Replace <a> tags with "text (url)" format
+  const withLinks = html.replace(
+    /<a[^>]+href="([^"]*)"[^>]*>(.*?)<\/a>/gi,
+    (match: string, url: string, content: string) => {
+      // Remove HTML tags from the link content to get clean text
+      const cleanText = content.replace(/<[^>]+>/g, "");
+
+      // Clean up malformed URLs
+      let cleanUrl = url;
+
+      // Fix mailto: prefix with http/https URLs
+      if (
+        cleanUrl.startsWith("mailto:") &&
+        (cleanUrl.includes("http://") || cleanUrl.includes("https://"))
+      ) {
+        cleanUrl = cleanUrl.replace("mailto:", "");
+      }
+
+      // Fix double protocols (e.g., https://https://...)
+      cleanUrl = cleanUrl.replace(/^https?:\/\/https?:\/\//, "https://");
+
+      // Ensure common domains have proper protocol
+      if (/^(github\.com|linkedin\.com|twitter\.com|x\.com)/.test(cleanUrl)) {
+        cleanUrl = "https://" + cleanUrl;
+      }
+
+      return `${cleanText} (${cleanUrl})`;
+    },
+  );
+
+  // Remove other HTML tags
+  const textOnly = withLinks
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
+  // Clean up extra whitespace
+  return textOnly.replace(/\s+/g, " ").trim();
+}
+
 async function parseDocx(buffer: Buffer): Promise<string> {
   try {
-    const result = await mammoth.extractRawText({ buffer });
-    return result.value;
+    // First try to convert to HTML to preserve hyperlinks
+    const htmlResult = await mammoth.convertToHtml({ buffer });
+    if (htmlResult.value) {
+      return convertHtmlToTextWithLinks(htmlResult.value);
+    }
+
+    // Fallback to raw text if HTML conversion fails
+    const textResult = await mammoth.extractRawText({ buffer });
+    return textResult.value;
   } catch (error) {
     console.error("DOCX parsing failed:", error);
     throw new Error("DOCX parsing failed.");
@@ -26,8 +79,16 @@ async function parseDocx(buffer: Buffer): Promise<string> {
 async function parseDoc(buffer: Buffer): Promise<string> {
   try {
     const mammoth = await import("mammoth");
-    const result = await mammoth.extractRawText({ buffer });
-    return result.value;
+
+    // First try to convert to HTML to preserve hyperlinks
+    const htmlResult = await mammoth.convertToHtml({ buffer });
+    if (htmlResult.value) {
+      return convertHtmlToTextWithLinks(htmlResult.value);
+    }
+
+    // Fallback to raw text if HTML conversion fails
+    const textResult = await mammoth.extractRawText({ buffer });
+    return textResult.value;
   } catch (error) {
     console.error("DOC parsing failed:", error);
     throw new Error("DOC parsing failed.");
