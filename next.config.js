@@ -9,6 +9,39 @@ const config = {
   experimental: {
     serverComponentsExternalPackages: ["pdf-parse"],
   },
+  webpack: (config) => {
+    // Enable WASM support
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
+
+    // Add WASM file handling
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: "webassembly/async",
+    });
+
+    return config;
+  },
+  // Ensure WASM files are properly served from public directory
+  async headers() {
+    return [
+      {
+        source: "/:path*.wasm",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/wasm",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   outputFileTracingIncludes: {
     // Include WASM files for typst compilation in tRPC API routes
     "/api/trpc/[trpc]": [
