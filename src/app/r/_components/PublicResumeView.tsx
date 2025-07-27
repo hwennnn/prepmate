@@ -9,6 +9,7 @@ import { Download, Eye, Lock } from "lucide-react";
 import Link from "next/link";
 import { TypstResumeRenderer } from "~/lib/typst-renderer";
 import type { RouterOutputs } from "~/trpc/react";
+import { notifyToaster } from "~/lib/notification";
 
 interface PublicResumeViewProps {
   resume: RouterOutputs["resume"]["getPublicResume"]["resume"];
@@ -48,6 +49,7 @@ export function PublicResumeView({
   const handleDownloadPDF = async () => {
     try {
       const result = await downloadPDF.mutateAsync({ slug });
+      notifyToaster(true, "Download Started ...", 3000);
 
       // Create blob from base64 data
       const byteCharacters = atob(result.pdf);
@@ -68,6 +70,7 @@ export function PublicResumeView({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
+      notifyToaster(false, "Download Failed", 3000);
       console.error("Failed to download PDF:", error);
     }
   };
