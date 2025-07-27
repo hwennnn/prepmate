@@ -10,6 +10,7 @@ import Link from "next/link";
 import { TypstResumeRenderer } from "~/lib/typst-renderer";
 import type { RouterOutputs } from "~/trpc/react";
 import { notifyToaster } from "~/lib/notification";
+import { Toaster } from "react-hot-toast";
 
 interface PublicResumeViewProps {
   resume: RouterOutputs["resume"]["getPublicResume"]["resume"];
@@ -48,8 +49,8 @@ export function PublicResumeView({
 
   const handleDownloadPDF = async () => {
     try {
+      notifyToaster(true, "Preparing download...", 2000);
       const result = await downloadPDF.mutateAsync({ slug });
-      notifyToaster(true, "Download Started ...", 3000);
 
       // Create blob from base64 data
       const byteCharacters = atob(result.pdf);
@@ -69,8 +70,11 @@ export function PublicResumeView({
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
+      // Show success notification
+      notifyToaster(true, `${result.filename} downloaded successfully!`, 3000);
     } catch (error) {
-      notifyToaster(false, "Download Failed", 3000);
+      notifyToaster(false, "Download failed. Please try again.", 3000);
       console.error("Failed to download PDF:", error);
     }
   };
@@ -175,6 +179,7 @@ export function PublicResumeView({
           </p>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }
