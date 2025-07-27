@@ -31,7 +31,7 @@ jobs:
         run: pnpm format:check
 
   testing:
-    name: Run Unit Tests
+    name: Run All Tests
     runs-on: ubuntu-latest
     steps:
       - name: 1. Fetch repository
@@ -49,6 +49,11 @@ jobs:
         run: pnpm install
 
       - name: 5. Run unit tests
-        run: pnpm test:ci
+        run: pnpm test:unit
+        env:
+          SKIP_ENV_VALIDATION: true
+
+      - name: 6. Run integration tests
+        run: pnpm test:integration
         env:
           SKIP_ENV_VALIDATION: true

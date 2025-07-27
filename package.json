@@ -23,6 +23,8 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:all": "vitest run tests",
     "test:watch": "vitest",
     "test:ci": "vitest run --reporter=verbose"
   },
