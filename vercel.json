@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "app/api/**/*.ts": {
+      "includeFiles": "node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/**"
+    }
+  },
+  "build": {
+    "env": {
+      "NEXT_PRIVATE_STANDALONE": "true"
+    }
+  }
+}
