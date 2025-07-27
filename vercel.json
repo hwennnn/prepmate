@@ -1,21 +1,6 @@
 {
   "functions": {
-    "app/api/**/route.ts": {
-      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
-    },
     "src/app/api/**/route.ts": {
-      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
-    },
-    "app/api/**/route.js": {
-      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
-    },
-    ".next/server/app/api/**/route.js": {
-      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
-    },
-    "api/**/route.ts": {
-      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
-    },
-    "api/**/route.js": {
       "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
     }
   },
