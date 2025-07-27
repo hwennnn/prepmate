@@ -43,7 +43,7 @@
   font: "New Computer Modern",
   paper: "a4",
   author-font-size: 20pt,
-  font-size: 10pt,
+  font-size: 10.5pt,
   body,
 ) = {
 
@@ -175,23 +175,12 @@
   // Makes dates on upper right like rest of components
   consistent: false,
 ) = {
-  if consistent {
-    // edu-constant style (dates top-right, location bottom-right)
-    generic-two-by-two(
-      top-left: strong(institution),
-      top-right: dates,
-      bottom-left: emph(degree),
-      bottom-right: emph(location),
-    )
-  } else {
-    // original edu style (location top-right, dates bottom-right)
-    generic-two-by-two(
-      top-left: strong(institution),
-      top-right: location,
-      bottom-left: emph(degree),
-      bottom-right: emph(dates),
-    )
-  }
+  generic-two-by-two(
+    top-left: strong(institution),
+    top-right: dates,
+    bottom-left: emph(degree),
+    bottom-right: if gpa != "" { emph("GPA: " + gpa) } else { "" },
+  )
 }
 
 #let work(
@@ -201,9 +190,9 @@
   location: "",
 ) = {
   generic-two-by-two(
-    top-left: strong(title),
+    top-left: strong(company),
     top-right: dates,
-    bottom-left: company,
+    bottom-left: emph(title),
     bottom-right: emph(location),
   )
 }
@@ -213,23 +202,20 @@
   name: "",
   url: "",
   dates: "",
+  description: "",
 ) = {
-  generic-one-by-two(
-    left: {
-      if role == "" {
-        [*#name* #if url != "" and dates != "" [ (#link("https://" + url)[#url])]]
+  [
+    #{
+      if url != "" {
+        [*#link("https://" + url)[#name]*]
       } else {
-        [*#role*, #name #if url != "" and dates != ""  [ (#link("https://" + url)[#url])]]
+        [*#name*]
       }
-    },
-    right: {
-      if dates == "" and url != "" {
-        link("https://" + url)[#url]
-      } else {
-        dates
+      if description != "" {
+        [ – #description]
       }
-    },
-  )
+    }
+  ]
 }
 
 #let certificates(
