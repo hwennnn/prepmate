@@ -98,13 +98,23 @@ export const formatDataForTypst = (formData: OnboardingFormData) => {
       ...edu,
       startDate: formatDate(edu.startDate),
       endDate: formatDate(edu.endDate),
+      gpa: edu.gpa ?? "", // Ensure gpa field always exists
+      awards: edu.awards ?? "", // Ensure awards field always exists
+      coursework: edu.coursework ?? "", // Ensure coursework field always exists
     })),
     experience: validExperience?.map((exp) => ({
       ...exp,
       startDate: formatDate(exp.startDate),
       endDate: exp.endDate ? formatDate(exp.endDate) : undefined,
+      achievements: exp.achievements ?? [], // Ensure achievements field always exists
+      technologies: exp.technologies ?? "", // Ensure technologies field always exists
     })),
-    projects: validProjects,
+    projects: validProjects?.map((proj) => ({
+      ...proj,
+      url: proj.url ?? "", // Ensure url field always exists
+      achievements: proj.achievements ?? [], // Ensure achievements field always exists
+      technologies: proj.technologies ?? "", // Ensure technologies field always exists
+    })),
   };
 };
 

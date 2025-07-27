@@ -3,6 +3,7 @@
 import { api } from "~/trpc/react";
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { Resume } from "~/app/_components/onboarding/types";
 import { notifyToaster } from "~/lib/notification";
 
@@ -17,6 +18,7 @@ import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { usePublicToggle } from "~/hooks/use-public-toggle";
 import { TemplatePreview } from "../../templates/_components/TemplatePreview";
+import { ConfirmDialog } from "~/components/ui/confirm-dialog";
 
 export interface ResumeCardProps {
   resume: Resume;
@@ -28,7 +30,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
 
   const router = useRouter();
 
-  const [isCopied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // Manage state of analytics data
   const [publicData, setPublicData] = useState<{
@@ -84,30 +86,14 @@ export function ResumeCard({ resume }: ResumeCardProps) {
     router.push(`/resume/builder/${resume.id}`);
   };
 
-  const handleView = () => {
-    if (publicData?.slug) {
-      // Navigate to resume slug link
-      router.push(`/r/${publicData.slug}`);
-    } else {
-      notifyToaster(false, "No public URL available for this resume", 2500);
-    }
-  };
-
   const handleShare = async () => {
     if (publicData?.slug) {
       await navigator.clipboard.writeText(
         `${window.location.origin}/r/${publicData.slug}`,
       );
-      setCopied(true);
+      notifyToaster(true, "Link copied to clipboard!", 3000);
     }
   };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setCopied(false);
-    }, 3000);
-    return () => clearTimeout(timeout);
-  }, [isCopied]);
 
   const handleDelete = useCallback(async () => {
     if (!resume.id) return;
@@ -121,6 +107,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
         // Invalidate and refetch the resumes list
         await utils.resume.getResumes.invalidate();
         notifyToaster(true, "Deleted resume successfully!", 2500);
+        setOpen(false); // Close modal on success
       }
     } catch (error) {
       console.error("Failed to delete resume:", error);
@@ -145,7 +132,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
             size="sm"
             className="px3 onclick:bg-green h-6 rounded-xl text-xs"
           >
-            {!isCopied ? "Share" : "Copied to clipboard!"}
+            Share
           </Button>
         </div>
       </CardHeader>
@@ -211,34 +198,85 @@ export function ResumeCard({ resume }: ResumeCardProps) {
 
       <CardFooter className="pt-3">
         <div className="flex w-full gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleView}
-            disabled={!publicData?.slug}
-            className="flex-1"
-            title={
-              publicData?.slug
-                ? `View at /r/${publicData.slug}`
-                : "No public URL available"
-            }
-          >
-            <Eye className="mr-1 h-3 w-3" />
-            {publicData?.isPublic ? "View" : "Preview"}
-          </Button>
+          {publicData?.slug ? (
+            <Button asChild variant="outline" size="sm" className="flex-1">
+              <Link
+                href={`/r/${publicData.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`View at /r/${publicData.slug}`}
+              >
+                <Eye className="mr-1 h-3 w-3" />
+                {publicData?.isPublic ? "View" : "Preview"}
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled
+              className="flex-1"
+              title="No public URL available"
+              onClick={() =>
+                notifyToaster(
+                  false,
+                  "No public URL available for this resume",
+                  2500,
+                )
+              }
+            >
+              <Eye className="mr-1 h-3 w-3" />
+              {publicData?.isPublic ? "View" : "Preview"}
+            </Button>
+          )}
           <Button size="sm" onClick={handleEdit} className="flex-1">
             <Edit className="mr-1 h-3 w-3" />
             Edit
           </Button>
+          {/** Delete API */}
           <Button
             variant="outline"
             size="sm"
-            onClick={handleDelete}
+            onClick={() => setOpen(true)}
             disabled={deleteResume.isPending}
             className="text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="mr-1 h-3 w-3" />
+            Delete
           </Button>
+
+          {/* Confirmation Modal */}
+          <ConfirmDialog isOpen={open} onClose={() => setOpen(false)}>
+            <div className="w-56 text-center">
+              <Trash2 className="mx-auto mb-4 h-12 w-12 text-red-500" />
+              <div className="mx-auto my-4 w-48">
+                <h3 className="text-lg font-black text-gray-800">
+                  Confirm Delete
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Are you sure you want to delete &quot;{resume.resumeName}
+                  &quot;? This action cannot be undone.
+                </p>
+              </div>
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDelete}
+                  disabled={deleteResume.isPending}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  {deleteResume.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </div>
+            </div>
+          </ConfirmDialog>
         </div>
       </CardFooter>
     </Card>

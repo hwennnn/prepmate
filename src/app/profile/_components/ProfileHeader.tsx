@@ -5,7 +5,11 @@ import Link from "next/link";
 import { Header } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 
-export function ProfileHeader() {
+interface ProfileHeaderProps {
+  selectedProfileId?: string | null;
+}
+
+export function ProfileHeader({ selectedProfileId }: ProfileHeaderProps) {
   return (
     <>
       <Header
@@ -28,7 +32,13 @@ export function ProfileHeader() {
               </p>
             </div>
             <Button asChild>
-              <Link href="/profile/edit">
+              <Link
+                href={
+                  selectedProfileId
+                    ? `/profile/edit/${selectedProfileId}`
+                    : "/profile/edit"
+                }
+              >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Profile
               </Link>
