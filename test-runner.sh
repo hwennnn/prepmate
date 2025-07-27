@@ -17,6 +17,10 @@ case $TEST_TYPE in
     echo "📝 Running unit tests..."
     pnpm test:unit
     ;;
+"integration")
+    echo "🔗 Running integration tests..."
+    pnpm test:integration
+    ;;
 "watch")
     echo "👁️  Running tests in watch mode..."
     pnpm test:watch
@@ -29,12 +33,14 @@ case $TEST_TYPE in
     echo "🔄 Running all test types..."
     echo "📝 Unit tests..."
     pnpm test:unit
+    echo "🔗 Integration tests..."
+    pnpm test:integration
     echo "🤖 CI tests..."
     pnpm test:ci
     ;;
 *)
     echo "❌ Unknown test type: $TEST_TYPE"
-    echo "Available options: unit, watch, ci, all"
+    echo "Available options: unit, integration, watch, ci, all"
     exit 1
     ;;
 esac
