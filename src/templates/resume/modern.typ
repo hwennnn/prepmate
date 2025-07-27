@@ -62,10 +62,7 @@
       institution: ed.institution,
       location: "",
       dates: if ed.isAttending {
-        dates-helper(
-          start-date: format-date(ed.startDate),
-          end-date: "Present"
-        )
+        "Expected Graduation: " + format-date(ed.endDate)
       } else {
         dates-helper(
           start-date: format-date(ed.startDate),
