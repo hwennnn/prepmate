@@ -181,6 +181,7 @@
     bottom-left: emph(degree),
     bottom-right: if gpa != "" { emph("GPA: " + gpa) } else { "" },
   )
+  v(-0.2em)
 }
 
 #let work(
