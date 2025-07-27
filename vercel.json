@@ -1,7 +1,10 @@
 {
   "functions": {
     "src/app/api/**/route.ts": {
-      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm"
+      "includeFiles": "node_modules/**/@myriaddreamin/*/pkg/*.wasm"
+    },
+    "src/app/api/trpc/[trpc]/route.ts": {
+      "includeFiles": "node_modules/**/@myriaddreamin/*/pkg/*.wasm"
     }
   },
   "build": {
