@@ -1,7 +1,7 @@
 {
   "functions": {
-    "app/api/**/*.ts": {
-      "includeFiles": "node_modules/{@myriaddreamin/typst-ts-web-compiler/pkg/**,.pnpm/@myriaddreamin+typst-ts-web-compiler@*/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/**}"
+    "**": {
+      "includeFiles": "node_modules/.pnpm/@myriaddreamin+typst-ts-web-compiler@0.6.1-rc1/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/**"
     }
   },
   "build": {
