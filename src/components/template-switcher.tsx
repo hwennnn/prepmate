@@ -1,10 +1,9 @@
 "use client";
 import type { Template } from "@prisma/client";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { Button } from "~/components/ui/button";
 
-import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { ErrorMessage } from "~/components/error-message";
 import { api } from "~/trpc/react";
 
@@ -44,7 +43,7 @@ export function TemplateSwitcher({ currentTemplateId }: TemplateSwitcherProps) {
   };
 
   if (isLoading) {
-    return <LoadingSpinner fullScreen text="Loading profile..." size="lg" />;
+    return null;
   }
 
   if (error || !templates) {
