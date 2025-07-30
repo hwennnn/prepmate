@@ -208,11 +208,7 @@ export class TypstResumeRenderer {
         // Create a new SVG for this page with responsive attributes
         // Mark as SVG
         // Scales uniformly to the center
-        const pageContent = `
-          <svg width="${pageWidth}" height="${pageHeight}" viewBox="0 ${yOffset} ${pageWidth} ${pageHeight}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-            ${svgElement.innerHTML}
-          </svg>
-        `;
+        const pageContent = `<svg width="${pageWidth}" height="${pageHeight}" viewBox="0 ${yOffset} ${pageWidth} ${pageHeight}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${svgElement.innerHTML}</svg>`;
         // Push the created svg into pages array
         pages.push(pageContent);
       }
