@@ -208,7 +208,33 @@ export class TypstResumeRenderer {
         // Create a new SVG for this page with responsive attributes
         // Mark as SVG
         // Scales uniformly to the center
-        const pageContent = `<svg width="${pageWidth}" height="${pageHeight}" viewBox="0 ${yOffset} ${pageWidth} ${pageHeight}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${svgElement.innerHTML}</svg>`;
+        // Use cloneNode and serialize to preserve XML structure
+        const clonedSvg = svgElement.cloneNode(true) as SVGElement;
+        clonedSvg.setAttribute("width", pageWidth.toString());
+        clonedSvg.setAttribute("height", pageHeight.toString());
+        clonedSvg.setAttribute(
+          "viewBox",
+          `0 ${yOffset} ${pageWidth} ${pageHeight}`,
+        );
+        clonedSvg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+        // Serialize the cloned SVG to ensure proper XML formatting
+        const pageContent = new XMLSerializer().serializeToString(clonedSvg);
+
+        // Validate the generated SVG is well-formed XML
+        try {
+          const parser = new DOMParser();
+          const testDoc = parser.parseFromString(pageContent, "image/svg+xml");
+          const parserError = testDoc.querySelector("parsererror");
+          if (parserError) {
+            console.warn("Generated SVG has parsing errors, skipping page", i);
+            continue;
+          }
+        } catch (validationError) {
+          console.warn("SVG validation failed for page", i, validationError);
+          continue;
+        }
+
         // Push the created svg into pages array
         pages.push(pageContent);
       }
